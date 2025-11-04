@@ -9,8 +9,6 @@
 | feat    | 기능 단위 구현                     |
 | hotfix  | 서비스 중 긴급 수정 건에 대한 처리 |
 
-## 🔗 Git Convention
-
 ## **🔥 Commit Message Convention**
 
 | **커밋 유형** | **설명**                                                     |
@@ -168,3 +166,13 @@
   <!-- ⚠️⚠️⚠️⚠️⚠️⚠️ 잠깐 !!!! ⚠️⚠️⚠️⚠️⚠️ -->
   <!-- PR 제목 컨벤션에 맞게 잘 작성했는지, assignee 및 reviewer 지정했는지 다시 한 번 체크하기 !! -->
   ```
+
+## Naming Rule 📄
+
+| 머릿말            | 설명                             |
+| ----------------- | -------------------------------- |
+| Components        | PascalCase                       |
+| State variables   | (boolean values) is, has, should |
+| Event handlers    | handle                           |
+| Constants         | UPPER_SNAKE_CASE                 |
+| Utility functions | camelCase                        |
