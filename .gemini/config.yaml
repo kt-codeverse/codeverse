@@ -5,8 +5,8 @@ output_language: Korean
 
 code_review:
   disable: false
-  comment_severity_threshold: MEDIUM
-  max_review_comments: -1
+  comment_severity_threshold: HIGH
+  max_review_comments: 3
   language: Korean
   locale: ko-KR
   pull_request_opened:
@@ -23,4 +23,4 @@ settings:
   language: Korean
   locale: ko-KR
 
-ignore_patterns: []
+ignore_patterns: ["docs/**", "tests/**"]
