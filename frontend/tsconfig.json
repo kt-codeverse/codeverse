@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    /* ===== 기본 빌드 타겟 ===== */
+    "target": "ES2023", // 최신 문법 그대로 사용 (top-level await 등)
+    "module": "esnext", // ESM 모듈 그대로 유지 (Next가 번들링)
+    "moduleResolution": "bundler", // Next.js 13.4+ 권장
+    "lib": ["dom", "dom.iterable", "esnext"],
+
+    /* ===== 품질 및 타입 설정 ===== */
+    "strict": true, // 엄격 타입 검사 (필수)
+    "skipLibCheck": true, // node_modules 타입 검사 생략 (속도 ↑)
+    "noEmit": true, // 실제 JS 파일 생성 안 함 (Next가 처리)
+    "esModuleInterop": true, // CommonJS interop
+    "resolveJsonModule": true, // JSON import 허용
+    "isolatedModules": true, // 독립 모듈 검사
+    "jsx": "react-jsx", // React 17+ JSX transform
+    "incremental": true, // 증분 빌드
+
+    /* ===== 경로 별칭 ===== */
+    "paths": {
+      "@/*": ["./*"]
+    },
+
+    /* ===== Next.js 전용 플러그인 ===== */
+    "plugins": [{ "name": "next" }]
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
+  ],
+  "exclude": ["node_modules"]
+}

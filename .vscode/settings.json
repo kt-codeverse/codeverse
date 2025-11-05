@@ -1,0 +1,31 @@
+{
+  // Disable built-in CSS/SCSS/LESS validation (we use Tailwind/PostCSS features)
+  "css.validate": false,
+  "less.validate": false,
+  "scss.validate": false,
+
+  // TypeScript import preferences & formatting
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+  // Keep unknown at-rules lint suppression as a fallback
+  "css.lint.unknownAtRules": "ignore",
+  "scss.lint.unknownAtRules": "ignore",
+  "less.lint.unknownAtRules": "ignore",
+
+  // Provide Tailwind custom data so the editor recognizes Tailwind at-rules
+  "css.customData": [".vscode/css_custom_data.json"],
+
+  // Tailwind extension tweaks to improve class detection in JS/TSX
+  "tailwindCSS.includeLanguages": {
+    "plaintext": "html"
+  },
+  "tailwindCSS.experimental.classRegex": [
+    "tw`([^`]*)",
+    ["clsx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
+    ["classnames\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
+    ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
+    ["cn\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
+  ]
+}
