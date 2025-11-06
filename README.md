@@ -176,5 +176,3 @@
 | Event handlers    | handle                           |
 | Constants         | UPPER_SNAKE_CASE                 |
 | Utility functions | camelCase                        |
-
-test
