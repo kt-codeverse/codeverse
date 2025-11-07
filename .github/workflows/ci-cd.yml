@@ -1,0 +1,80 @@
+name: CI/CD (Docker Hub)
+
+on:
+  push:
+    branches: [dev]
+
+env:
+  IMAGE_TAG: ${{ github.sha }}
+
+jobs:
+  build-and-push-to-dockerhub:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU (optional for cross-build)
+        uses: docker/setup-qemu-action@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build & push backend image to Docker Hub
+        run: |
+          IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/codeverse-backend:${IMAGE_TAG}
+          IMAGE_LATEST=${{ secrets.DOCKERHUB_USERNAME }}/codeverse-backend:latest
+          docker build -t "$IMAGE" -f backend/Dockerfile backend
+          docker tag "$IMAGE" "$IMAGE_LATEST"
+          docker push "$IMAGE"
+          docker push "$IMAGE_LATEST"
+
+      - name: Build & push frontend image to Docker Hub
+        run: |
+          IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/codeverse-frontend:${IMAGE_TAG}
+          IMAGE_LATEST=${{ secrets.DOCKERHUB_USERNAME }}/codeverse-frontend:latest
+          docker build -t "$IMAGE" -f frontend/Dockerfile frontend
+          docker tag "$IMAGE" "$IMAGE_LATEST"
+          docker push "$IMAGE"
+          docker push "$IMAGE_LATEST"
+
+      - name: Copy production compose to EC2
+        uses: appleboy/scp-action@v0.1.10
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          source: "docker-compose.prod.yml"
+          target: "~/deploy"
+
+      - name: Deploy images on EC2 (pull specific tags and restart)
+        uses: appleboy/ssh-action@v0.1.9
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            set -e
+            mkdir -p ~/deploy
+            cd ~/deploy
+            IMAGE_PREFIX=${{ secrets.DOCKERHUB_USERNAME }}
+            BACKEND_IMAGE="$IMAGE_PREFIX/codeverse-backend:${IMAGE_TAG}"
+            FRONTEND_IMAGE="$IMAGE_PREFIX/codeverse-frontend:${IMAGE_TAG}"
+            # write .env (contains DB creds + image refs)
+            echo "BACKEND_IMAGE=$BACKEND_IMAGE" > .env
+            echo "FRONTEND_IMAGE=$FRONTEND_IMAGE" >> .env
+            echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> .env
+            echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> .env
+            echo "MYSQL_USER=${{ secrets.MYSQL_USER }}" >> .env
+            echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> .env
+            echo "NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}" >> .env
+            # login to Docker Hub on EC2 (required for private repos)
+            echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+            # pull and run
+            docker compose -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.prod.yml up -d --force-recreate --remove-orphans
