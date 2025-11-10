@@ -7,12 +7,7 @@ import { validation } from './utils';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath:
-        process.env.NODE_ENV === 'production'
-          ? '.production.env'
-          : process.env.NODE_ENV === 'development'
-            ? '.development.env'
-            : '.env',
+      envFilePath: [`.env.${process.env.NODE_ENV}`, '.env'],
       isGlobal: true,
       validationSchema: validation,
     }),

@@ -25,33 +25,6 @@
 cd backend
 ```
 
-# Verse - backend
-
-- 프레임워크: NestJS
-- 언어: TypeScript
-- 목적: Settings 서비스의 백엔드 API
-
-## 주요 기술 스택
-
-- Node.js, TypeScript
-- NestJS
-- class-validator, class-transformer (DTO 검증/변환)
-- dotenv / @nestjs/config (환경변수 관리)
-- Jest, Supertest (테스트)
-
-## 요구사항(Prerequisites)
-
-- Node.js >= 18
-- npm 또는 pnpm
-
-## 빠른 시작
-
-1. 리포지토리 루트에서 `backend` 디렉터리로 이동합니다.
-
-```bash
-cd backend
-```
-
 2. 의존성 설치:
 
 ```bash
