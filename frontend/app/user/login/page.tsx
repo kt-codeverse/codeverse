@@ -1,9 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-//import { useRouter } from 'next/navigation';
-//import axios from 'axios';
-
+import { useRouter } from 'next/navigation';
+import axios from 'axios';
 import TextInput from '@/components/user/TextInput';
 import PasswordInput from '@/components/user/PasswordInput';
 import { Mail } from 'lucide-react';
@@ -12,30 +11,24 @@ import AuthButton from '@/components/user/AuthButton';
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  //const router = useRouter();
+  const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('이메일:', email);
     console.log('비밀번호:', password);
 
-    /* const loginData = {
-      email: email,
-      password: password,
-    };
-
+    const loginData = { email: email, password: password };
     const API_URL = '/api/auth/login'; // 백엔드 로그인 API 주소 (예시)
+
     try {
       console.log('로그인 요청중: ', loginData);
       const response = await axios.post(API_URL, loginData);
       console.log('로그인 응답: ', response.data);
-
       router.push('/home');
-
       alert('로그인 성공!');
     } catch (error) {
       if (error instanceof Error) {
-        // Axios 에러를 포함한 대부분의 에러는 Error 객체를 상속합니다.
         console.error('로그인 실패:', error.message);
       }
     }
