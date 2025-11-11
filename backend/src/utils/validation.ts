@@ -1,12 +1,10 @@
 import * as Joi from 'joi';
 
 export const validation: Joi.Schema = Joi.object({
-  // NODE_ENV: Joi.string().valid('development', 'production').required(),
   NODE_ENV: Joi.string()
-    .valid('development', 'production')
+    .valid('development', 'production', 'test')
     .default('development'),
-  // PORT: Joi.number().required(),
-  PORT: Joi.number().default(8080),
+  SERVER_PORT: Joi.number().default(3000),
 }).options({
   abortEarly: true,
 });
