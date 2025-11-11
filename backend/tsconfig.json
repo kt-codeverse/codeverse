@@ -1,5 +1,8 @@
 {
   "compilerOptions": {
+    // allow .js test mocks to be part of the project so editors/ESLint
+    // can see them (e.g. jest __mocks__ files written in CommonJS).
+    "allowJs": true,
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "resolvePackageJsonExports": true,
@@ -21,5 +24,6 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false
-  }
+  },
+  "include": ["src/**/*", "test/**/*"]
 }

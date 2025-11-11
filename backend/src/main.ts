@@ -1,17 +1,14 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe, Logger } from '@nestjs/common';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import { HttpExceptionFilter } from './common/filters/HttpExceptionFilter.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const PORT = app.get(ConfigService).getOrThrow<number>('PORT');
-
-  // cors 활성화
   app.enableCors();
 
-  // 전역 validation 파이프 설정
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -20,14 +17,21 @@ async function bootstrap() {
     }),
   );
 
-  // 전역 예외 필터 등록
+  const configService = app.get(ConfigService);
+  const PORT = configService.get<number>('SERVER_PORT') || 3000;
   app.useGlobalFilters(new HttpExceptionFilter());
+  if (configService.get('NODE_ENV') === 'development') {
+    const config = new DocumentBuilder()
+      .setTitle('Codeverse API')
+      .setDescription('API 문서')
+      .setVersion('1.0')
+      .addBearerAuth()
+      .build();
 
-  // 로깅
-  console.log('--- 환경변수 ---');
-  console.log('DATABASE_URL:', process.env.DATABASE_URL);
-  console.log('PORT:', process.env.PORT);
-  console.log('------------------------------------');
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api', app, document);
+    Logger.log(`Application running on port ${PORT}, http://localhost:${PORT}`);
+  }
 
   await app.listen(PORT);
 }
