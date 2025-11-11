@@ -2,14 +2,20 @@ import {
   Injectable,
   ConflictException,
   NotFoundException,
+  Inject,
 } from '@nestjs/common';
 import { UserEntity } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
+import type { IdGenerator } from '../../common/interfaces/id-generator.interface';
 
 @Injectable()
 export class UserService {
   private users: Map<string, UserEntity> = new Map();
+
+  constructor(
+    @Inject('ID_GENERATOR') private readonly idGenerator: IdGenerator,
+  ) {}
 
   async create(dto: CreateUserDto): Promise<Omit<UserEntity, 'password'>> {
     const existing = Array.from(this.users.values()).find(
@@ -18,13 +24,7 @@ export class UserService {
     if (existing) throw new ConflictException('이미 등록된 이메일입니다.');
 
     const hashed = await bcrypt.hash(dto.password, 10);
-    let id: string;
-    if (process.env.NODE_ENV === 'test') {
-      id = `test-${Math.random().toString(36).substring(2, 10)}`;
-    } else {
-      const { v4: uuidv4 } = await import('uuid');
-      id = uuidv4();
-    }
+    const id = await this.idGenerator.generate();
 
     const user = new UserEntity({
       id,

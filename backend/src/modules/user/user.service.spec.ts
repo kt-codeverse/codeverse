@@ -1,12 +1,17 @@
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
+import type { IdGenerator } from '../../common/interfaces/id-generator.interface';
 
 describe('UserService', () => {
   let service: UserService;
+  let mockIdGenerator: IdGenerator;
 
   beforeEach(() => {
-    service = new UserService();
+    mockIdGenerator = {
+      generate: jest.fn().mockReturnValue('test-mock-id'),
+    };
+    service = new UserService(mockIdGenerator);
   });
 
   it('should create a user and hash the password', async () => {

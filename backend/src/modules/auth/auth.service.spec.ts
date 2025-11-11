@@ -3,14 +3,19 @@ import { AuthService } from './auth.service';
 import { UserService } from '../user/user.service';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { UnauthorizedException } from '@nestjs/common';
+import type { IdGenerator } from '../../common/interfaces/id-generator.interface';
 
 describe('AuthService', () => {
   let userService: UserService;
   let jwtService: JwtService;
   let authService: AuthService;
+  let mockIdGenerator: IdGenerator;
 
   beforeEach(() => {
-    userService = new UserService();
+    mockIdGenerator = {
+      generate: jest.fn().mockReturnValue('test-mock-id'),
+    };
+    userService = new UserService(mockIdGenerator);
     jwtService = new JwtService({
       secret: 'test-secret',
       signOptions: { expiresIn: '1h' },
