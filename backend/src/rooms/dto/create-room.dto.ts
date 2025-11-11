@@ -47,10 +47,4 @@ export class CreateRoomDto {
   @IsLongitude()
   @IsOptional()
   lng?: number;
-
-  // TODO: 인증 구현 후 request의 user 정보에서 가져와야 합니다.
-  // 현재는 클라이언트에서 보내주는 값으로 처리합니다.
-  @IsString()
-  @IsNotEmpty()
-  hostId: string;
 }

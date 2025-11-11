@@ -12,8 +12,8 @@ import { Role, Prisma } from '@prisma/client';
 export class RoomsService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(createRoomDto: CreateRoomDto) {
-    const { lat, lng, hostId, images, amenities, ...rest } = createRoomDto;
+  async create(createRoomDto: CreateRoomDto, hostId: string) {
+    const { lat, lng, images, amenities, ...rest } = createRoomDto;
 
     // 1. hostId로 사용자를 찾습니다.
     const host = await this.prismaService.user.findUnique({
