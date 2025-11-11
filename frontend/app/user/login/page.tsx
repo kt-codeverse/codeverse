@@ -29,11 +29,11 @@ export default function Login() {
       router.push('/home');
 
       alert('로그인 성공!');
-    } catch (error: any) {
-      console.error(
-        '로그인 실패:',
-        error.response ? error.response.data : error.message,
-      );
+    } catch (error) {
+      if (error instanceof Error) {
+        // Axios 에러를 포함한 대부분의 에러는 Error 객체를 상속합니다.
+        console.error('로그인 실패:', error.message);
+      }
     }
   };
 
