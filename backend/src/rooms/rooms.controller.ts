@@ -6,12 +6,18 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
+  // UseGuards,
   Request,
 } from '@nestjs/common';
+import { Request as ExpressRequest } from 'express';
 import { RoomsService } from './rooms.service';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
+
+// TODO: 인증 구현 후 AuthenticatedRequest 인터페이스로 교체해야 합니다.
+interface TmpRequest extends ExpressRequest {
+  user?: { id: string };
+}
 
 @Controller('rooms')
 export class RoomsController {
@@ -19,8 +25,9 @@ export class RoomsController {
 
   // @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Request() req: any, @Body() createRoomDto: CreateRoomDto) {
-    const hostId = req.user.id;
+  create(@Request() req: TmpRequest, @Body() createRoomDto: CreateRoomDto) {
+    // TODO: 인증 구현 후에는 req.user가 항상 존재하므로 이 값은 삭제되어야 합니다.
+    const hostId = req.user?.id ?? 'temp-host-id'; // 임시 값
     return this.roomsService.create(createRoomDto, hostId);
   }
 
