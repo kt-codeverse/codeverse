@@ -6,5 +6,5 @@ export class RegisterResponseDto {
   user: UserResponseDto;
 
   @ApiProperty()
-  token: string;
+  access_token: string;
 }

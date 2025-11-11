@@ -45,7 +45,7 @@ export class UserController {
       role?: string;
     };
     const token = this.authService.createAccessToken({ id, email, role });
-    return { user, token };
+    return { user, access_token: token };
   }
 
   @Get('me')
