@@ -3,7 +3,7 @@ import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { UserEntity } from '../user/entities/user.entity';
 
-type JwtPayload = { sub: string; email: string; role?: string };
+export type JwtPayload = { sub: string; email: string; role?: string };
 
 @Injectable()
 export class AuthService {
