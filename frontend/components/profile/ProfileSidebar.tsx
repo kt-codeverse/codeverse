@@ -1,14 +1,12 @@
 // components/profile/ProfileSidebar.tsx
 "use client";
-
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-type Props = { basePath?: string }; // 기본값: ""
+type Props = { basePath?: string };
 
 export default function ProfileSidebar({ basePath = "" }: Props) {
   const pathname = usePathname();
-
   const items = [
     { href: `${basePath}/profile`, label: "자기소개", icon: "민" },
     { href: `${basePath}/trips`, label: "이전 여행", icon: "🏠" },
@@ -23,10 +21,9 @@ export default function ProfileSidebar({ basePath = "" }: Props) {
           <Link
             key={it.href}
             href={it.href}
-            className={[
-              "flex items-center gap-3 rounded-2xl border px-4 py-4 text-sm",
-              active ? "bg-gray-100 shadow-sm" : "hover:bg-gray-50",
-            ].join(" ")}
+            className={`flex items-center gap-3 rounded-2xl border px-4 py-4 text-sm ${
+              active ? "bg-gray-100 shadow-sm" : "hover:bg-gray-50"
+            }`}
           >
             <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-900 text-white text-sm">
               {it.icon}

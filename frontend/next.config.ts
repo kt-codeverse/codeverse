@@ -8,6 +8,11 @@ const nextConfig: NextConfig = {
   images: {
     // prefer modern image formats when available
     formats: ['image/webp', 'image/avif'],
+
+  remotePatterns: [
+      { protocol: "https", hostname: "images.unsplash.com" },
+      { protocol: "https", hostname: "a0.muscache.com" },
+    ],
   },
 }
 
