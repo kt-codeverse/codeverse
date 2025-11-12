@@ -14,9 +14,23 @@ export default function RegisterPage() {
   const [password, setPassword] = useState('');
   const [checkedPW, setCheckedPW] = useState('');
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(name);
+
+    const data = {
+      name: name,
+      email: email,
+      phone: phone,
+      password: password,
+      checkedPW: checkedPW,
+    };
+
+    console.log(data);
+
+    if (password !== checkedPW) {
+      console.log('비밀번호가 일치하지 않습니다.');
+      return;
+    }
   };
 
   return (
@@ -28,7 +42,7 @@ export default function RegisterPage() {
             <p className="text-gray-600">새로운 여행을 시작하세요</p>
           </div>
 
-          <form onSubmit={handleRegister} className="space-y-5">
+          <form onSubmit={handleSignup} className="space-y-5">
             <TextInput
               label="이름"
               value={name}
@@ -42,6 +56,7 @@ export default function RegisterPage() {
               onChange={setEmail}
               placeholder="example@email.com"
               icon={Mail}
+              type="email"
             />
             <TextInput
               label="전화번호"

@@ -8,6 +8,7 @@ type Props = {
   onChange: (value: string) => void;
   placeholder?: string;
   icon: LucideIcon;
+  type?: string;
 };
 
 export default function TextInput({
@@ -16,6 +17,7 @@ export default function TextInput({
   onChange,
   placeholder,
   icon: Icon,
+  type,
 }: Props) {
   return (
     <div className="space-y-2">
@@ -23,11 +25,12 @@ export default function TextInput({
       <div className="relative">
         <Icon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
         <input
-          type="email"
+          type={type || 'text'}
           placeholder={placeholder}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           className="pl-10 bg-gray-50 border border-gray-200 h-9 w-full rounded-md"
+          required
         />
       </div>
     </div>

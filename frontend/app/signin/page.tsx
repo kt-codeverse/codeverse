@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import axios from 'axios';
+//import { useRouter } from 'next/navigation';
+//import axios from 'axios';
 import TextInput from '@/components/user/TextInput';
 import PasswordInput from '@/components/user/PasswordInput';
 import { Mail } from 'lucide-react';
@@ -12,14 +12,14 @@ import Link from 'next/link';
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const router = useRouter();
+  //const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('이메일:', email);
     console.log('비밀번호:', password);
 
-    const loginData = { email: email, password: password };
+    //const loginData = { email: email, password: password };
     // const API_URL = ''; // 백엔드 로그인 API 주소
 
     /* try {
