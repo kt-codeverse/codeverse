@@ -19,7 +19,7 @@ export default function TextInput({
 }: Props) {
   return (
     <div className="space-y-2">
-      <label className="text-gray-700">{label}</label>
+      <label className="text-gray-700 block mb-1">{label}</label>
       <div className="relative">
         <Icon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
         <input
