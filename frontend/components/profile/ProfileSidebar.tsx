@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 type Props = { basePath?: string };
-
 export default function ProfileSidebar({ basePath = "" }: Props) {
   const pathname = usePathname();
   const items = [
@@ -12,7 +11,6 @@ export default function ProfileSidebar({ basePath = "" }: Props) {
     { href: `${basePath}/trips`, label: "이전 여행", icon: "🏠" },
     { href: `${basePath}/relationships`, label: "인연", icon: "👥" },
   ];
-
   return (
     <nav className="space-y-2">
       {items.map((it) => {

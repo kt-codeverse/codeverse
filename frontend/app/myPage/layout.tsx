@@ -1,6 +1,8 @@
-// app/myPage/layout.tsx
-import ProfileSidebar from "@/components/profile/ProfileSidebar";
 import type { ReactNode } from "react";
+import Container from "@/components/layout/Container";
+import SiteHeader from "@/components/layout/SiteHeader";
+import SiteFooter from "@/components/layout/SiteFooter";
+import ProfileSidebar from "@/components/profile/ProfileSidebar";
 
 export const metadata = {
   title: "TripNest - 마이페이지",
@@ -8,30 +10,26 @@ export const metadata = {
 
 export default function MyPageLayout({ children }: { children: ReactNode }) {
   return (
-    <main className="min-h-dvh">
-      {/* 공통 헤더 */}
-      <header className="sticky top-0 z-10 bg-white/70 backdrop-blur border-b">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
-          <div className="flex items-center gap-2">
-            <span className="inline-block h-7 w-7 rounded-full bg-rose-500" />
-            <span className="text-xl font-semibold">tripnest</span>
-          </div>
-          <nav className="flex items-center gap-4 text-sm text-gray-600">
-            <button className="rounded-full bg-gray-900 text-white h-9 w-9">민</button>
-            <button className="rounded-full border h-9 w-9">≡</button>
-          </nav>
+    <main className="min-h-dvh flex flex-col">
+      {/* 상단 공용 헤더 (기존 SiteHeader 그대로 사용) */}
+      <SiteHeader />
+
+      {/* 마이페이지 본문 */}
+      <Container>
+        <div className="grid grid-cols-1 gap-8 py-10 md:grid-cols-[260px_1fr]">
+          {/* 왼쪽 사이드바 */}
+          <aside>
+            <h2 className="mb-6 text-3xl font-extrabold">프로필</h2>
+            <ProfileSidebar basePath="/myPage" />
+          </aside>
+
+          {/* 오른쪽 콘텐츠 (각 페이지의 내용이 여기에 렌더링됨) */}
+          <section className="pb-24">{children}</section>
         </div>
-      </header>
+      </Container>
 
-      {/* 공통 레이아웃 */}
-      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-4 py-10 md:grid-cols-[260px_1fr]">
-        <aside>
-          <h2 className="mb-6 text-3xl font-extrabold">프로필</h2>
-          <ProfileSidebar basePath="/myPage" />
-        </aside>
-
-        <section className="pb-24">{children}</section>
-      </div>
+      {/* 하단 공용 푸터 (기존 SiteFooter 그대로 사용) */}
+      <SiteFooter />
     </main>
   );
 }

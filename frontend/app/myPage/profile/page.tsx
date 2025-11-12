@@ -1,18 +1,38 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { http } from "@/lib/http";
 import ProfileCard from "@/components/profile/ProfileCard";
 
 export default function MyPageProfile() {
-  const user = {
-    name: "민기",
-    role: "게스트",
-    trips: 1,
-    reviews: 1,
-    memberFor: "4개월",
-    verified: true,
-  };
+  const [user, setUser] = useState<any>(null);
+  const [reviews, setReviews] = useState<any[]>([]);
 
-  const reviews = [
-    { id: "r1", author: "리나", date: "2025년 7월", text: "감사합니다 🙂" },
-  ];
+  useEffect(() => {
+    (async () => {
+      try {
+        const me = await http.get("/users/me");
+        setUser(me.data);
+        const rv = await http.get(`/reviews?userId=${me.data.id}`);
+        setReviews(rv.data);
+      } catch {
+        // 백엔드 미연결 시 더미데이터
+        setUser({
+          name: "민기",
+          role: "게스트",
+          trips: 1,
+          reviews: 1,
+          memberFor: "4개월",
+          verified: true,
+        });
+        setReviews([
+          { id: "r1", author: "리나", date: "2025년 7월", content: "감사합니다 🙂" },
+        ]);
+      }
+    })();
+  }, []);
+
+  if (!user) return <p>로딩 중...</p>;
 
   return (
     <>
@@ -43,7 +63,7 @@ export default function MyPageProfile() {
               <div>
                 <div className="font-medium">{r.author}</div>
                 <div className="text-sm text-gray-500">{r.date}</div>
-                <p className="mt-2">{r.text}</p>
+                <p className="mt-2">{r.content}</p>
               </div>
             </li>
           ))}
