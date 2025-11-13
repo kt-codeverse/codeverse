@@ -6,7 +6,7 @@ import Image from "next/image";
 
 type Trip = { id: string; city: string; date: string; imageUrl: string };
 
-export default function MyPageTrips() {
+export default function MyTrips() {
   const [trips, setTrips] = useState<Trip[]>([]);
 
   useEffect(() => {

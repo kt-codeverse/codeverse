@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { http } from "@/lib/http";
 import ProfileCard from "@/components/profile/ProfileCard";
 
-export default function MyPageProfile() {
+export default function MyProfile() {
   const [user, setUser] = useState<any>(null);
   const [reviews, setReviews] = useState<any[]>([]);
 
@@ -16,7 +16,6 @@ export default function MyPageProfile() {
         const rv = await http.get(`/reviews?userId=${me.data.id}`);
         setReviews(rv.data);
       } catch {
-        // 백엔드 미연결 시 더미데이터
         setUser({
           name: "민기",
           role: "게스트",
