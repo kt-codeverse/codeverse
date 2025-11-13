@@ -34,8 +34,6 @@ export default function SearchDropdown({
       const rect = anchor.getBoundingClientRect();
       const viewportWidth = window.innerWidth;
 
-      // Treat preferredWidth as a maximum; compute width and left aligned to anchor's left edge
-      // preferredWidth can be a number (px) or a string like 'auto', '100%', '600px'
       let computedPreferred: number | undefined;
       if (typeof preferredWidth === 'number') {
         computedPreferred = preferredWidth;
@@ -63,23 +61,20 @@ export default function SearchDropdown({
       const minLeft = 16;
       const maxRight = viewportWidth - 16;
 
-      // left-align to anchor's left edge (viewport coords)
       let left = rect.left;
       if (left < minLeft) left = minLeft;
 
-      // if dropdown would overflow right side, shrink width to available space but not below anchor width
       if (left + width > maxRight) {
         const available = maxRight - left;
         width = Math.max(rect.width, Math.min(width, available));
         left = Math.max(minLeft, Math.min(left, maxRight - width));
       }
 
-      const top = rect.bottom + 8; // viewport coordinates
+      const top = rect.bottom + 8;
       setPos({ left, top, width });
       if (onPosition) onPosition(width);
     }
 
-    // compute position when opened or when dependencies change; do NOT update on scroll
     if (open) update();
     window.addEventListener('resize', update);
     return () => {
@@ -135,7 +130,6 @@ export default function SearchDropdown({
   return createPortal(content, document.body);
 }
 
-// fallback minWidth helper (used in style for SSR safety)
 function rectWidthFallback() {
   try {
     return '200px';

@@ -29,7 +29,6 @@ export default function SearchBar() {
           expand ? 'py-3 scale-105 shadow-lg' : 'py-2 hover:shadow-md'
         }`}
       >
-        {/* left: destination */}
         <div
           ref={leftRef}
           className="flex-none min-w-40 px-4 pr-6 border-r border-gray-200"
@@ -46,7 +45,6 @@ export default function SearchBar() {
           </button>
         </div>
 
-        {/* center: dates */}
         <div ref={centerRef} className="flex-1 px-4 border-r border-gray-200">
           <button
             onClick={() => setStep('dates')}
@@ -62,7 +60,6 @@ export default function SearchBar() {
           </button>
         </div>
 
-        {/* right: guests + search */}
         <div
           ref={rightRef}
           className="flex-none min-w-[180px] flex items-center justify-between gap-3 px-4"
@@ -89,7 +86,6 @@ export default function SearchBar() {
         </div>
       </div>
 
-      {/* 드롭다운 단계 */}
       <SearchDropdown
         open={step !== 'default'}
         onClose={() => setStep('default')}

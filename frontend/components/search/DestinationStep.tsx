@@ -13,7 +13,6 @@ export default function DestinationStep({
     <div className="p-4">
       <h4 className="text-sm font-semibold mb-3">추천 여행지</h4>
 
-      {/* 세로 스크롤 텍스트 리스트: 가독성 좋게 위아래로 스크롤 */}
       <div className="max-h-60 overflow-y-auto">
         <ul className="divide-y divide-gray-100">
           {locations.map((loc) => (
