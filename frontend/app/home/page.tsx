@@ -1,5 +1,4 @@
 import SiteHeader from '@/components/layout/SiteHeader';
-import SiteFooter from '@/components/layout/SiteFooter';
 import Container from '@/components/layout/Container';
 
 export default function HomePage() {
@@ -14,7 +13,6 @@ export default function HomePage() {
           </p>
         </Container>
       </main>
-      <SiteFooter />
     </div>
   );
 }

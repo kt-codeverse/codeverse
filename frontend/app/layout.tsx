@@ -7,7 +7,7 @@ import Footer from '@/components/layout/Footer';
 const inter = Inter({ weight: '400', style: 'normal', subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'CodeVerse | sdfsdfsfdsfd',
+  title: 'TripNest | sdfsdfsfdsfd',
   description: '',
   keywords: [''],
   // icons: "/favicon.png",

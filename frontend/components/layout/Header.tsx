@@ -19,7 +19,7 @@ export default function Header() {
         {/* 좌측: 최소 너비, 축소하지 않음 */}
         <div className="relative flex items-center h-10 cursor-pointer my-auto shrink-0">
           <span className="text-2xl font-bold text-[#FF385C] ml-2 hidden md:inline-block ">
-            CodeVerse
+            TripNest
           </span>
         </div>
 

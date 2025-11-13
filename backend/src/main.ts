@@ -22,7 +22,7 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpExceptionFilter());
   if (configService.get('NODE_ENV') === 'development') {
     const config = new DocumentBuilder()
-      .setTitle('Codeverse API')
+      .setTitle('TripNest API')
       .setDescription('API 문서')
       .setVersion('1.0')
       .addBearerAuth()
