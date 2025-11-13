@@ -25,17 +25,16 @@ export default function SearchBar() {
   return (
     <div ref={containerRef} className="w-full min-w-0">
       <div
-        className={`flex items-center bg-white border border-gray-300 rounded-full shadow-sm transition-all duration-300 ${
+        className={`relative flex items-center bg-white border border-gray-300 rounded-full shadow-sm transition-all duration-300 ${
           expand ? 'py-3 scale-105 shadow-lg' : 'py-2 hover:shadow-md'
         }`}
       >
-        <div
-          ref={leftRef}
-          className="flex-none min-w-40 px-4 pr-6 border-r border-gray-200"
-        >
+        <div ref={leftRef} className="flex-none min-w-40">
           <button
             onClick={() => setStep('destination')}
-            className="w-full text-left"
+            className={`w-full h-full block text-left rounded-l-full rounded-r-none px-4 pr-6 py-2.5 transition-colors duration-150 relative z-0 ${
+              step === 'destination' ? 'bg-gray-100' : 'hover:bg-gray-50'
+            }`}
             aria-label="여행지 선택"
           >
             <div className="text-xs text-gray-500">여행지</div>
@@ -45,10 +44,18 @@ export default function SearchBar() {
           </button>
         </div>
 
-        <div ref={centerRef} className="flex-1 px-4 border-r border-gray-200">
+        {/* separator between left and center (visual divider) */}
+        <div
+          className="flex-none w-px h-6 bg-gray-300 z-50 pointer-events-none"
+          aria-hidden
+        />
+
+        <div ref={centerRef} className="flex-1">
           <button
             onClick={() => setStep('dates')}
-            className="w-full text-left"
+            className={`w-full h-full text-left rounded-none px-4 py-2.5 transition-colors duration-150 relative z-0 ${
+              step === 'dates' ? 'bg-gray-100' : 'hover:bg-gray-50'
+            }`}
             aria-label="체크인 / 체크아웃"
           >
             <div className="text-xs text-gray-500">체크인 / 체크아웃</div>
@@ -60,13 +67,21 @@ export default function SearchBar() {
           </button>
         </div>
 
+        {/* separator between center and right (visual divider) */}
+        <div
+          className="flex-none w-px h-6 bg-gray-300 z-50 pointer-events-none"
+          aria-hidden
+        />
+
         <div
           ref={rightRef}
-          className="flex-none min-w-[180px] flex items-center justify-between gap-3 px-4"
+          className="flex-none min-w-[180px] flex items-center justify-between gap-3"
         >
           <button
             onClick={() => setStep('guests')}
-            className="text-left flex-1"
+            className={`text-left flex-1 h-full rounded-r-full rounded-l-none px-4 py-2.5 transition-colors duration-150 relative z-0 ${
+              step === 'guests' ? 'bg-gray-100' : 'hover:bg-gray-50'
+            }`}
             aria-label="여행자 선택"
           >
             <div className="text-xs text-gray-500">여행자</div>
@@ -77,7 +92,7 @@ export default function SearchBar() {
 
           <button
             disabled
-            className="bg-gray-300 text-white rounded-full p-2 shrink-0 cursor-not-allowed"
+            className="bg-gray-300 text-white rounded-full p-2 shrink-0 cursor-not-allowed mr-4"
             aria-label="검색 (비활성)"
             aria-disabled="true"
           >
