@@ -1,7 +1,6 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Search } from 'lucide-react';
 import SearchDropdown from './SearchDropdown';
 import DestinationStep from './DestinationStep';
@@ -22,18 +21,6 @@ export default function SearchBar() {
   const leftRef = useRef<HTMLDivElement | null>(null);
   const centerRef = useRef<HTMLDivElement | null>(null);
   const rightRef = useRef<HTMLDivElement | null>(null);
-  const router = useRouter();
-
-  const handleSearch = () => {
-    const params = new URLSearchParams();
-    if (destination) params.set('destination', destination);
-    if (dates.start) params.set('start', dates.start);
-    if (dates.end) params.set('end', dates.end);
-    if (guests) params.set('guests', String(guests));
-    const url = `/search?${params.toString()}`;
-    router.push(url);
-    setStep('default');
-  };
 
   return (
     <div ref={containerRef} className="w-full min-w-0">
@@ -92,9 +79,10 @@ export default function SearchBar() {
           </button>
 
           <button
-            onClick={handleSearch}
-            className="bg-[#FF385C] text-white rounded-full p-2 shrink-0"
-            aria-label="검색"
+            disabled
+            className="bg-gray-300 text-white rounded-full p-2 shrink-0 cursor-not-allowed"
+            aria-label="검색 (비활성)"
+            aria-disabled="true"
           >
             <Search size={16} />
           </button>
