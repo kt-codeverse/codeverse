@@ -1,19 +1,15 @@
-import type { ReactNode } from "react";
-import Container from "@/components/layout/Container";
-import SiteHeader from "@/components/layout/SiteHeader";
-import SiteFooter from "@/components/layout/SiteFooter";
-import ProfileSidebar from "@/components/profile/ProfileSidebar";
+import type { ReactNode } from 'react';
+import Container from '@/components/layout/Container';
+import ProfileSidebar from '@/components/profile/ProfileSidebar';
 
 export const metadata = {
-  title: "TripNest - 마이페이지",
+  title: 'TripNest - 마이페이지',
 };
 
 export default function MyLayout({ children }: { children: ReactNode }) {
   return (
     <main className="min-h-dvh flex flex-col">
-      {/* 공통 헤더 */}
-      <SiteHeader />
-
+      {/* 루트 레이아웃에서 Header/ Footer를 렌더하므로 여기서는 제외 */}
       <Container>
         <div className="grid grid-cols-1 gap-8 py-10 md:grid-cols-[260px_1fr]">
           {/* 왼쪽 사이드바 */}
@@ -27,8 +23,7 @@ export default function MyLayout({ children }: { children: ReactNode }) {
         </div>
       </Container>
 
-      {/* 공통 푸터 */}
-      <SiteFooter />
+      {/* Footer는 루트 레이아웃에서 렌더됩니다. */}
     </main>
   );
 }
