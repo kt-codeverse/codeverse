@@ -131,3 +131,79 @@
     @apply transition;
   }
 }
+
+/* react-datepicker overrides to match shadcn tokens */
+.react-datepicker {
+  font-family: inherit;
+  background: var(--card);
+  color: var(--card-foreground);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg, 0 10px 15px -3px rgba(0, 0, 0, 0.1));
+}
+
+.react-datepicker__header {
+  background: transparent;
+  border-bottom: none;
+}
+
+.react-datepicker__day {
+  transition: background-color 120ms ease, color 120ms ease,
+    transform 120ms ease;
+}
+
+.react-datepicker__day--selected {
+  background-color: var(--primary) !important;
+  color: var(--primary-foreground) !important;
+  box-shadow: 0 4px 10px rgba(16, 24, 40, 0.12);
+  border-radius: 8px !important;
+  transform: translateY(-2px);
+}
+
+.react-datepicker__day--range-start,
+.react-datepicker__day--range-end {
+  background-color: var(--primary) !important;
+  color: var(--primary-foreground) !important;
+  border-radius: 8px !important;
+}
+
+.react-datepicker__day--in-range {
+  background-color: color-mix(
+    in srgb,
+    var(--primary) 12%,
+    transparent
+  ) !important;
+  color: var(--card-foreground) !important;
+}
+
+.react-datepicker__day--disabled {
+  color: var(--muted-foreground) !important;
+  opacity: 0.38 !important;
+  pointer-events: none;
+}
+
+.react-datepicker__day:not(.react-datepicker__day--disabled):hover {
+  background-color: color-mix(in srgb, var(--primary) 10%, transparent);
+  cursor: pointer;
+}
+
+.rdp-saturday {
+  color: #2563eb !important;
+}
+.rdp-sunday {
+  color: #ef4444 !important;
+}
+
+/* small preset buttons */
+.ds-preset-button {
+  @apply text-sm rounded-md px-3 py-1 border border-border bg-popover text-popover-foreground hover:bg-muted;
+}
+
+/* custom header styling for react-datepicker custom header */
+.react-datepicker-custom-header {
+  background: transparent;
+}
+.react-datepicker-custom-header .react-datepicker__current-month,
+.react-datepicker-custom-header div {
+  text-align: center;
+}
