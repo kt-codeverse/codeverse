@@ -38,7 +38,7 @@ export default function RegisterPage() {
       <div className="flex min-h-screen items-center justify-center bg-linear-to-bl from-blue-50 to-purple-50 ">
         <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-8">
           <div className="text-center mb-8">
-            <h1 className="text-pink-500 mb-2 text-2xl font-bold">TripNest</h1>
+            <h1 className="text-pink-500 mb-2 text-2xl font-bold">CodeVerse</h1>
             <p className="text-gray-600">새로운 여행을 시작하세요</p>
           </div>
 
