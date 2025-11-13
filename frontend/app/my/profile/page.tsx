@@ -3,17 +3,19 @@
 import { useEffect, useState } from "react";
 import { http } from "@/lib/http";
 import ProfileCard from "@/components/profile/ProfileCard";
+import { User, Review } from "@/types/model";
 
 export default function MyProfile() {
-  const [user, setUser] = useState<any>(null);
-  const [reviews, setReviews] = useState<any[]>([]);
+  const [user, setUser] = useState<User | null>(null);
+  const [reviews, setReviews] = useState<Review[]>([]);
 
   useEffect(() => {
     (async () => {
       try {
-        const me = await http.get("/users/me");
+        const me = await http.get<User>("/users/me");
         setUser(me.data);
-        const rv = await http.get(`/reviews?userId=${me.data.id}`);
+
+        const rv = await http.get<Review[]>(`/reviews?userId=${me.data.id}`);
         setReviews(rv.data);
       } catch {
         setUser({
@@ -24,8 +26,14 @@ export default function MyProfile() {
           memberFor: "4개월",
           verified: true,
         });
+
         setReviews([
-          { id: "r1", author: "리나", date: "2025년 7월", content: "감사합니다 🙂" },
+          {
+            id: "r1",
+            author: "리나",
+            date: "2025년 7월",
+            content: "감사합니다 🙂",
+          },
         ]);
       }
     })();
@@ -43,6 +51,7 @@ export default function MyProfile() {
       </div>
 
       <div className="mt-6">
+        {}
         <ProfileCard user={user} />
       </div>
 
