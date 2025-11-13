@@ -29,8 +29,13 @@ export default function Header() {
         <div className="">
           <ul className="flex items-center justify-between">
             {navIconUrls.map((url, index) => (
-              <li key={index} className="flex items-center">
-                <NavIcon src={url.src} alt={url.alt} />
+              <li
+                key={index}
+                className="flex items-center group hover:cursor-pointer"
+              >
+                <span className="group-hover:scale-110 transition">
+                  <NavIcon src={url.src} alt={url.alt} />
+                </span>
                 <Link href={url.href}>{url.text}</Link>
               </li>
             ))}
@@ -42,10 +47,18 @@ export default function Header() {
           <Button variant={'ghost'} size={'default'} className="rounded-full">
             호스팅 하기
           </Button>
-          <Button variant={'secondary'} size={'icon'} className="rounded-full">
+          <Button
+            variant={'secondary'}
+            size={'icon'}
+            className="rounded-full hover:bg-neutral-200"
+          >
             <Globe />
           </Button>
-          <Button variant={'secondary'} size={'icon'} className="rounded-full">
+          <Button
+            variant={'secondary'}
+            size={'icon'}
+            className="rounded-full hover:bg-neutral-200"
+          >
             <Menu />
           </Button>
         </div>
