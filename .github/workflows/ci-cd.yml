@@ -25,8 +25,8 @@ jobs:
 
       - name: Build & push backend image to Docker Hub
         run: |
-          IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/codeverse-backend:${IMAGE_TAG}
-          IMAGE_LATEST=${{ secrets.DOCKERHUB_USERNAME }}/codeverse-backend:latest
+          IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/TripNest-backend:${IMAGE_TAG}
+          IMAGE_LATEST=${{ secrets.DOCKERHUB_USERNAME }}/TripNest-backend:latest
           docker build -t "$IMAGE" -f backend/Dockerfile backend
           docker tag "$IMAGE" "$IMAGE_LATEST"
           docker push "$IMAGE"
@@ -34,8 +34,8 @@ jobs:
 
       - name: Build & push frontend image to Docker Hub
         run: |
-          IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/codeverse-frontend:${IMAGE_TAG}
-          IMAGE_LATEST=${{ secrets.DOCKERHUB_USERNAME }}/codeverse-frontend:latest
+          IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/TripNest-frontend:${IMAGE_TAG}
+          IMAGE_LATEST=${{ secrets.DOCKERHUB_USERNAME }}/TripNest-frontend:latest
           docker build -t "$IMAGE" -f frontend/Dockerfile frontend
           docker tag "$IMAGE" "$IMAGE_LATEST"
           docker push "$IMAGE"
@@ -63,8 +63,8 @@ jobs:
             mkdir -p ~/deploy
             cd ~/deploy
             IMAGE_PREFIX=${{ secrets.DOCKERHUB_USERNAME }}
-            BACKEND_IMAGE="$IMAGE_PREFIX/codeverse-backend:${IMAGE_TAG}"
-            FRONTEND_IMAGE="$IMAGE_PREFIX/codeverse-frontend:${IMAGE_TAG}"
+            BACKEND_IMAGE="$IMAGE_PREFIX/TripNest-backend:${IMAGE_TAG}"
+            FRONTEND_IMAGE="$IMAGE_PREFIX/TripNest-frontend:${IMAGE_TAG}"
             # write .env (contains DB creds + image refs)
             echo "BACKEND_IMAGE=$BACKEND_IMAGE" > .env
             echo "FRONTEND_IMAGE=$FRONTEND_IMAGE" >> .env

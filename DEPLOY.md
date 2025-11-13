@@ -17,7 +17,7 @@
 
 ## Docker Hub 리포지토리
 
-- Docker Hub에서 `DOCKERHUB_USERNAME/codeverse-backend` 및 `DOCKERHUB_USERNAME/codeverse-frontend` 리포지토리를 만들거나, 워크플로가 기존 리포지토리에 푸시하도록 설정하세요(프라이빗 리포지토리도 가능).
+- Docker Hub에서 `DOCKERHUB_USERNAME/TripNest-backend` 및 `DOCKERHUB_USERNAME/TripNest-frontend` 리포지토리를 만들거나, 워크플로가 기존 리포지토리에 푸시하도록 설정하세요(프라이빗 리포지토리도 가능).
 
 ## EC2 준비
 
