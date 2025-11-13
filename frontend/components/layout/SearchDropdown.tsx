@@ -17,7 +17,7 @@ export default function SearchDropdown({
   children: React.ReactNode;
   anchorRef?: React.RefObject<HTMLElement | null>;
   onPosition?: (width: number) => void;
-  preferredWidth?: number;
+  preferredWidth?: number | string;
   align?: 'left' | 'center' | 'right';
 }) {
   const portalRef = useRef<HTMLDivElement | null>(null);
@@ -35,7 +35,27 @@ export default function SearchDropdown({
       const viewportWidth = window.innerWidth;
 
       // Treat preferredWidth as a maximum; compute width and left aligned to anchor's left edge
-      const maxPreferred = preferredWidth ?? Math.max(rect.width * 2, 720);
+      // preferredWidth can be a number (px) or a string like 'auto', '100%', '600px'
+      let computedPreferred: number | undefined;
+      if (typeof preferredWidth === 'number') {
+        computedPreferred = preferredWidth;
+      } else if (typeof preferredWidth === 'string') {
+        const s = preferredWidth.trim();
+        if (s === 'auto') {
+          computedPreferred = undefined;
+        } else if (s.endsWith('%')) {
+          const pct = parseFloat(s.slice(0, -1));
+          if (!isNaN(pct)) computedPreferred = viewportWidth * (pct / 100);
+        } else if (s.endsWith('px')) {
+          const px = parseFloat(s.slice(0, -2));
+          if (!isNaN(px)) computedPreferred = px;
+        } else {
+          const n = parseFloat(s);
+          if (!isNaN(n)) computedPreferred = n;
+        }
+      }
+
+      const maxPreferred = computedPreferred ?? Math.max(rect.width * 2, 720);
       let width = Math.min(maxPreferred, viewportWidth - 32);
       // ensure width is at least anchor width
       width = Math.max(width, rect.width);

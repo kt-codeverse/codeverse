@@ -1,8 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
-import { DayPicker, type DateRange } from 'react-day-picker';
-import 'react-day-picker/dist/style.css';
+'use client';
+
+import React, { useState, useMemo } from 'react';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 
@@ -15,109 +17,110 @@ export default function DateStep({
   initialStart?: string;
   initialEnd?: string;
 }) {
-  const [range, setRange] = useState<DateRange | undefined>(() => {
-    try {
-      if (initialStart && initialEnd) {
-        return { from: new Date(initialStart), to: new Date(initialEnd) };
-      }
-      if (initialStart) {
-        return { from: new Date(initialStart), to: undefined };
-      }
-    } catch {
-      // if parsing fails, fall back to undefined
-    }
-    return undefined;
-  });
+  // react-datepicker uses [startDate, endDate]
+  const parseDate = (s?: string) => (s ? new Date(s) : null);
+  const [range, setRange] = useState<[Date | null, Date | null]>([
+    parseDate(initialStart),
+    parseDate(initialEnd),
+  ]);
   const [error, setError] = useState<string | null>(null);
 
-  // keep onSave available for keyboard/explicit save flow but not used in the default UI
+  const today = useMemo(() => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }, []);
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const onChange = (dates: [Date | null, Date | null]) => {
+    const [start, end] = dates;
+    // Prevent selecting before today by guarding (react-datepicker also has minDate)
+    if (start && start < today) {
+      setError('오늘 이전 날짜는 선택할 수 없습니다.');
+      return;
+    }
+    if (end && end < today) {
+      setError('오늘 이전 날짜는 선택할 수 없습니다.');
+      return;
+    }
+
+    // If both selected validate order
+    if (start && end && end < start) {
+      setError('체크아웃 날짜는 체크인 날짜보다 앞설 수 없습니다.');
+      setRange([start, null]);
+      return;
+    }
+
+    setError(null);
+    setRange(dates);
+
+    if (start && end && onSelectRange) {
+      const s = format(start, 'yyyy-MM-dd');
+      const e = format(end, 'yyyy-MM-dd');
+      onSelectRange(s, e);
+    }
+  };
+
+  // dayClassName: style weekends specially (can be styled in global css)
+  const dayClassName = (date: Date) => {
+    const day = date.getDay();
+    if (day === 6) return 'rdp-saturday';
+    if (day === 0) return 'rdp-sunday';
+    return '';
+  };
+
+  // Preset helpers removed — kept code minimal per request
 
   return (
-    <div className="p-4">
-      <h4 className="text-sm font-semibold mb-3">체크인 / 체크아웃</h4>
+    <div className="bg-card rounded-xl shadow-lg border border-border p-4">
+      <h4 className="text-sm font-semibold mb-3 text-center">
+        체크인 / 체크아웃
+      </h4>
 
-      <div className="flex flex-col gap-4">
-        <DayPicker
-          mode="range"
-          selected={range}
+      <div className="flex flex-col gap-3">
+        {/* Preset buttons removed as requested */}
+
+        <DatePicker
+          selected={range[0]}
+          startDate={range[0]}
+          endDate={range[1]}
+          onChange={onChange}
+          selectsRange
+          inline
+          monthsShown={2}
+          minDate={today}
+          dayClassName={dayClassName}
           locale={ko}
-          disabled={{ before: today }}
-          modifiers={{
-            // saturday = 6, sunday = 0
-            saturday: (d: Date) => d.getDay() === 6,
-            sunday: (d: Date) => d.getDay() === 0,
-          }}
-          onDayClick={(day) => {
-            // ignore clicks on past days
-            const clicked = new Date(day);
-            clicked.setHours(0, 0, 0, 0);
-            if (clicked < today) return;
-
-            setError(null);
-            // no selection yet -> set check-in
-            if (!range || !range.from) {
-              setRange({ from: day, to: undefined });
-              return;
-            }
-
-            // have check-in but no check-out -> try to set check-out
-            if (range.from && !range.to) {
-              // if clicked day is before check-in, show error and reset
-              if (day < range.from) {
-                setError('체크아웃 날짜는 체크인 날짜보다 앞설 수 없습니다.');
-                // reset selection so user must re-select
-                setRange(undefined);
-                return;
-              }
-              const newRange = { from: range.from, to: day };
-              setRange(newRange);
-              const s = format(newRange.from as Date, 'yyyy-MM-dd');
-              const e = format(newRange.to as Date, 'yyyy-MM-dd');
-              if (onSelectRange) onSelectRange(s, e);
-              return;
-            }
-
-            // both exist -> start a new selection from clicked day
-            setRange({ from: day, to: undefined });
-          }}
-          numberOfMonths={2}
-          // custom inline styles for selected range to mimic Airbnb look
-          modifiersStyles={{
-            selected: {
-              background: '#111827',
-              color: '#fff',
-              borderRadius: '9999px',
-            },
-            range_start: {
-              background: '#111827',
-              color: '#fff',
-              borderTopLeftRadius: '9999px',
-              borderBottomLeftRadius: '9999px',
-            },
-            range_end: {
-              background: '#111827',
-              color: '#fff',
-              borderTopRightRadius: '9999px',
-              borderBottomRightRadius: '9999px',
-            },
-            today: {
-              background: '#7b3aed',
-              color: '#fff',
-              borderRadius: '9999px',
-            },
-            range_middle: { background: '#F3F4F6' },
-            disabled: {
-              color: '#9CA3AF',
-              background: 'transparent',
-              cursor: 'not-allowed',
-            },
-            saturday: { color: '#2563EB' },
-            sunday: { color: '#EF4444' },
-          }}
+          renderCustomHeader={({
+            date,
+            decreaseMonth,
+            increaseMonth,
+            prevMonthButtonDisabled,
+            nextMonthButtonDisabled,
+          }) => (
+            <div className="react-datepicker-custom-header flex items-center justify-between px-2 py-1">
+              <button
+                type="button"
+                onClick={decreaseMonth}
+                disabled={prevMonthButtonDisabled}
+                className="text-sm px-2"
+              >
+                ◀
+              </button>
+              <div className="text-sm font-medium">
+                {format(date, 'yyyy년 M월', { locale: ko })}
+              </div>
+              <button
+                type="button"
+                onClick={increaseMonth}
+                disabled={nextMonthButtonDisabled}
+                className="text-sm px-2"
+              >
+                ▶
+              </button>
+            </div>
+          )}
         />
+
         {error && <div className="text-sm text-red-600">{error}</div>}
       </div>
     </div>

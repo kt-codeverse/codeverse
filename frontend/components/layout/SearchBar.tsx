@@ -119,7 +119,7 @@ export default function SearchBar() {
           step === 'destination'
             ? 300
             : step === 'dates'
-            ? 650
+            ? 520
             : step === 'guests'
             ? 200
             : undefined
