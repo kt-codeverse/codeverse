@@ -7,6 +7,8 @@ import { Globe, Menu } from 'lucide-react';
 import { Button } from '../../ui/button';
 import { navIconUrls } from '@/data/urls';
 import SearchBar from '@/components/search/SearchBar';
+import HeaderMenuButton from './HeaderMenuButton';
+import HeaderHostingButton from './HeaderHostingButton';
 
 export default function Header() {
   const pathname = usePathname();
@@ -45,9 +47,7 @@ export default function Header() {
 
         {/* 우측 */}
         <div className="flex items-center justify-end gap-4 text-gray-700">
-          <Button variant={'ghost'} size={'default'} className="rounded-full">
-            호스팅 하기
-          </Button>
+          <HeaderHostingButton />
           <Button
             variant={'secondary'}
             size={'icon'}
@@ -55,13 +55,7 @@ export default function Header() {
           >
             <Globe />
           </Button>
-          <Button
-            variant={'secondary'}
-            size={'icon'}
-            className="rounded-full hover:bg-neutral-200"
-          >
-            <Menu />
-          </Button>
+          <HeaderMenuButton />
         </div>
       </section>
 
