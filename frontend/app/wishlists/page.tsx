@@ -15,19 +15,19 @@ export default function WishlistsPage() {
   useEffect(() => {
     (async () => {
       try {
-        // 실제 백엔드 붙일 때:
         const res = await http.get<Wishlist[]>("/wishlists");
         setWishlists(res.data);
+      } catch (error) {
+        console.error("위시리스트 불러오기 실패, 더미 데이터 사용:", error);
 
-        // 더미 데이터
         const dummy: Wishlist[] = [
           {
             id: "recent",
             name: "최근 조회",
             coverImages: [
-              "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=800&q=80",
+              "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80",
               "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=800&q=80",
-              "https://images.unsplash.com/photo-1516887120175-b0f7b0c70a6e?auto=format&fit=crop&w=800&q=80",
+              "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=800&q=80",
             ],
             updatedAt: new Date().toISOString(),
             itemCount: 3,
@@ -36,15 +36,14 @@ export default function WishlistsPage() {
             id: "mingi",
             name: "민기",
             coverImages: [
-              "https://images.unsplash.com/photo-1600607687920-4e2a534a9edd?auto=format&fit=crop&w=800&q=80",
+              "https://images.unsplash.com/photo-1556912173-3bb406ef7e77?auto=format&fit=crop&w=800&q=80",
             ],
             updatedAt: new Date().toISOString(),
             itemCount: 1,
           },
         ];
+
         setWishlists(dummy);
-      } catch (e) {
-        console.error(e);
       } finally {
         setLoading(false);
       }
