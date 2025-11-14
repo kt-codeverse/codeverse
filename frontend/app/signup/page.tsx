@@ -1,13 +1,11 @@
-'use client';
+ 'use client';
 
 import TextInput from '@/components/user/TextInput';
-import React, { useState } from 'react';
 import { Mail, User, Phone } from 'lucide-react';
 import PasswordInput from '@/components/user/PasswordInput';
 import AuthButton from '@/components/user/AuthButton';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
-import { error } from 'console';
 
 type FormValues = {
   name: string;
@@ -27,7 +25,7 @@ export default function RegisterPage() {
   const {
     register,
     handleSubmit,
-    watch,
+    getValues,
     formState: { errors },
   } = useForm<FormValues>({
     mode: 'onChange', // 입력할때마다 유효성 검사 실행
@@ -41,22 +39,7 @@ export default function RegisterPage() {
     console.log('회원가입 데이터: ', data);
   };
 
-  const handleSignup = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // const data = {
-    //   name: name,
-    //   email: email,
-    //   phone: phone,
-    //   password: password,
-    //   checkedPW: checkedPW,
-    // };
-
-    // if (password !== checkedPW) {
-    //   console.log('비밀번호가 일치하지 않습니다.');
-    //   return;
-    // }
-  };
+  // removed unused handleSignup helper; form uses handleSubmit(onSubmit)
 
   return (
     <>
@@ -121,7 +104,7 @@ export default function RegisterPage() {
               {...register('checkedPW', {
                 required: '비밀번호 확인이 필요합니다.',
                 validate: (value: string) =>
-                  value === watch('password') ||
+                  value === getValues('password') ||
                   '비밀번호가 일치하지 않습니다.',
               })}
               error={errors.checkedPW?.message}

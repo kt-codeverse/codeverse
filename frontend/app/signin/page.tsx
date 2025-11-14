@@ -1,6 +1,4 @@
-'use client';
-
-import { useState } from 'react';
+ 'use client';
 //import { useRouter } from 'next/navigation';
 //import axios from 'axios';
 import TextInput from '@/components/user/TextInput';
@@ -29,24 +27,6 @@ export default function LoginPage() {
   };
 
   //const router = useRouter();
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    //const loginData = { email: email, password: password };
-    // const API_URL = ''; // 백엔드 로그인 API 주소
-
-    /* try {
-      console.log('로그인 요청중: ', loginData);
-      // const response = await axios.post(API_URL, loginData);
-      router.push('/home');
-      alert('로그인 성공!');
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error('로그인 실패:', error.message);
-      }
-    } */
-  };
 
   return (
     <>

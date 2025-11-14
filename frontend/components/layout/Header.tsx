@@ -3,7 +3,9 @@
 import { usePathname } from 'next/navigation';
 import { Globe, Menu } from 'lucide-react';
 import { Button } from '../ui/button';
-import SearchBar from '../search/SearchBar';
+import Link from 'next/link';
+import NavIcon from '../NavIcon';
+import { navIconUrls } from '../../data/urls';
 
 export default function Header() {
   const pathname = usePathname();
