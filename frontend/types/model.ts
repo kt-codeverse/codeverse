@@ -14,3 +14,11 @@ export type Review = {
   date: string;
   content: string;
 };
+
+export type Wishlist = {
+  id: string;
+  name: string;
+  coverImages: string[]; 
+  updatedAt: string;     
+  itemCount: number;
+};
