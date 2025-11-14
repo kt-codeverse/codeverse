@@ -1,4 +1,4 @@
-name: CI/CD (Docker Hub)
+name: CI/CD (Docker Hub + EC2 Deploy)
 
 on:
   push:
@@ -8,14 +8,12 @@ env:
   IMAGE_TAG: ${{ github.sha }}
 
 jobs:
-  build-and-push-to-dockerhub:
+  build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Set up QEMU (optional for cross-build)
-        uses: docker/setup-qemu-action@v2
 
       - name: Login to Docker Hub
         uses: docker/login-action@v2
@@ -23,7 +21,8 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build & push backend image to Docker Hub
+      # Backend 이미지 빌드 & Push
+      - name: Build & push backend image
         run: |
           IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/TripNest-backend:${IMAGE_TAG}
           IMAGE_LATEST=${{ secrets.DOCKERHUB_USERNAME }}/TripNest-backend:latest
@@ -32,7 +31,8 @@ jobs:
           docker push "$IMAGE"
           docker push "$IMAGE_LATEST"
 
-      - name: Build & push frontend image to Docker Hub
+      # Frontend 이미지 빌드 & Push
+      - name: Build & push frontend image
         run: |
           IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/TripNest-frontend:${IMAGE_TAG}
           IMAGE_LATEST=${{ secrets.DOCKERHUB_USERNAME }}/TripNest-frontend:latest
@@ -41,7 +41,8 @@ jobs:
           docker push "$IMAGE"
           docker push "$IMAGE_LATEST"
 
-      - name: Copy production compose to EC2
+      # docker-compose.prod.yml → EC2 전송
+      - name: Copy compose file to EC2
         uses: appleboy/scp-action@v0.1.10
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -51,7 +52,8 @@ jobs:
           source: "docker-compose.prod.yml"
           target: "~/deploy"
 
-      - name: Deploy images on EC2 (pull specific tags and restart)
+      # EC2에서 Pull & Run
+      - name: Deploy on EC2
         uses: appleboy/ssh-action@v0.1.9
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -60,21 +62,22 @@ jobs:
           port: 22
           script: |
             set -e
-            mkdir -p ~/deploy
             cd ~/deploy
+
+            # 이미지 설정
             IMAGE_PREFIX=${{ secrets.DOCKERHUB_USERNAME }}
-            BACKEND_IMAGE="$IMAGE_PREFIX/TripNest-backend:${IMAGE_TAG}"
-            FRONTEND_IMAGE="$IMAGE_PREFIX/TripNest-frontend:${IMAGE_TAG}"
-            # write .env (contains DB creds + image refs)
-            echo "BACKEND_IMAGE=$BACKEND_IMAGE" > .env
-            echo "FRONTEND_IMAGE=$FRONTEND_IMAGE" >> .env
+
+            echo "BACKEND_IMAGE=$IMAGE_PREFIX/TripNest-backend:${IMAGE_TAG}" > .env
+            echo "FRONTEND_IMAGE=$IMAGE_PREFIX/TripNest-frontend:${IMAGE_TAG}" >> .env
             echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> .env
             echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> .env
             echo "MYSQL_USER=${{ secrets.MYSQL_USER }}" >> .env
             echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> .env
             echo "NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}" >> .env
-            # login to Docker Hub on EC2 (required for private repos)
+
+            # Docker Hub 로그인
             echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
-            # pull and run
+
+            # Compose 실행
             docker compose -f docker-compose.prod.yml pull
             docker compose -f docker-compose.prod.yml up -d --force-recreate --remove-orphans

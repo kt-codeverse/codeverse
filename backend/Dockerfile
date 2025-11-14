@@ -8,7 +8,12 @@ RUN npm ci --prefer-offline --no-audit --progress=false
 
 # copy source and build
 COPY tsconfig*.json ./
+COPY prisma ./prisma
 COPY src ./src
+
+# Generate Prisma client (needed for @prisma/client types/enums)
+RUN npx prisma generate
+
 RUN npm run build
 
 ### Runtime image
