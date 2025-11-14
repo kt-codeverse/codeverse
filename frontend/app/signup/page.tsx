@@ -6,31 +6,56 @@ import { Mail, User, Phone } from 'lucide-react';
 import PasswordInput from '@/components/user/PasswordInput';
 import AuthButton from '@/components/user/AuthButton';
 import Link from 'next/link';
+import { useForm } from 'react-hook-form';
+import { error } from 'console';
+
+type FormValues = {
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+  checkedPW: string;
+};
 
 export default function RegisterPage() {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [password, setPassword] = useState('');
-  const [checkedPW, setCheckedPW] = useState('');
+  // const [name, setName] = useState('');
+  // const [email, setEmail] = useState('');
+  // const [phone, setPhone] = useState('');
+  // const [password, setPassword] = useState('');
+  // const [checkedPW, setCheckedPW] = useState('');
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<FormValues>({
+    mode: 'onChange', // 입력할때마다 유효성 검사 실행
+  });
+
+  const onSubmit = (data: FormValues) => {
+    if (data.password !== data.checkedPW) {
+      alert('비밀번호가 일치하지 않습니다.');
+      return;
+    }
+    console.log('회원가입 데이터: ', data);
+  };
 
   const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const data = {
-      name: name,
-      email: email,
-      phone: phone,
-      password: password,
-      checkedPW: checkedPW,
-    };
+    // const data = {
+    //   name: name,
+    //   email: email,
+    //   phone: phone,
+    //   password: password,
+    //   checkedPW: checkedPW,
+    // };
 
-    console.log(data);
-
-    if (password !== checkedPW) {
-      console.log('비밀번호가 일치하지 않습니다.');
-      return;
-    }
+    // if (password !== checkedPW) {
+    //   console.log('비밀번호가 일치하지 않습니다.');
+    //   return;
+    // }
   };
 
   return (
@@ -42,40 +67,69 @@ export default function RegisterPage() {
             <p className="text-gray-600">새로운 여행을 시작하세요</p>
           </div>
 
-          <form onSubmit={handleSignup} className="space-y-5">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            {/* 이름 */}
             <TextInput
               label="이름"
-              value={name}
-              onChange={setName}
               placeholder="이름"
               icon={User}
+              {...register('name', { required: '이름을 입력해주세요' })}
             />
+            {errors.name && (
+              <p className="text-red-500 text-sm">{errors.name.message}</p>
+            )}
+
+            {/* 이메일 */}
             <TextInput
               label="이메일"
-              value={email}
-              onChange={setEmail}
               placeholder="example@email.com"
               icon={Mail}
               type="email"
+              {...register('email', {
+                required: '이메일을 입력해주세요.',
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+                  message:
+                    '유효한 이메일 형식으로 입력하세요.(example@email.com)',
+                },
+              })}
             />
+            {errors.email && (
+              <p className="text-red-500 text-sm">{errors.email.message}</p>
+            )}
+
             <TextInput
               label="전화번호"
-              value={phone}
-              onChange={setPhone}
               placeholder="010-1234-5678"
               icon={Phone}
+              {...register('phone', {
+                required: '전화번호를 입력해주세요.',
+              })}
             />
+            {errors.phone && (
+              <p className="text-red-500 text-sm">{errors.phone.message}</p>
+            )}
             <PasswordInput
               label="비밀번호"
-              value={password}
-              onChange={setPassword}
+              {...register('password', {
+                required: '비밀번호를 입력해주세요.',
+              })}
             />
 
             <PasswordInput
               label="비밀번호 확인"
-              value={checkedPW}
-              onChange={setCheckedPW}
+              {...register('checkedPW', {
+                required: '비밀번호 확인이 필요합니다.',
+                validate: (value: string) =>
+                  value === watch('password') ||
+                  '비밀번호가 일치하지 않습니다.',
+              })}
+              error={errors.checkedPW?.message}
             />
+            {/* {errors.checkedPW && (
+              <p className="text-red-500 text-sm">{errors.checkedPW.message}</p>
+            )} */}
+
             <AuthButton label="회원가입" type="submit" />
           </form>
 
