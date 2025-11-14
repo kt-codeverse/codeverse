@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import NavIcon from '../../NavIcon';
-import { Globe, Menu } from 'lucide-react';
+import { Globe } from 'lucide-react';
 import { Button } from '../../ui/button';
 import { navIconUrls } from '@/data/urls';
 import SearchBar from '@/components/search/SearchBar';
