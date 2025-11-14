@@ -1,11 +1,12 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useMemo } from 'react';
 import { Search } from 'lucide-react';
 import SearchDropdown from './SearchDropdown';
 import DestinationStep from './DestinationStep';
 import DateStep from './DateStep';
 import GuestStep from './GuestStep';
+import { useRouter } from 'next/navigation';
 
 export default function SearchBar() {
   const [step, setStep] = useState<
@@ -15,6 +16,7 @@ export default function SearchBar() {
   const [dates, setDates] = useState({ start: '', end: '' });
   const [guests, setGuests] = useState(1);
 
+  const router = useRouter();
   const expand = step !== 'default';
 
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -22,8 +24,27 @@ export default function SearchBar() {
   const centerRef = useRef<HTMLDivElement | null>(null);
   const rightRef = useRef<HTMLDivElement | null>(null);
 
+  const isSearchReady = useMemo(() => {
+    return !!(destination && dates.start && dates.end && guests > 0);
+  }, [destination, dates, guests]);
+
+  const handleSearch = () => {
+    console.log('검색 데이터:', {
+      destination,
+      dates,
+      guests,
+    });
+
+    const params = new URLSearchParams();
+    if (destination) params.set('destination', destination);
+    if (dates.start) params.set('start', dates.start);
+    if (dates.end) params.set('end', dates.end);
+    if (guests) params.set('guests', guests.toString());
+
+    router.push(`/search?${params.toString()}`);
+  };
   return (
-    <div ref={containerRef} className="w-full min-w-0">
+    <div ref={containerRef} className="max-w-4xl mx-auto min-w-0">
       <div
         className={`relative flex items-center bg-white border border-gray-300 rounded-full shadow-sm transition-all duration-300 ${
           expand ? 'py-3 scale-105 shadow-lg' : 'py-2 hover:shadow-md'
@@ -91,10 +112,10 @@ export default function SearchBar() {
           </button>
 
           <button
-            disabled
-            className="bg-gray-300 text-white rounded-full p-2 shrink-0 cursor-not-allowed mr-4"
-            aria-label="검색 (비활성)"
-            aria-disabled="true"
+            onClick={handleSearch}
+            disabled={!isSearchReady}
+            className="bg-[#FF385C] text-white rounded-full p-2 shrink-0 mr-4 transition-opacity hover:bg-opacity-90 disabled:bg-gray-300 disabled:cursor-not-allowed"
+            aria-label="검색"
           >
             <Search size={16} />
           </button>

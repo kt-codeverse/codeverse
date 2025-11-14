@@ -1,9 +1,8 @@
 'use client';
 
-import React from 'react';
 import { useSearchParams } from 'next/navigation';
 
-export default function SearchClient() {
+export default function Page() {
   const params = useSearchParams();
   const destination = params.get('destination') ?? '';
   const start = params.get('start') ?? '';
