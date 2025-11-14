@@ -18,7 +18,7 @@ export type Review = {
 export type Wishlist = {
   id: string;
   name: string;
-  coverImages: string[];   
-  updatedAt: string;       
-  itemCount: number;       
+  coverImages: string[]; 
+  updatedAt: string;     
+  itemCount: number;
 };
