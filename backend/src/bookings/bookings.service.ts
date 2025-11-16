@@ -90,19 +90,11 @@ export class BookingsService {
    * @param id 예약 ID
    */
   async cancel(id: string) {
-    try {
-      // update 메서드는 대상 레코드가 없을 경우 자동으로 에러를 발생시킵니다.
-      // 따라서 findOne을 미리 호출할 필요 없이 바로 update를 시도할 수 있습니다.
-      return await this.prisma.booking.update({
-        where: { id },
-        data: { status: 'CANCELLED' },
-      });
-    } catch (error) {
-      // Prisma의 RecordNotFound 에러를 확인하고 더 구체적인 예외를 던질 수 있습니다.
-      // 여기서는 간단하게 NotFoundException을 다시 던집니다.
-      throw new NotFoundException(
-        '해당 예약을 찾을 수 없어 취소할 수 없습니다.',
-      );
-    }
+    // update 메서드는 대상 레코드가 없을 경우 자동으로 에러를 발생시킵니다.
+    // 따라서 findOne을 미리 호출할 필요 없이 바로 update를 시도할 수 있습니다.
+    return await this.prisma.booking.update({
+      where: { id },
+      data: { status: 'CANCELLED' },
+    });
   }
 }

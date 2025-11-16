@@ -29,8 +29,8 @@ export class BookingsController {
     @Body() createBookingDto: CreateBookingDto,
     @Request() req: AuthenticatedRequest,
   ): Promise<BookingEntity> {
-    const guestId = 'fd252871-e0d7-4874-b557-82124647f2b5';
-    // const guestId = req.user.id;
+    // const guestId = 'fd252871-e0d7-4874-b557-82124647f2b5';
+    const guestId = req.user.id;
     const booking = await this.bookingsService.create(
       roomId,
       guestId,
@@ -45,14 +45,16 @@ export class BookingsController {
     @Request() req: AuthenticatedRequest,
   ): Promise<BookingEntity[]> {
     const bookings = await this.bookingsService.findAllByUserId(req.user.id);
-    return bookings.map((booking) => new BookingEntity(booking as any)); // include된 관계 때문에 타입 캐스팅 필요
+    return bookings.map(
+      (booking) => new BookingEntity(booking as Partial<BookingEntity>),
+    );
   }
 
   @ApiOperation({ summary: '예약 상세 조회' })
   @Get('bookings/:id')
   async findOne(@Param('id') id: string): Promise<BookingEntity> {
     const booking = await this.bookingsService.findOne(id);
-    return new BookingEntity(booking as any);
+    return new BookingEntity(booking as Partial<BookingEntity>);
   }
 
   @ApiOperation({ summary: '예약 취소' })

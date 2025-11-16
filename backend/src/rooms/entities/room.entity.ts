@@ -96,7 +96,7 @@ export class RoomEntity implements Room {
   constructor(partial: Partial<RoomEntity>) {
     Object.assign(this, partial);
     if (partial.host) {
-      this.host = new HostEntity(partial.host as any);
+      this.host = partial.host;
     }
   }
 }
