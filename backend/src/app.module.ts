@@ -5,7 +5,9 @@ import { AppService } from './app.service';
 import { validation } from './utils';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { RoomsModule } from './modules/rooms/rooms.module';
+import { RoomsModule } from './rooms/rooms.module';
+import { PrismaModule } from './prisma/prisma.module';
+import { BookingsModule } from './bookings/bookings.module';
 
 @Module({
   imports: [
@@ -14,9 +16,11 @@ import { RoomsModule } from './modules/rooms/rooms.module';
       isGlobal: true,
       validationSchema: validation,
     }),
+    PrismaModule,
     AuthModule,
     UserModule,
     RoomsModule,
+    BookingsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
