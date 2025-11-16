@@ -19,10 +19,10 @@ CREATE TABLE `User` (
 CREATE TABLE `Room` (
     `id` VARCHAR(191) NOT NULL,
     `title` VARCHAR(191) NOT NULL,
-    `description` VARCHAR(191) NOT NULL,
+    `description` TEXT NOT NULL,
     `country` VARCHAR(191) NOT NULL,
     `city` VARCHAR(191) NOT NULL,
-    `rules` VARCHAR(191) NULL,
+    `rules` TEXT NULL,
     `lat` DOUBLE NOT NULL,
     `lng` DOUBLE NOT NULL,
     `pricePerNight` INTEGER NOT NULL,
@@ -78,7 +78,7 @@ CREATE TABLE `Payment` (
 CREATE TABLE `Message` (
     `id` VARCHAR(191) NOT NULL,
     `toUserId` VARCHAR(191) NOT NULL,
-    `content` VARCHAR(191) NOT NULL,
+    `content` TEXT NOT NULL,
     `timestamp` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `fromUserId` VARCHAR(191) NOT NULL,
 
