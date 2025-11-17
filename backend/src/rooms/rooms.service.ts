@@ -70,8 +70,24 @@ export class RoomsService {
     return room;
   }
 
-  async update(id: string, updateRoomDto: UpdateRoomDto) {
-    await this.findOne(id); // ID에 해당하는 숙소가 존재하는지 먼저 확인합니다. 없으면 findOne에서 예외를 던집니다.
+  async update(id: string, updateRoomDto: UpdateRoomDto, userId?: string) {
+    // 숙소 존재 확인
+    const room = await this.findOne(id);
+
+    // 권한 검사: 요청한 사용자가 호스트이거나 ADMIN이어야 함
+    if (userId) {
+      const user = await this.prismaService.user.findUnique({
+        where: { id: userId },
+      });
+      if (!user) {
+        throw new NotFoundException(
+          `사용자 ID '${userId}'를 찾을 수 없습니다.`,
+        );
+      }
+      if (user.role !== Role.ADMIN && room.hostId !== userId) {
+        throw new ForbiddenException('숙소 수정 권한이 없습니다.');
+      }
+    }
 
     const { images, amenities, ...rest } = updateRoomDto;
     const updateData: Prisma.RoomUpdateInput = { ...rest };
@@ -96,8 +112,24 @@ export class RoomsService {
     });
   }
 
-  async remove(id: string) {
-    await this.findOne(id); // ID에 해당하는 숙소가 존재하는지 먼저 확인합니다. 없으면 findOne에서 예외를 던집니다.
+  async remove(id: string, userId?: string) {
+    const room = await this.findOne(id); // 숙소 존재 확인
+
+    // 권한 검사: 요청한 사용자가 호스트이거나 ADMIN이어야 함
+    if (userId) {
+      const user = await this.prismaService.user.findUnique({
+        where: { id: userId },
+      });
+      if (!user) {
+        throw new NotFoundException(
+          `사용자 ID '${userId}'를 찾을 수 없습니다.`,
+        );
+      }
+      if (user.role !== Role.ADMIN && room.hostId !== userId) {
+        throw new ForbiddenException('숙소 삭제 권한이 없습니다.');
+      }
+    }
+
     return this.prismaService.room.delete({ where: { id } });
   }
 }
