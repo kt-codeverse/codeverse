@@ -7,8 +7,8 @@ import { Wishlist } from "@/types/model";
 import CreateWishlistModal from "./CreateWishlistModal";
 
 type WishlistHeartButtonProps = {
-  listingId: string;       // 숙소/방 ID
-  initialSaved?: boolean;  // 이미 저장된 상태인지 (옵션)
+  listingId: string;
+  initialSaved?: boolean;
 };
 
 export default function WishlistHeartButton({
@@ -25,17 +25,17 @@ export default function WishlistHeartButton({
     try {
       setProcessing(true);
 
-      // 1. 우선 사용자의 위시리스트 목록을 가져온다
+      // 👉 실제 백엔드가 있으면 이 부분이 정상 작동
       const res = await http.get<Wishlist[]>("/wishlists");
       const lists = res.data;
 
       if (!lists || lists.length === 0) {
-        // 2-1. 위시리스트가 하나도 없으면 → 모달 오픈
+        // 위시리스트가 없으면 → 모달 오픈
         setModalOpen(true);
         return;
       }
 
-      // 2-2. 일단은 "첫 번째 위시리스트"에 저장하는 단순 버전
+      // 위시리스트가 있으면: 일단 첫 번째 리스트에 추가
       const target = lists[0];
 
       await http.post(`/wishlists/${target.id}/items`, {
@@ -44,21 +44,26 @@ export default function WishlistHeartButton({
 
       setSaved(true);
     } catch (error) {
-      console.error("위시리스트에 추가 실패:", error);
+      console.error("위시리스트 처리 중 에러:", error);
+
+      // ❗지금은 백엔드가 없으니, 에러가 나도 모달은 띄워 주자
+      setModalOpen(true);
     } finally {
       setProcessing(false);
     }
   };
 
-  // 모달에서 새 위시리스트가 생성되었을 때
   const handleCreated = async (wishlist: Wishlist) => {
     try {
+      // 새 위시리스트에 이 숙소도 추가
       await http.post(`/wishlists/${wishlist.id}/items`, {
         listingId,
       });
       setSaved(true);
     } catch (error) {
       console.error("새 위시리스트에 항목 추가 실패:", error);
+      // 테스트 단계에서는 실패해도 UI 상으로는 저장된 것처럼 보여도 됨
+      setSaved(true);
     }
   };
 
@@ -78,7 +83,6 @@ export default function WishlistHeartButton({
         />
       </button>
 
-      {/* 위시리스트 만들기 모달 */}
       <CreateWishlistModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
