@@ -7,19 +7,21 @@ import { HttpExceptionFilter } from './common/filters/HttpExceptionFilter.filter
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors();
+  const configService = app.get(ConfigService);
+  const PORT = configService.get<number>('PORT') || 8080;
 
+  // 설정 및 미들웨어
+  app.enableCors();
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
-      forbidNonWhitelisted: true,
+      // forbidNonWhitelisted: true,
       transform: true,
     }),
   );
-
-  const configService = app.get(ConfigService);
-  const PORT = configService.get<number>('SERVER_PORT') || 3000;
   app.useGlobalFilters(new HttpExceptionFilter());
+
+  // 스웨거 문서 등록
   if (configService.get('NODE_ENV') === 'development') {
     const config = new DocumentBuilder()
       .setTitle('TripNest API')
@@ -30,10 +32,13 @@ async function bootstrap() {
 
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api', app, document);
-    Logger.log(`Application running on port ${PORT}, http://localhost:${PORT}`);
   }
 
-  await app.listen(PORT);
+  await app.listen(PORT, () => {
+    Logger.log(`=============================================================`);
+    Logger.log(`Application running on port ${PORT}, http://localhost:${PORT}`);
+    Logger.log(`=============================================================`);
+  });
 }
 
 void bootstrap();

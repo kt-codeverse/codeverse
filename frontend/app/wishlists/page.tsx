@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Container from "@/components/layout/Container";
-import SiteHeader from "@/components/layout/SiteHeader";
-import SiteFooter from "@/components/layout/SiteFooter";
+import Header from "@/components/layout/header/Header";
+import Footer from "@/components/layout/footer/Footer";
 import WishlistCard from "@/components/wishlist/WishlistCard";
 import { http } from "@/lib/http";
 import { Wishlist } from "@/types/model";
@@ -52,7 +52,7 @@ export default function WishlistsPage() {
 
   return (
     <main className="min-h-dvh flex flex-col">
-      <SiteHeader />
+  <Header />
 
       <Container>
         <section className="py-10">
@@ -74,7 +74,7 @@ export default function WishlistsPage() {
         </section>
       </Container>
 
-      <SiteFooter />
+  <Footer />
     </main>
   );
 }

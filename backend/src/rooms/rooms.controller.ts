@@ -13,41 +13,55 @@ import { Request as ExpressRequest } from 'express';
 import { RoomsService } from './rooms.service';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
+// import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-// TODO: 인증 구현 후 AuthenticatedRequest 인터페이스로 교체해야 합니다.
-interface TmpRequest extends ExpressRequest {
-  user?: { id: string };
+interface AuthenticatedRequest extends ExpressRequest {
+  user: { id: string; email: string; role: string };
 }
 
+@ApiTags('숙소서비스(rooms)')
 @Controller('rooms')
 export class RoomsController {
   constructor(private readonly roomsService: RoomsService) {}
 
-  // @UseGuards(JwtAuthGuard)
+  // @UseGuards(AuthGuard('jwt'))
+  // @ApiBearerAuth()
+  @ApiOperation({ summary: '숙소 생성' })
   @Post()
-  create(@Request() req: TmpRequest, @Body() createRoomDto: CreateRoomDto) {
-    // TODO: 인증 구현 후에는 req.user가 항상 존재하므로 이 값은 삭제되어야 합니다.
-    const hostId = req.user?.id ?? 'temp-host-id'; // 임시 값
+  create(
+    @Request() req: AuthenticatedRequest,
+    @Body() createRoomDto: CreateRoomDto,
+  ) {
+    // 인증서비스가 완료되면 사용자아이디를 사용
+    // const hostId = req.user.id;
+    const hostId = 'df5046ea-61ef-4c0b-96f1-13c43c37d9b7';
     return this.roomsService.create(createRoomDto, hostId);
   }
 
+  @ApiOperation({ summary: '숙소 전체 조회' })
   @Get()
   findAll() {
     return this.roomsService.findAll();
   }
 
+  @ApiOperation({ summary: '숙소 상세 조회' })
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.roomsService.findOne(id);
   }
 
-  // @UseGuards(JwtAuthGuard)
+  // @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
+  @ApiOperation({ summary: '숙소 수정' })
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateRoomDto: UpdateRoomDto) {
     return this.roomsService.update(id, updateRoomDto);
   }
 
-  // @UseGuards(JwtAuthGuard)
+  // @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
+  @ApiOperation({ summary: '숙소 삭제' })
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.roomsService.remove(id);
