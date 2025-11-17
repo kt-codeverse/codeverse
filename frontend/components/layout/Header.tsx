@@ -2,14 +2,10 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import NavIcon from '../NavIcon';
 import { Globe, Menu, Search } from 'lucide-react';
 import { Button } from '../ui/button';
-
-import Link from 'next/link';
 import NavIcon from '../NavIcon';
 import { navIconUrls } from '../../data/urls';
-
 
 export default function Header() {
   const pathname = usePathname();
