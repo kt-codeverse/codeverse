@@ -41,7 +41,7 @@ export default function MyTrips() {
                 alt={t.city}
                 width={400}
                 height={300}
-                className="aspect-[4/3] object-cover"
+                className="aspect-4/3 object-cover"
               />
             </div>
             <div className="mt-3 font-medium">{t.city}</div>
