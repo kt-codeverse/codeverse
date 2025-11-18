@@ -24,7 +24,6 @@ describe('AuthService', () => {
       password: 'mypassword',
     };
     await userService.create(dto);
-
     const validated = await authService.validateUser(dto.email, dto.password);
     expect(validated).toBeDefined();
     const validatedRec = validated as Record<string, unknown>;
@@ -43,10 +42,16 @@ describe('AuthService', () => {
       password: 'tokentest',
     };
     await userService.create(dto);
-    const stored = userService.findByEmail(dto.email);
-    expect(stored).toBeDefined();
+    const validatedUser = await authService.validateUser(
+      dto.email,
+      dto.password,
+    );
+    expect(validatedUser).toBeDefined();
 
-    const tokenRes = authService.login({ id: stored!.id, email: dto.email });
+    const tokenRes = authService.login({
+      id: validatedUser!.id,
+      email: dto.email,
+    });
     expect(tokenRes).toHaveProperty('access_token');
     const payload = authService.validateToken(tokenRes.access_token);
     expect(payload).toHaveProperty('sub');

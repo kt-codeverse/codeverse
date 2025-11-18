@@ -1,5 +1,6 @@
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import { UserService } from './user.service';
+import { UserEntity } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 
 describe('UserService', () => {
@@ -23,11 +24,13 @@ describe('UserService', () => {
     const createdRec = created as Record<string, unknown>;
     expect(createdRec.password).toBeUndefined();
 
-    const stored = service.findByEmail(dto.email);
+    const stored = (await service.findByEmail(
+      dto.email,
+    )) as unknown as UserEntity;
     expect(stored).toBeDefined();
-    expect(stored?.password).not.toEqual(dto.password);
+    expect(stored.password).not.toEqual(dto.password);
 
-    const valid = await service.validatePassword(stored!, dto.password);
+    const valid = await service.validatePassword(stored, dto.password);
     expect(valid).toBe(true);
   });
 
@@ -48,9 +51,11 @@ describe('UserService', () => {
       password: 'password123',
     };
     await service.create(dto);
-    const stored = service.findByEmail(dto.email);
+    const stored = (await service.findByEmail(
+      dto.email,
+    )) as unknown as UserEntity;
     expect(stored).toBeDefined();
-    const byId = service.findById(stored!.id);
+    const byId = await service.findById(stored.id);
     expect(byId.email).toEqual(dto.email);
 
     expect(() => service.findById('non-existent-id')).toThrow(
