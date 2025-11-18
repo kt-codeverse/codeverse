@@ -1,87 +1,52 @@
 'use client';
 
-import { useState, ComponentType } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/src/components/ui/button';
-import { Building, Star, BellRing, LucideProps } from 'lucide-react';
 
-type HostingType = 'accommodation' | 'experience' | 'service';
-
-interface HostingTypeOption {
-  type: HostingType;
-  label: string;
-  Icon: ComponentType<LucideProps>;
-}
-
-const hostingTypes: HostingTypeOption[] = [
-  { type: 'accommodation', label: '숙소', Icon: Building },
-  { type: 'experience', label: '체험', Icon: Star },
-  { type: 'service', label: '서비스', Icon: BellRing },
-];
-
-interface HostingTypeButtonProps {
-  option: HostingTypeOption;
-  selectedType: HostingType | null;
-  onSelect: (type: HostingType) => void;
-}
-
-function HostingTypeButton({
-  option,
-  selectedType,
-  onSelect,
-}: HostingTypeButtonProps) {
-  const { type, label, Icon } = option;
-  return (
-    <Button
-      type="button"
-      variant={selectedType === type ? 'default' : 'outline'}
-      className="h-24 flex-col gap-2"
-      onClick={() => onSelect(type)}
-    >
-      <Icon />
-      <span>{label}</span>
-    </Button>
-  );
-}
-
-/**
- * 호스팅 유형을 선택하는 페이지입니다. (호스팅 절차 1단계)
- */
-export default function SelectHostingTypePage() {
-  const [selectedType, setSelectedType] = useState<HostingType | null>(null);
+export default function Page() {
   const router = useRouter();
 
-  const handleNext = () => {
-    if (!selectedType) return;
-    // TODO: 선택된 유형에 따라 다음 단계 페이지로 이동합니다.
-    // 예: /hosting/accommodation/location
-    router.push(`/hosting/title`); // 임시로 title 페이지로 이동
-  };
-
   return (
-    <div className="container mx-auto flex h-screen flex-col items-center justify-center sm:max-w-[425px]">
-      <div className="w-full">
-        <h1 className="text-2xl font-bold">
-          원하시는 호스팅 유형을 선택하세요
-        </h1>
-        <p className="mt-2 text-gray-600">
-          호스팅할 유형을 선택하고 다음 단계로 진행하세요.
-        </p>
-        <div className="grid grid-cols-3 gap-4 py-8">
-          {hostingTypes.map((option) => (
-            <HostingTypeButton
-              key={option.type}
-              option={option}
-              selectedType={selectedType}
-              onSelect={setSelectedType}
-            />
-          ))}
-        </div>
-        <div className="flex justify-end">
-          <Button type="button" onClick={handleNext} disabled={!selectedType}>
-            다음
-          </Button>
-        </div>
+    <div className="container mx-auto flex h-screen items-center justify-center px-4 sm:max-w-[550px]">
+      <div className="flex w-full flex-col gap-8">
+        <header>
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+            간단하게 호스팅을 시작할 수 있습니다
+          </h1>
+        </header>
+
+        <main>
+          <ol className="flex flex-col gap-6">
+            <li className="flex flex-col gap-1">
+              <strong className="font-semibold">
+                1. 숙소 정보를 알려주세요
+              </strong>
+              <p className="text-gray-600">
+                숙소 위치와 숙박 가능 인원 등 기본 정보를 알려주세요.
+              </p>
+            </li>
+            <li className="flex flex-col gap-1">
+              <strong className="font-semibold">
+                2. 숙소를 돋보이게 하세요
+              </strong>
+              <p className="text-gray-600">
+                사진을 5장 이상 제출하고 제목과 설명을 추가해주시면 숙소가
+                돋보일 수 있도록 도와드릴게요.
+              </p>
+            </li>
+            <li className="flex flex-col gap-1">
+              <strong className="font-semibold">3. 등록을 완료하세요</strong>
+              <p className="text-gray-600">
+                호스팅 초기에 적용할 요금을 설정하고, 세부정보를 인증한 다음
+                리스팅을 게시하세요.
+              </p>
+            </li>
+          </ol>
+        </main>
+
+        <Button type="button" onClick={() => router.push('/hosting/structure')}>
+          시작하기
+        </Button>
       </div>
     </div>
   );
