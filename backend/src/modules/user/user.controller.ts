@@ -7,6 +7,7 @@ import {
   Get,
   Req,
   UseGuards,
+  BadRequestException,
 } from '@nestjs/common';
 import { Request } from 'express';
 import {
@@ -38,7 +39,19 @@ export class UserController {
   })
   @UsePipes(new ValidationPipe({ whitelist: true }))
   async register(@Body() dto: CreateUserDto) {
-    const user = await this.userService.create(dto);
+    if (dto.password !== dto.passwordConfirm) {
+      throw new BadRequestException('비밀번호와 확인이 일치하지 않습니다.');
+    }
+
+    const createUserDto: Omit<CreateUserDto, 'passwordConfirm'> = {
+      email: dto.email,
+      password: dto.password,
+      name: dto.name,
+      phoneNumber: dto.phoneNumber,
+      avatar: dto.avatar,
+    };
+
+    const user = await this.userService.create(createUserDto as CreateUserDto);
     const { id, email, role } = user as {
       id: string;
       email: string;
