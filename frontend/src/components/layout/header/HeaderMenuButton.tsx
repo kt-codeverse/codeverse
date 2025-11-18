@@ -32,6 +32,12 @@ export default function HeaderMenuButton() {
         <DropdownMenuSeparator />
 
         <DropdownMenuItem asChild className="px-4 py-2 cursor-pointer">
+          <Link href="/my">마이 페이지</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild className="px-4 py-2 cursor-pointer">
+          <Link href="/wishlist">위시리스트</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild className="px-4 py-2 cursor-pointer">
           <Link href="/hosting">호스팅 하기</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
