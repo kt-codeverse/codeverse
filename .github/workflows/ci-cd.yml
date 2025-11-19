@@ -62,7 +62,9 @@ jobs:
         run: |
           set -euo pipefail
           # write SSH key file and secure it
-          printf '%s\n' "$SSH_KEY" > /tmp/deploy_ssh_key
+            cat > /tmp/deploy_ssh_key <<'KEY'
+  ${{ secrets.SSH_PRIVATE_KEY }}
+  KEY
           chmod 600 /tmp/deploy_ssh_key
 
           TARGET_DIR="/home/${EC2_USER}/codeverse"
@@ -173,11 +175,28 @@ jobs:
               echo "WROTE: $REPO_PATH/.deploy_success"
             fi
 
-            # Marker in DEPLOY_DIR location (if different)
-            DEPLOY_MARKER_PATH="$DEPLOY_DIR/codeverse/.deploy_success"
-            if [ "$REPO_PATH" != "$DEPLOY_DIR/codeverse" ]; then
-              mkdir -p "$(dirname "$DEPLOY_MARKER_PATH")" || true
-              echo "$COMMIT_SHORT $TIMESTAMP deployed" > "$DEPLOY_MARKER_PATH" || true
-              chmod 644 "$DEPLOY_MARKER_PATH" || true
-              echo "WROTE: $DEPLOY_MARKER_PATH"
-            fi
+            # (removed fallback marker in DEPLOY_DIR to avoid writing to /home/.../deploy/codeverse)
+
+      - name: Create runner-side deploy marker and scp to EC2 (reliable fallback)
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+          SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          COMMIT_SHORT: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          TIMESTAMP="$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+          # create marker on runner
+          echo "$COMMIT_SHORT $TIMESTAMP deployed" > deploy_marker
+
+            # write SSH key and secure it (from env)
+            printf '%s\n' "$SSH_KEY" > /tmp/deploy_ssh_key
+            chmod 600 /tmp/deploy_ssh_key
+
+          TARGET_DIR="/home/${EC2_USER}/codeverse"
+          ssh -o StrictHostKeyChecking=no -i /tmp/deploy_ssh_key ${EC2_USER}@${EC2_HOST} "mkdir -p '${TARGET_DIR}'"
+          scp -o StrictHostKeyChecking=no -i /tmp/deploy_ssh_key deploy_marker ${EC2_USER}@${EC2_HOST}:"${TARGET_DIR}/.deploy_success" || echo "scp to EC2 failed"
+          ssh -o StrictHostKeyChecking=no -i /tmp/deploy_ssh_key ${EC2_USER}@${EC2_HOST} "chmod 644 '${TARGET_DIR}/.deploy_success' || true"
+
+          # cleanup
+          rm -f /tmp/deploy_ssh_key deploy_marker || true
