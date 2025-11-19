@@ -50,7 +50,7 @@ async function bootstrap() {
 
     SwaggerModule.setup('docs', app, document, {
       swaggerOptions: {
-        url: `${swaggerBase}/api-json`,
+        url: '/api-json',
       },
     });
     Logger.log(
