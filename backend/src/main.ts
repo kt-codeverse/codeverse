@@ -50,7 +50,14 @@ async function bootstrap() {
     // OpenAPI `servers` 필드에 외부 접근용 기본 URL을 설정합니다.
     document.servers = [{ url: swaggerBase }];
 
-    SwaggerModule.setup('api', app, document);
+    // Ensure the Swagger UI requests the OpenAPI JSON from an absolute URL
+    // so the UI served under `/api` does not try to fetch a relative
+    // `./api-json` (which would become `/api/api-json` and 404).
+    SwaggerModule.setup('api', app, document, {
+      swaggerOptions: {
+        url: `${swaggerBase}/api-json`,
+      },
+    });
     Logger.log(
       `Swagger enabled (NODE_ENV=${configService.get('NODE_ENV')}, ENABLE_SWAGGER=${enableSwaggerEnv}). UI: ${swaggerBase}/api`,
     );
