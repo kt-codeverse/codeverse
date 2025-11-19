@@ -11,7 +11,7 @@ export default function Page() {
   const router = useRouter();
 
   const handleNext = () => {
-    router.push('/hosting/location');
+    router.push('/hosting/amenities');
   };
 
   return (

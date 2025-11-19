@@ -10,7 +10,7 @@ export default function GuestBedroomBedStepper() {
   const [beds, setBeds] = useState(1);
 
   return (
-    <div className="min-w-xl border space-y-4">
+    <div className="sm:min-w-xl space-y-4">
       {/* 게스트 */}
       <div className="flex items-center justify-between p-4 border rounded-md shadow-sm">
         <div>
