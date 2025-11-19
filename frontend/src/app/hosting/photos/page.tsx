@@ -49,8 +49,12 @@ export default function Page() {
         console.log('Upload successful:', data);
 
         router.push('/hosting/title');
-      } catch (e: any) {
-        setError(e.message || '알 수 없는 오류가 발생했습니다.');
+      } catch (e: unknown) {
+        if (e instanceof Error) {
+          setError(e.message);
+        } else {
+          setError('알 수 없는 오류가 발생했습니다.');
+        }
       }
     });
   };

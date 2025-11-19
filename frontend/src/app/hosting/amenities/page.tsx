@@ -13,6 +13,7 @@ import { amenityCategories } from '@/data/hosting-amenities-options';
 export default function Page() {
   const router = useRouter();
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
+  console.log({ selectedAmenities });
 
   const handleSelectionChange = (selectedIds: string[]) => {
     setSelectedAmenities(selectedIds);

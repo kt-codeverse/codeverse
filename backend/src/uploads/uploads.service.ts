@@ -42,6 +42,7 @@ export class UploadsService {
     try {
       return await Promise.all(uploadPromises);
     } catch (error) {
+      console.log(error);
       throw new InternalServerErrorException(
         '하나 이상의 이미지 업로드에 실패했습니다.',
       );
