@@ -48,7 +48,8 @@ async function bootstrap() {
 
     const document: OpenAPIObject = SwaggerModule.createDocument(app, config);
     // OpenAPI `servers` 필드에 외부 접근용 기본 URL을 설정합니다.
-    document.servers = [{ url: swaggerBase }];
+    // Include the `/api` prefix so the Swagger UI will call e.g. `https://host/api/users/...`.
+    document.servers = [{ url: `${swaggerBase}/api` }];
 
     // Ensure the Swagger UI requests the OpenAPI JSON from an absolute URL
     // so the UI served under `/api` does not try to fetch a relative
