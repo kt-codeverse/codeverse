@@ -22,7 +22,19 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpExceptionFilter());
 
   // 스웨거 문서 등록
-  if (configService.get('NODE_ENV') === 'development') {
+  // 개발 환경이거나 `ENABLE_SWAGGER` 가 truthy 한 값이면 활성화합니다.
+  const enableSwaggerEnv = configService.get<any>('ENABLE_SWAGGER');
+  const isDev = configService.get('NODE_ENV') === 'development';
+  const enableSwaggerFlag =
+    isDev ||
+    enableSwaggerEnv === true ||
+    enableSwaggerEnv === 'true' ||
+    enableSwaggerEnv === '1' ||
+    enableSwaggerEnv === 'yes';
+
+  if (enableSwaggerFlag) {
+    const swaggerBase = configService.get<string>('SWAGGER_BASE_URL') || `http://localhost:${PORT}`;
+
     const config = new DocumentBuilder()
       .setTitle('TripNest API')
       .setDescription('API 문서')
@@ -30,8 +42,14 @@ async function bootstrap() {
       .addBearerAuth()
       .build();
 
-    const document = SwaggerModule.createDocument(app, config);
+    const document: any = SwaggerModule.createDocument(app, config);
+    // OpenAPI `servers` 필드에 외부 접근용 기본 URL을 설정합니다.
+    document.servers = [{ url: swaggerBase }];
+
     SwaggerModule.setup('api', app, document);
+    Logger.log(`Swagger enabled (NODE_ENV=${configService.get('NODE_ENV')}, ENABLE_SWAGGER=${enableSwaggerEnv}). UI: ${swaggerBase}/api`);
+  } else {
+    Logger.log(`Swagger disabled (NODE_ENV=${configService.get('NODE_ENV')}, ENABLE_SWAGGER=${enableSwaggerEnv}).`);
   }
 
   await app.listen(PORT, () => {
