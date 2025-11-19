@@ -27,6 +27,10 @@ RUN npm ci --production --prefer-offline --no-audit --progress=false
 
 # copy built artifacts
 COPY --from=builder /app/dist ./dist
+ 
+# copy generated Prisma client from builder (contains enums and runtime)
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 
 EXPOSE 3000
 CMD ["node", "dist/main"]
