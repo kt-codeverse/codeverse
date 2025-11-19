@@ -8,8 +8,7 @@ export default function RoomPage() {
   // 임시 데이터
   const roomData = {
     id: '1',
-    title:
-      'Modern Stay | Winter Seoul Mood | 명동·동대문·경복궁·종로 접근 편리',
+    title: 'Modern Stay | Winter Seoul Mood | 명동·동대문·경복궁 접근 편리',
     description: '한국의 집 전체',
     explanation: `Located near Seoul’s top attractions like Myeongdong, Hongdae, Gyeongbokgung, Seongsu (the Brooklyn of Seoul), and the lively Jongno 3-ga Night Market.
 
