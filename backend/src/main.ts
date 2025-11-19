@@ -21,6 +21,9 @@ async function bootstrap() {
   );
   app.useGlobalFilters(new HttpExceptionFilter());
 
+  // 모든 API 경로를 `/api` 로 통일합니다. (리버스 프록시에서 `/api`로 전달될 때 라우팅 일관성을 유지)
+  app.setGlobalPrefix('api');
+
   // 스웨거 문서 등록
   // 개발 환경이거나 `ENABLE_SWAGGER` 가 truthy 한 값이면 활성화합니다.
   const enableSwaggerEnv = configService.get<string>('ENABLE_SWAGGER');
