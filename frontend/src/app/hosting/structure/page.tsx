@@ -19,7 +19,10 @@ export default function Page() {
   return (
     <main>
       <section className="h-screen flex flex-col border border-dashed">
-        <div className="flex-1 border border-dashed py-10 flex flex-col justify-center gap-10">
+        <div
+          className="flex-1 py-10 border border-dashed
+          flex flex-col justify-center gap-10 "
+        >
           <div className="text-center">
             <h1 className="text-3xl font-bold tracking-tight">
               어떤 유형의 숙소를 호스팅하시나요?

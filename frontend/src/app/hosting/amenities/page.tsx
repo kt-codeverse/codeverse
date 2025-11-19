@@ -1,8 +1,10 @@
 'use client';
 
-import Link from 'next/link';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import AmenitySelector from '@/components/hosting/AmenitySelector';
+import { amenityCategories } from '@/data/hosting-amenities-options';
 
 /**
  * 숙소에서 제공하는 편의시설을 선택하는 페이지입니다. (5단계)
@@ -10,33 +12,43 @@ import { Button } from '@/components/ui/button';
  */
 export default function Page() {
   const router = useRouter();
+  const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
+
+  const handleSelectionChange = (selectedIds: string[]) => {
+    setSelectedAmenities(selectedIds);
+    // TODO: 선택된 편의시설 ID 목록을 상태 관리(e.g., Zustand, Redux) 또는 상위 컴포넌트로 전달하세요.
+    console.log('Selected amenities:', selectedIds);
+  };
+
+  const handleNext = () => {
+    // TODO: 다음 단계로 넘어가기 전, 선택된 편의시설 정보를 저장하는 로직을 추가하세요.
+    router.push('/hosting/photos');
+  };
 
   return (
     <main>
       <section className="h-screen flex flex-col">
-        <div className="flex-1 py-10 flex flex-col justify-center gap-10">
-          <div className="text-center">
-            <h1 className="text-3xl font-bold">
-              숙소의 편의시설을 알려주세요.
+        <div className="flex-1 py-10 flex flex-col gap-10 max-w-4xl mx-auto w-full">
+          <header>
+            <h1 className="text-3xl font-bold tracking-tight">
+              숙소의 편의시설을 알려주세요
             </h1>
             <p className="mt-2 text-gray-600">
-              5단계: 제공하는 편의시설을 선택하세요.
+              5단계: 게스트가 이용할 수 있는 편의시설을 선택해주세요.
             </p>
-          </div>
+          </header>
 
-          {/* TODO: 여기에 편의시설 선택 UI(체크박스 등)를 구현하세요. */}
-          <div className="mt-8 h-96 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center">
-            <p className="text-gray-500">편의시설 선택 컴포넌트 영역</p>
-          </div>
+          <AmenitySelector
+            categories={amenityCategories}
+            onSelectionChange={handleSelectionChange}
+          />
         </div>
 
-        <div className="py-10 flex justify-between">
+        <div className="py-10 flex justify-between border border-dashed">
           <Button variant="ghost" onClick={() => router.back()}>
             이전
           </Button>
-          <Button asChild>
-            <Link href="/hosting/photos">다음</Link>
-          </Button>
+          <Button onClick={handleNext}>다음</Button>
         </div>
       </section>
     </main>
