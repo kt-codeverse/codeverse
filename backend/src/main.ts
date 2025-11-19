@@ -51,16 +51,16 @@ async function bootstrap() {
     // Include the `/api` prefix so the Swagger UI will call e.g. `https://host/api/users/...`.
     document.servers = [{ url: `${swaggerBase}/api` }];
 
-    // Ensure the Swagger UI requests the OpenAPI JSON from an absolute URL
-    // so the UI served under `/api` does not try to fetch a relative
-    // `./api-json` (which would become `/api/api-json` and 404).
-    SwaggerModule.setup('api', app, document, {
+    // Serve the Swagger UI under `/docs` to avoid colliding with the API
+    // global prefix (`/api`). Configure the UI to fetch the OpenAPI JSON
+    // from the absolute API JSON URL so it always targets `/api` endpoints.
+    SwaggerModule.setup('docs', app, document, {
       swaggerOptions: {
         url: `${swaggerBase}/api-json`,
       },
     });
     Logger.log(
-      `Swagger enabled (NODE_ENV=${configService.get('NODE_ENV')}, ENABLE_SWAGGER=${enableSwaggerEnv}). UI: ${swaggerBase}/api`,
+      `Swagger enabled (NODE_ENV=${configService.get('NODE_ENV')}, ENABLE_SWAGGER=${enableSwaggerEnv}). UI: ${swaggerBase}/docs`,
     );
   } else {
     Logger.log(
