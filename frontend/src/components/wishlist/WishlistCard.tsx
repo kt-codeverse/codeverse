@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { Wishlist } from '@/src/types/model';
+import { Wishlist } from '@/types/model';
 
 type Props = {
   wishlist: Wishlist;
