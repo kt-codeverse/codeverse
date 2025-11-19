@@ -20,6 +20,9 @@ services:
       DATABASE_URL: ${DATABASE_URL}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
+      # Swagger 제어용 환경변수 (값은 루트의 .env에서 로드됩니다)
+      ENABLE_SWAGGER: ${ENABLE_SWAGGER}
+      SWAGGER_BASE_URL: ${SWAGGER_BASE_URL}
       NODE_ENV: production
     depends_on:
       - db
