@@ -46,7 +46,11 @@ async function bootstrap() {
 
     const document: OpenAPIObject = SwaggerModule.createDocument(app, config);
 
-    document.servers = [{ url: `${swaggerBase}` }];
+    // Expose server URL as a relative path so the Swagger UI in the
+    // browser will use the same origin and request paths under `/api`.
+    // Using an absolute `swaggerBase` can cause the browser to target
+    // the wrong host (e.g. `http://localhost:...`) and lead to 404s.
+    document.servers = [{ url: '/api' }];
 
     SwaggerModule.setup('docs', app, document, {
       swaggerOptions: {
