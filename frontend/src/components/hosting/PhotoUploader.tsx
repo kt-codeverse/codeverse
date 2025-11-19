@@ -1,14 +1,10 @@
 'use client';
 
-import { useCallback, useState, useEffect } from 'react';
-import { useDropzone, FileRejection, DropEvent } from 'react-dropzone';
+import { useCallback, useState, useEffect, useRef } from 'react'; // useRef 추가
+import { useDropzone } from 'react-dropzone';
 import { UploadCloud, X } from 'lucide-react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-
-interface PhotoUploaderProps {
-  onFilesChange: (files: File[]) => void;
-}
 
 interface FileWithPreview extends File {
   preview: string;
@@ -17,54 +13,66 @@ interface FileWithPreview extends File {
 /**
  * 숙소 사진을 업로드하기 위한 드래그 앤 드롭 컴포넌트입니다.
  * 이미지 미리보기와 삭제 기능을 제공합니다.
- * @param {PhotoUploaderProps} props - onFilesChange: 파일 목록이 변경될 때 호출되는 콜백 함수
  */
-export default function PhotoUploader({ onFilesChange }: PhotoUploaderProps) {
+export default function PhotoUploader({
+  onFilesChange,
+}: {
+  onFilesChange: (files: File[]) => void;
+}) {
   const [files, setFiles] = useState<FileWithPreview[]>([]);
+  const createdObjectUrls = useRef<string[]>([]); // 생성된 모든 Object URL을 추적하기 위한 ref
 
-  const onDrop = useCallback(
-    <T extends File>(
-      acceptedFiles: T[],
-      fileRejections: FileRejection[],
-      event: DropEvent,
-    ): void => {
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop: useCallback(<T extends File>(acceptedFiles: T[]): void => {
       const newFiles = acceptedFiles.map((file) =>
         Object.assign(file, {
           preview: URL.createObjectURL(file),
+          // 생성된 URL을 추적 목록에 추가
         }),
       );
 
-      setFiles((prevFiles) => {
-        const updatedFiles = [...prevFiles, ...newFiles];
-        onFilesChange(updatedFiles);
-        return updatedFiles;
-      });
-    },
-    [onFilesChange],
-  );
-
-  const removeFile = (fileToRemove: FileWithPreview) => {
-    setFiles((prevFiles) => {
-      const updatedFiles = prevFiles.filter((file) => file !== fileToRemove);
-      onFilesChange(updatedFiles);
-      URL.revokeObjectURL(fileToRemove.preview); // 메모리 누수 방지
-      return updatedFiles;
-    });
-  };
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
+      setFiles((prevFiles) => [...prevFiles, ...newFiles]);
+    }, []),
     accept: {
       'image/png': ['.png'],
       'image/jpeg': ['.jpeg', '.jpg'],
       'image/webp': ['.webp'],
     },
+    // onDrop 콜백은 useCallback으로 감싸져 있으므로,
+    // createdObjectUrls.current에 직접 접근하는 것은 문제가 없습니다.
+    // (ref는 렌더링과 무관하게 변경 가능)
   });
 
-  // 컴포넌트 언마운트 시 생성된 Object URL들을 정리합니다.
+  const removeFile = (fileToRemove: FileWithPreview) => {
+    // 선택된 파일을 제외한 새 배열로 상태를 업데이트합니다.
+    setFiles((prevFiles) => prevFiles.filter((file) => file !== fileToRemove)); // 상태 업데이트
+    URL.revokeObjectURL(fileToRemove.preview); // 삭제되는 파일의 URL만 즉시 해제
+    // 추적 목록에서도 제거
+    createdObjectUrls.current = createdObjectUrls.current.filter(
+      (url) => url !== fileToRemove.preview,
+    );
+  };
+
+  // files 상태가 변경될 때마다 부모 컴포넌트로 변경 사항을 알립니다.
   useEffect(() => {
-    return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
-  }, [files]);
+    onFilesChange(files);
+    // onDrop에서 생성된 URL들을 createdObjectUrls.current에 추가
+    files.forEach((file) => {
+      if (!createdObjectUrls.current.includes(file.preview)) {
+        createdObjectUrls.current.push(file.preview);
+      }
+    });
+  }, [files, onFilesChange]);
+
+  // 컴포넌트 언마운트 시 생성된 Object URL들을 정리합니다.
+  // 이 방법이 여러 곳에서 revoke를 호출하는 것보다 안전하고 간단합니다.
+  useEffect(() => {
+    return () => {
+      // 컴포넌트 언마운트 시, 남아있는 모든 추적된 URL을 해제
+      createdObjectUrls.current.forEach((url) => URL.revokeObjectURL(url));
+      createdObjectUrls.current = []; // ref 초기화
+    };
+  }, []); // 빈 의존성 배열로 컴포넌트 마운트/언마운트 시에만 실행
 
   return (
     <div className="w-full">
@@ -102,9 +110,6 @@ export default function PhotoUploader({ onFilesChange }: PhotoUploaderProps) {
                 alt={`미리보기 ${index + 1}`}
                 fill
                 className="object-cover rounded-md"
-                onLoad={() => {
-                  URL.revokeObjectURL(file.preview);
-                }} // next/image 로드 후 revoke
               />
               <Button
                 variant="destructive"

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import TitleForm from '@/components/hosting/TitleForm';
@@ -12,9 +12,12 @@ export default function Page() {
   const router = useRouter();
   const [formData, setFormData] = useState({ title: '', description: '' });
 
-  const handleDataChange = (data: { title: string; description: string }) => {
-    setFormData(data);
-  };
+  const handleDataChange = useCallback(
+    (data: { title: string; description: string }) => {
+      setFormData(data);
+    },
+    [],
+  );
 
   const handleComplete = () => {
     // TODO: Zustand 스토어에 저장된 모든 호스팅 데이터를 취합하여 서버로 전송하는 API를 호출합니다.
