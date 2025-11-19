@@ -6,7 +6,7 @@ import Header from '@/components/layout/header/Header';
 import Footer from '@/components/layout/footer/Footer';
 import WishlistCard from '@/components/wishlist/WishlistCard';
 import { http } from '@/lib/http';
-import { Wishlist } from '@/src/types/model';
+import { Wishlist } from '@/types/model';
 
 export default function WishlistsPage() {
   const [wishlists, setWishlists] = useState<Wishlist[]>([]);

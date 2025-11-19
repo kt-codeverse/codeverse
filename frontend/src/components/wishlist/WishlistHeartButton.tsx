@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Heart } from 'lucide-react';
 import { http } from '@/lib/http';
-import { Wishlist } from '@/src/types/model';
+import { Wishlist } from '@/types/model';
 import CreateWishlistModal from './CreateWishlistModal';
 
 type WishlistHeartButtonProps = {
