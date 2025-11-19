@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Card } from './Card';
-import { Button } from '@/src/components/ui/button';
+import { Button } from '../ui/button';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { ko } from 'date-fns/locale';

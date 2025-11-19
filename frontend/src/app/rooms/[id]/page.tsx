@@ -1,8 +1,8 @@
 'use client';
-import BookCard from '@/src/components/room/BookCard';
-import RoomHeader from '@/src/components/room/RoomHeader';
-import RoomImages from '@/src/components/room/RoomImages';
-import RoomInfo from '@/src/components/room/RoomInfo';
+import BookCard from '@/components/room/BookCard';
+import RoomHeader from '@/components/room/RoomHeader';
+import RoomImages from '@/components/room/RoomImages';
+import RoomInfo from '@/components/room/RoomInfo';
 
 export default function RoomPage() {
   // 임시 데이터
