@@ -10,6 +10,15 @@ interface AddressFormProps {
 }
 
 /**
+ * Daum 우편번호 서비스의 oncomplete 콜백으로 반환되는 데이터 타입입니다.
+ * @see https://postcode.map.daum.net/guide#attributes
+ */
+interface DaumPostcodeData {
+  address: string;
+  zonecode: string;
+}
+
+/**
  * Daum 우편번호 서비스를 사용하여 주소를 입력받는 폼 컴포넌트입니다.
  * @param {AddressFormProps} props - onAddressChange 콜백 함수
  */
@@ -22,7 +31,7 @@ export default function AddressForm({ onAddressChange }: AddressFormProps) {
    */
   const handleSearchClick = () => {
     new window.daum.Postcode({
-      oncomplete: (data: any) => {
+      oncomplete: (data: DaumPostcodeData) => {
         setMainAddress(data.address);
         onAddressChange({ main: data.address, detail: detailAddress });
       },

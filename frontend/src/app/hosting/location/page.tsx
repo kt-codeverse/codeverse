@@ -1,16 +1,38 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import Script from 'next/script';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import AddressForm from '@/components/hosting/AddressForm';
 
-// Daum Postcode 서비스의 window 객체 타입 확장
+/**
+ * Daum 우편번호 서비스의 `oncomplete` 콜백으로 반환되는 데이터 타입입니다.
+ */
+interface DaumPostcodeData {
+  address: string;
+  zonecode: string;
+}
+
+/**
+ * Daum 우편번호 서비스의 `Postcode` 생성자 옵션 타입입니다.
+ */
+interface DaumPostcodeOptions {
+  oncomplete: (data: DaumPostcodeData) => void;
+}
+
+/**
+ * Daum 우편번호 서비스의 `Postcode` 인스턴스 타입입니다.
+ */
+interface DaumPostcodeInstance {
+  open(): void;
+}
+
 declare global {
   interface Window {
-    daum: any;
+    daum: {
+      Postcode: new (options: DaumPostcodeOptions) => DaumPostcodeInstance;
+    };
   }
 }
 
@@ -20,6 +42,7 @@ declare global {
 export default function Page() {
   const router = useRouter();
   const [address, setAddress] = useState({ main: '', detail: '' });
+  console.log('주소:', address); // 개발 중 확인용
 
   const handleAddressChange = (newAddress: {
     main: string;
