@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { http } from '@/src/lib/http';
+import { http } from '@/lib/http';
 import Image from 'next/image';
 
 type Trip = { id: string; city: string; date: string; imageUrl: string };
@@ -41,7 +41,7 @@ export default function MyTrips() {
                 alt={t.city}
                 width={400}
                 height={300}
-                className="aspect-[4/3] object-cover"
+                className="aspect-4/3 object-cover"
               />
             </div>
             <div className="mt-3 font-medium">{t.city}</div>

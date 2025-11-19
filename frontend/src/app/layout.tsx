@@ -1,13 +1,13 @@
-import Header from '@/src/components/layout/header/Header';
+import Header from '@/components/layout/header/Header';
 import { Inter } from 'next/font/google';
 import type { Metadata } from 'next';
 import './globals.css';
-import Footer from '@/src/components/layout/footer/Footer';
+import Footer from '@/components/layout/footer/Footer';
 
 const inter = Inter({ weight: '400', style: 'normal', subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'TripNest | sdfsdfsfdsfd',
+  title: 'TRIPNEST',
   description: '',
   keywords: [''],
   // icons: "/favicon.png",

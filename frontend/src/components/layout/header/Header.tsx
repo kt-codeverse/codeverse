@@ -5,17 +5,17 @@ import { usePathname } from 'next/navigation';
 import NavIcon from '../../NavIcon';
 import { Globe } from 'lucide-react';
 import { Button } from '../../ui/button';
-import { navIconUrls } from '@/src/data/urls';
-import SearchBar from '@/src/components/search/SearchBar';
+import { navIconUrls } from '@/data/urls';
+import SearchBar from '@/components/search/SearchBar';
 import HeaderMenuButton from './HeaderMenuButton';
 import HeaderHostingButton from './HeaderHostingButton';
 
 export default function Header() {
   const pathname = usePathname();
-  const isSigninPage = pathname === '/signin';
-  const isSignupPage = pathname === '/signup';
 
-  if (isSigninPage || isSignupPage) return null;
+  const hiddenPages = ['/signin', '/signup', '/hosting'];
+  const isHiddenPage = hiddenPages.some((page) => pathname.startsWith(page));
+  if (isHiddenPage) return null;
 
   return (
     <header className="sticky top-0 z-50 bg-white shadow-md p-4 md:px-10 pt-4 pb-8 space-y-4 whitespace-nowrap">
@@ -23,8 +23,8 @@ export default function Header() {
       <section className="max-w-7xl mx-auto grid grid-cols-3 items-center border border-dashed">
         {/* 좌측 */}
         <div className="relative flex items-center h-10 cursor-pointer my-auto shrink-0">
-          <span className="text-2xl font-bold text-[#FF385C] ml-2 hidden md:inline-block ">
-            TripNest
+          <span className="text-2xl font-bold text-[#FF385C] ml-2 hidden md:inline-block uppercase">
+            tripnest
           </span>
         </div>
 

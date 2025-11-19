@@ -1,0 +1,44 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
+import RadioCardGroup from '@/components/hosting/RadioCardGroup';
+import { hostingStructureOptions } from '@/data/hosting-structure-options';
+import { Button } from '@/components/ui/button';
+
+/**
+ * 호스팅할 숙소의 구조를 선택하는 페이지입니다. (1단계)
+ * 예: 주택, 아파트, 호텔 등
+ */
+export default function Page() {
+  const router = useRouter();
+
+  const handleNext = () => {
+    router.push('/hosting/privacy-type');
+  };
+
+  return (
+    <main>
+      <section className="h-screen flex flex-col border border-dashed">
+        <div className="flex-1 border border-dashed py-10 flex flex-col justify-center gap-10">
+          <div className="text-center">
+            <h1 className="text-3xl font-bold tracking-tight">
+              어떤 유형의 숙소를 호스팅하시나요?
+            </h1>
+            <p className="mt-2 text-gray-600">
+              1단계: 숙소의 구조를 선택해주세요.
+            </p>
+          </div>
+
+          <RadioCardGroup options={hostingStructureOptions} />
+        </div>
+
+        <div className="py-10 flex justify-between border border-dashed">
+          <Button variant="ghost" onClick={() => router.back()}>
+            이전
+          </Button>
+          <Button onClick={handleNext}>다음</Button>
+        </div>
+      </section>
+    </main>
+  );
+}

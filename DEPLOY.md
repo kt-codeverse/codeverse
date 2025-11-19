@@ -15,6 +15,15 @@
 - `MYSQL_ROOT_PASSWORD`, `MYSQL_DATABASE`, `MYSQL_USER`, `MYSQL_PASSWORD`
 - `NEXT_PUBLIC_API_URL`
 
+### GitHub Actions 추가 Secrets (CI/CD 자동화용)
+
+- `SSH_PRIVATE_KEY` : EC2에 접속 가능한 PEM 개인키 내용 전체(개행 포함). Repository > Settings > Secrets and variables > Actions 에 추가하세요.
+- `EC2_HOST` : 배포 대상 EC2 퍼블릭 IP 또는 DNS
+- `EC2_USER` : EC2 접속 사용자(예: `ec2-user` 또는 `ubuntu`)
+- `DEPLOY_PATH` : EC2에서 리포지토리가 위치한 경로(예: `/home/ec2-user/codeverse`) — 워크플로는 해당 경로로 이동해 `deploy/pull-and-restart.sh`를 실행합니다.
+
+참고: 워크플로는 먼저 백엔드/프론트 빌드를 수행한 뒤(빌드 성공 시) SSH로 EC2에 접속해 `deploy/pull-and-restart.sh`를 실행합니다. Secrets가 정확히 설정되어 있어야 자동 배포가 작동합니다.
+
 ## Docker Hub 리포지토리
 
 - Docker Hub에서 `DOCKERHUB_USERNAME/TripNest-backend` 및 `DOCKERHUB_USERNAME/TripNest-frontend` 리포지토리를 만들거나, 워크플로가 기존 리포지토리에 푸시하도록 설정하세요(프라이빗 리포지토리도 가능).

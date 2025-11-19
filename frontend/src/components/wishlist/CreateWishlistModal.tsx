@@ -2,7 +2,7 @@
 
 import { useState, FormEvent } from 'react';
 import { Wishlist } from '@/src/types/model';
-import { http } from '@/src/lib/http';
+import { http } from '@/lib/http';
 
 type CreateWishlistModalProps = {
   open: boolean;

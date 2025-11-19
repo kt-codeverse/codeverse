@@ -1,12 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/src/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function FooterRecommendations() {
   const destinations = [

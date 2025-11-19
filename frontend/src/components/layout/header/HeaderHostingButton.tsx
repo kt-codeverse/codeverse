@@ -1,6 +1,6 @@
 'use client';
-import { useState, ComponentType } from 'react';
-import { Button } from '@/src/components/ui/button';
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogClose,
@@ -10,21 +10,38 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/src/components/ui/dialog';
-import { Building, Star, BellRing, LucideProps } from 'lucide-react';
+} from '@/components/ui/dialog';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
-type HostingType = 'accommodation' | 'experience' | 'service';
+type HostingType = 'rooms' | 'experience' | 'services';
 
 interface HostingTypeOption {
   type: HostingType;
   label: string;
-  Icon: ComponentType<LucideProps>;
+  src: string;
+  alt: string;
 }
 
 const hostingTypes: HostingTypeOption[] = [
-  { type: 'accommodation', label: '숙소', Icon: Building },
-  { type: 'experience', label: '체험', Icon: Star },
-  { type: 'service', label: '서비스', Icon: BellRing },
+  {
+    type: 'rooms',
+    label: '숙소',
+    src: 'https://res.cloudinary.com/dfiaqyaug/image/upload/v1762927537/4aae4ed7-5939-4e76-b100-e69440ebeae4_y5c8hl.png',
+    alt: '숙소 호스팅 아이콘',
+  },
+  {
+    type: 'experience',
+    label: '체험',
+    src: 'https://res.cloudinary.com/dfiaqyaug/image/upload/v1762931477/e47ab655-027b-4679-b2e6-df1c99a5c33d_itixfd.png',
+    alt: '체험 호스팅 아이콘',
+  },
+  {
+    type: 'services',
+    label: '서비스',
+    src: 'https://res.cloudinary.com/dfiaqyaug/image/upload/v1762931596/3d67e9a9-520a-49ee-b439-7b3a75ea814d_c2wozh.png',
+    alt: '서비스 호스팅 아이콘',
+  },
 ];
 
 interface HostingTypeButtonProps {
@@ -38,27 +55,32 @@ function HostingTypeButton({
   selectedType,
   onSelect,
 }: HostingTypeButtonProps) {
-  const { type, label, Icon } = option;
+  const { type, label, src, alt } = option;
   return (
     <Button
       type="button"
       variant={selectedType === type ? 'default' : 'outline'}
-      className="h-24 flex-col gap-2"
+      className="h-28 flex-col gap-2"
       onClick={() => onSelect(type)}
+      disabled={type !== 'rooms'}
     >
-      <Icon />
+      <div className="relative size-30">
+        <Image src={src} alt={alt} fill style={{ objectFit: 'contain' }} />
+      </div>
       <span>{label}</span>
     </Button>
   );
 }
 
 export default function HeaderHostingButton() {
+  const router = useRouter();
   const [selectedType, setSelectedType] = useState<HostingType | null>(null);
 
   const handleNext = () => {
     if (!selectedType) return;
-    // TODO: 다음 단계로 진행하는 로직 구현 (e.g., router.push(`/hosting/new?type=${selectedType}`))
-    console.log('선택된 호스팅 유형:', selectedType);
+    // 선택된 유형에 따라 호스팅 시작 페이지로 이동합니다.
+    // 예: /hosting/rooms/start
+    router.push(`/hosting`);
   };
   return (
     <Dialog>
