@@ -2,7 +2,7 @@ name: CI/CD (git-pull deploy to EC2)
 
 on:
   push:
-    branches: [ dev ]
+    branches: [dev]
 
 jobs:
   build:
@@ -15,7 +15,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Install backend dependencies
         working-directory: ./backend
@@ -42,6 +42,37 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
+      - name: Prepare .env artifact (runner)
+        run: |
+          set -euo pipefail
+          # Create a deploy_env file in the runner workspace with required secrets
+          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" > deploy_env
+          echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> deploy_env
+          echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> deploy_env
+          echo "NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}" >> deploy_env
+
+      - name: Upload .env to server (scp)
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+          SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          set -euo pipefail
+          # write SSH key file and secure it
+          printf '%s\n' "$SSH_KEY" > /tmp/deploy_ssh_key
+          chmod 600 /tmp/deploy_ssh_key
+
+          TARGET_DIR="/home/${EC2_USER}/codeverse"
+          # ensure target dir exists remotely
+          ssh -o StrictHostKeyChecking=no -i /tmp/deploy_ssh_key ${EC2_USER}@${EC2_HOST} "mkdir -p '${TARGET_DIR}'"
+
+          # copy file and set secure permissions
+          scp -o StrictHostKeyChecking=no -i /tmp/deploy_ssh_key deploy_env ${EC2_USER}@${EC2_HOST}:"${TARGET_DIR}/.env"
+          ssh -o StrictHostKeyChecking=no -i /tmp/deploy_ssh_key ${EC2_USER}@${EC2_HOST} "chmod 600 '${TARGET_DIR}/.env' && chown ${EC2_USER}:${EC2_USER} '${TARGET_DIR}/.env' || true"
+
+          # cleanup
+          rm -f /tmp/deploy_ssh_key deploy_env || true
+
       - name: Ensure remote deploy dir exists
         uses: appleboy/ssh-action@v0.1.6
         with:
@@ -63,15 +94,24 @@ jobs:
             DEPLOY_DIR="${DEPLOY_PATH:-/home/${{ secrets.EC2_USER }}/deploy}"
             echo "Using deploy dir: $DEPLOY_DIR"
             mkdir -p "$DEPLOY_DIR"
-            cd "$DEPLOY_DIR"
 
-            if [ -d codeverse/.git ]; then
-              cd codeverse
+            # Prefer an existing /home/<user>/codeverse repo (user may have cloned manually).
+            if [ -d "/home/${{ secrets.EC2_USER }}/codeverse/.git" ]; then
+              REPO_PATH="/home/${{ secrets.EC2_USER }}/codeverse"
+            else
+              REPO_PATH="$DEPLOY_DIR/codeverse"
+            fi
+
+            echo "Repository path: $REPO_PATH"
+
+            if [ -d "$REPO_PATH/.git" ]; then
+              cd "$REPO_PATH"
               git fetch --all --prune
               git reset --hard origin/${{ github.ref_name }} || git reset --hard origin/dev
             else
-              git clone https://github.com/kt-codeverse/codeverse.git
-              cd codeverse
+              mkdir -p "$(dirname "$REPO_PATH")"
+              git clone https://github.com/kt-codeverse/codeverse.git "$REPO_PATH"
+              cd "$REPO_PATH"
               git checkout -f ${GITHUB_REF_NAME:-dev} || git checkout -f dev
             fi
 
@@ -96,8 +136,21 @@ jobs:
             docker compose --env-file .env -f docker-compose.yml up -d --build --remove-orphans
 
             # Run Prisma migrations (if any) on the backend service
-            echo "Running Prisma migrations (if available)"
-            docker compose --env-file .env -f docker-compose.yml run --rm backend npx prisma migrate deploy || echo "migrate deploy failed or no migrations"
+            echo "Running Prisma migrations (if available) (inside service)"
+            if docker compose --env-file .env -f docker-compose.yml run --rm backend npx prisma migrate deploy; then
+              echo "migrations applied inside service"
+            else
+              echo "migrate deploy inside service failed or schema missing — attempting fallback using ephemeral node container"
+              # Fallback: run migrations from repo source using a temporary node container that mounts the repo
+              # This installs necessary dev deps (prisma) and runs migrations against the DB configured by .env
+              docker run --rm \
+                --network codeverse_default \
+                --env-file "$REPO_PATH/.env" \
+                -v "$REPO_PATH":/workspace \
+                -w /workspace/backend \
+                node:20 \
+                sh -c "npm ci --prefer-offline --no-audit --progress=false && npx prisma migrate deploy" || echo "fallback migrate also failed"
+            fi
 
             # Show status
             docker compose --env-file .env -f docker-compose.yml ps
