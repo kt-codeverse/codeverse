@@ -54,69 +54,61 @@ jobs:
           echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> deploy_env
           echo "NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}" >> deploy_env
 
+      - name: Prepare deploy SSH key (decode)
+        env:
+          DEPLOY_KEY_B64: ${{ secrets.DEPLOY_KEY_B64 }}
+        run: |
+          set -euo pipefail
+          echo "Decoding deploy key into /tmp/deploy_ssh_key"
+          echo "$DEPLOY_KEY_B64" | base64 --decode > /tmp/deploy_ssh_key
+          chmod 600 /tmp/deploy_ssh_key
+
       - name: Upload .env to server (scp)
         env:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USER: ${{ secrets.EC2_USER }}
-          SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
           set -euo pipefail
-          # write SSH key file and secure it
-            cat > /tmp/deploy_ssh_key <<'KEY'
-  ${{ secrets.SSH_PRIVATE_KEY }}
-  KEY
-          chmod 600 /tmp/deploy_ssh_key
-
           TARGET_DIR="/home/${EC2_USER}/codeverse"
-          # ensure target dir exists remotely
           ssh -o StrictHostKeyChecking=no -i /tmp/deploy_ssh_key ${EC2_USER}@${EC2_HOST} "mkdir -p '${TARGET_DIR}'"
-
-          # copy file and set secure permissions
           scp -o StrictHostKeyChecking=no -i /tmp/deploy_ssh_key deploy_env ${EC2_USER}@${EC2_HOST}:"${TARGET_DIR}/.env"
           ssh -o StrictHostKeyChecking=no -i /tmp/deploy_ssh_key ${EC2_USER}@${EC2_HOST} "chmod 600 '${TARGET_DIR}/.env' && chown ${EC2_USER}:${EC2_USER} '${TARGET_DIR}/.env' || true"
 
-          # cleanup
-          rm -f /tmp/deploy_ssh_key deploy_env || true
-
       - name: Ensure remote deploy dir exists
-        uses: appleboy/ssh-action@v0.1.6
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            set -e
-            mkdir -p ${DEPLOY_PATH:-~/deploy}
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+        run: |
+          set -euo pipefail
+          ssh -o StrictHostKeyChecking=no -i /tmp/deploy_ssh_key ${EC2_USER}@${EC2_HOST} "mkdir -p ${DEPLOY_PATH:-~/deploy}"
 
       - name: Remote git pull + compose deploy
-        uses: appleboy/ssh-action@v0.1.6
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          ssh -o StrictHostKeyChecking=no -i /tmp/deploy_ssh_key ${EC2_USER}@${EC2_HOST} 'bash -s' <<'REMOTE'
             set -euo pipefail
-            DEPLOY_DIR="${DEPLOY_PATH:-/home/${{ secrets.EC2_USER }}/deploy}"
+            DEPLOY_DIR="${DEPLOY_PATH:-/home/${EC2_USER}/deploy}"
             echo "Using deploy dir: $DEPLOY_DIR"
             mkdir -p "$DEPLOY_DIR"
 
-            # Prefer an existing /home/<user>/codeverse repo (user may have cloned manually).
-            if [ -d "/home/${{ secrets.EC2_USER }}/codeverse/.git" ]; then
-              REPO_PATH="/home/${{ secrets.EC2_USER }}/codeverse"
+            if [ -d "/home/${EC2_USER}/codeverse/.git" ]; then
+              REPO_PATH="/home/${EC2_USER}/codeverse"
             else
               REPO_PATH="$DEPLOY_DIR/codeverse"
             fi
 
             echo "Repository path: $REPO_PATH"
-
-            # Debug: print chosen paths for easier troubleshooting
             echo "DEBUG: DEPLOY_DIR=$DEPLOY_DIR"
             echo "DEBUG: REPO_PATH=$REPO_PATH"
 
             if [ -d "$REPO_PATH/.git" ]; then
               cd "$REPO_PATH"
               git fetch --all --prune
-              git reset --hard origin/${{ github.ref_name }} || git reset --hard origin/dev
+              git reset --hard origin/${GITHUB_REF_NAME:-dev} || git reset --hard origin/dev
             else
               mkdir -p "$(dirname "$REPO_PATH")"
               git clone https://github.com/kt-codeverse/codeverse.git "$REPO_PATH"
@@ -124,34 +116,26 @@ jobs:
               git checkout -f ${GITHUB_REF_NAME:-dev} || git checkout -f dev
             fi
 
-            # Basic checks for .env
             if [ ! -f .env ]; then
               echo "ERROR: .env not found in $PWD. Create .env with MYSQL_ROOT_PASSWORD and DATABASE_URL before running automatic deploy." >&2
               ls -la
               exit 2
             fi
 
-            # Debug: list files and show masked .env header
             echo "--- remote deploy files ---"
             ls -la | sed -n '1,200p'
             echo "--- .env (masked) ---"
             sed -n '1,50p' .env | sed -E 's/(MYSQL_ROOT_PASSWORD=).*/\1***MASKED***/; s#(DATABASE_URL=)(mysql://root:)[^@]+@#\1\2***@#' || true
 
-            # Ensure docker compose is available (uses docker compose plugin)
             docker compose --version || true
-
-            # Pull latest images if using image-based deploy; if using repo build this will rebuild
             docker compose --env-file .env -f docker-compose.yml pull || true
             docker compose --env-file .env -f docker-compose.yml up -d --build --remove-orphans
 
-            # Run Prisma migrations (if any) on the backend service
             echo "Running Prisma migrations (if available) (inside service)"
             if docker compose --env-file .env -f docker-compose.yml run --rm backend npx prisma migrate deploy; then
               echo "migrations applied inside service"
             else
               echo "migrate deploy inside service failed or schema missing — attempting fallback using ephemeral node container"
-              # Fallback: run migrations from repo source using a temporary node container that mounts the repo
-              # This installs necessary dev deps (prisma) and runs migrations against the DB configured by .env
               docker run --rm \
                 --network codeverse_default \
                 --env-file "$REPO_PATH/.env" \
@@ -161,42 +145,31 @@ jobs:
                 sh -c "npm ci --prefer-offline --no-audit --progress=false && npx prisma migrate deploy" || echo "fallback migrate also failed"
             fi
 
-            # Show status
             docker compose --env-file .env -f docker-compose.yml ps
 
-            # Write deploy success markers to both repository and deploy path (if available)
             TIMESTAMP="$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
             COMMIT_SHORT="$(cd "$REPO_PATH" 2>/dev/null && git rev-parse --short HEAD || echo unknown)"
 
-            # Marker in REPO_PATH
             if [ -d "$REPO_PATH" ]; then
               echo "$COMMIT_SHORT $TIMESTAMP deployed" > "$REPO_PATH/.deploy_success" || true
               chmod 644 "$REPO_PATH/.deploy_success" || true
               echo "WROTE: $REPO_PATH/.deploy_success"
             fi
-
-            # (removed fallback marker in DEPLOY_DIR to avoid writing to /home/.../deploy/codeverse)
+          REMOTE
 
       - name: Create runner-side deploy marker and scp to EC2 (reliable fallback)
         env:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USER: ${{ secrets.EC2_USER }}
-          SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           COMMIT_SHORT: ${{ github.sha }}
         run: |
           set -euo pipefail
           TIMESTAMP="$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
-          # create marker on runner
           echo "$COMMIT_SHORT $TIMESTAMP deployed" > deploy_marker
-
-            # write SSH key and secure it (from env)
-            printf '%s\n' "$SSH_KEY" > /tmp/deploy_ssh_key
-            chmod 600 /tmp/deploy_ssh_key
 
           TARGET_DIR="/home/${EC2_USER}/codeverse"
           ssh -o StrictHostKeyChecking=no -i /tmp/deploy_ssh_key ${EC2_USER}@${EC2_HOST} "mkdir -p '${TARGET_DIR}'"
           scp -o StrictHostKeyChecking=no -i /tmp/deploy_ssh_key deploy_marker ${EC2_USER}@${EC2_HOST}:"${TARGET_DIR}/.deploy_success" || echo "scp to EC2 failed"
           ssh -o StrictHostKeyChecking=no -i /tmp/deploy_ssh_key ${EC2_USER}@${EC2_HOST} "chmod 644 '${TARGET_DIR}/.deploy_success' || true"
 
-          # cleanup
-          rm -f /tmp/deploy_ssh_key deploy_marker || true
+          rm -f deploy_marker || true
