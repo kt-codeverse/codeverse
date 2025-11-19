@@ -107,6 +107,10 @@ jobs:
 
             echo "Repository path: $REPO_PATH"
 
+            # Debug: print chosen paths for easier troubleshooting
+            echo "DEBUG: DEPLOY_DIR=$DEPLOY_DIR"
+            echo "DEBUG: REPO_PATH=$REPO_PATH"
+
             if [ -d "$REPO_PATH/.git" ]; then
               cd "$REPO_PATH"
               git fetch --all --prune
@@ -158,9 +162,22 @@ jobs:
             # Show status
             docker compose --env-file .env -f docker-compose.yml ps
 
-            # Write a deploy success marker with commit and timestamp for easy verification
+            # Write deploy success markers to both repository and deploy path (if available)
+            TIMESTAMP="$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+            COMMIT_SHORT="$(cd "$REPO_PATH" 2>/dev/null && git rev-parse --short HEAD || echo unknown)"
+
+            # Marker in REPO_PATH
             if [ -d "$REPO_PATH" ]; then
-              cd "$REPO_PATH" || true
-              echo "$(git rev-parse --short HEAD) $(date -u '+%Y-%m-%dT%H:%M:%SZ') deployed" > .deploy_success || true
-              chmod 644 .deploy_success || true
+              echo "$COMMIT_SHORT $TIMESTAMP deployed" > "$REPO_PATH/.deploy_success" || true
+              chmod 644 "$REPO_PATH/.deploy_success" || true
+              echo "WROTE: $REPO_PATH/.deploy_success"
+            fi
+
+            # Marker in DEPLOY_DIR location (if different)
+            DEPLOY_MARKER_PATH="$DEPLOY_DIR/codeverse/.deploy_success"
+            if [ "$REPO_PATH" != "$DEPLOY_DIR/codeverse" ]; then
+              mkdir -p "$(dirname "$DEPLOY_MARKER_PATH")" || true
+              echo "$COMMIT_SHORT $TIMESTAMP deployed" > "$DEPLOY_MARKER_PATH" || true
+              chmod 644 "$DEPLOY_MARKER_PATH" || true
+              echo "WROTE: $DEPLOY_MARKER_PATH"
             fi
