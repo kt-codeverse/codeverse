@@ -22,9 +22,6 @@ async function bootstrap() {
   );
   app.useGlobalFilters(new HttpExceptionFilter());
 
-  // 모든 API 경로를 `/api` 로 통일합니다. (리버스 프록시에서 `/api`로 전달될 때 라우팅 일관성을 유지)
-  app.setGlobalPrefix('api');
-
   // 스웨거 문서 등록
   // 개발 환경이거나 `ENABLE_SWAGGER` 가 truthy 한 값이면 활성화합니다.
   const enableSwaggerEnv = configService.get<string>('ENABLE_SWAGGER');
@@ -67,7 +64,6 @@ async function bootstrap() {
     // 올바른 문서를 가져가도록 보장합니다.
     try {
       // Nest의 HTTP 어댑터에서 원본 Express 인스턴스를 가져옵니다.
-      // Express 타입을 사용해 `any`를 제거합니다.
       const expressApp = app.getHttpAdapter().getInstance() as Express;
       expressApp.get('/api-json', (_req: Request, res: Response) =>
         res.json(document),
@@ -86,6 +82,9 @@ async function bootstrap() {
       `Swagger disabled (NODE_ENV=${configService.get('NODE_ENV')}, ENABLE_SWAGGER=${enableSwaggerEnv}).`,
     );
   }
+
+  // 모든 API 경로를 `/api` 로 통일합니다. (리버스 프록시에서 `/api`로 전달될 때 라우팅 일관성을 유지)
+  app.setGlobalPrefix('api');
 
   await app.listen(PORT, () => {
     Logger.log(`=============================================================`);
