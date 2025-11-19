@@ -54,6 +54,17 @@ NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
 EOF
           cp docker-compose.prod.yml deploy_package/
 
+      - name: Ensure remote deploy directory exists
+        uses: appleboy/ssh-action@v0.1.9
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            set -e
+            mkdir -p ~/deploy
+
       - name: Copy deploy package to EC2
         uses: appleboy/scp-action@v0.1.10
         with:
