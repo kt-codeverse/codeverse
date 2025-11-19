@@ -64,11 +64,12 @@ async function bootstrap() {
     // 올바른 문서를 가져가도록 보장합니다.
     try {
       // Nest의 HTTP 어댑터에서 원본 Express 인스턴스를 가져옵니다.
+      // `use`로 미들웨어를 등록하면 Nest의 라우터보다 앞서 요청을 처리합니다.
       const expressApp = app.getHttpAdapter().getInstance() as Express;
-      expressApp.get('/api-json', (_req: Request, res: Response) =>
+      expressApp.use('/api-json', (_req: Request, res: Response) =>
         res.json(document),
       );
-      expressApp.get('/api/api-json', (_req: Request, res: Response) =>
+      expressApp.use('/api/api-json', (_req: Request, res: Response) =>
         res.json(document),
       );
     } catch (err: unknown) {
