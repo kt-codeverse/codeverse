@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe, Logger } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder, OpenAPIObject } from '@nestjs/swagger';
+import type { Express, Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { HttpExceptionFilter } from './common/filters/HttpExceptionFilter.filter';
 
@@ -58,6 +59,28 @@ async function bootstrap() {
     Logger.log(
       `Swagger enabled (NODE_ENV=${configService.get('NODE_ENV')}, ENABLE_SWAGGER=${enableSwaggerEnv}). UI: ${swaggerBase}/docs`,
     );
+
+    // Express 레벨에서 OpenAPI JSON을 두 경로로 노출합니다.
+    // 이유: 리버스 프록시(Caddy) 설정에 따라 요청 경로가
+    // `/api-json` 또는 `/api/api-json` 으로 전달될 수 있으므로
+    // 두 경로 모두를 지원해 Swagger UI와 외부 클라이언트가
+    // 올바른 문서를 가져가도록 보장합니다.
+    try {
+      // Nest의 HTTP 어댑터에서 원본 Express 인스턴스를 가져옵니다.
+      // Express 타입을 사용해 `any`를 제거합니다.
+      const expressApp = app.getHttpAdapter().getInstance() as Express;
+      expressApp.get('/api-json', (_req: Request, res: Response) =>
+        res.json(document),
+      );
+      expressApp.get('/api/api-json', (_req: Request, res: Response) =>
+        res.json(document),
+      );
+    } catch (err: unknown) {
+      // 실패해도 앱 실행에는 영향을 주지 않으므로 로그로 남깁니다.
+      Logger.warn(
+        `Failed to register raw express routes for api-json: ${String(err)}`,
+      );
+    }
   } else {
     Logger.log(
       `Swagger disabled (NODE_ENV=${configService.get('NODE_ENV')}, ENABLE_SWAGGER=${enableSwaggerEnv}).`,
