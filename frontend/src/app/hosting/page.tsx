@@ -1,22 +1,24 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Button } from '@/src/components/ui/button';
+import { Button } from '@/components/ui/button';
 
 export default function Page() {
   const router = useRouter();
 
+  const handleStartHosting = () => {
+    router.push('/hosting/structure');
+  };
+
   return (
-    <div className="container mx-auto flex h-screen items-center justify-center px-4 sm:max-w-[550px]">
-      <div className="flex w-full flex-col gap-8">
-        <header>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+    <main>
+      <section className="h-screen flex flex-col items-stretch justify-between px-4">
+        <div className="h-full flex flex-col md:flex-row items-center gap-2 border border-dashed">
+          <h1 className="text-5xl font-bold tracking-tight py-10">
             간단하게 호스팅을 시작할 수 있습니다
           </h1>
-        </header>
 
-        <main>
-          <ol className="flex flex-col gap-6">
+          <ol className="flex flex-col gap-6 [&_>_li]:pb-10">
             <li className="flex flex-col gap-1">
               <strong className="font-semibold">
                 1. 숙소 정보를 알려주세요
@@ -42,12 +44,12 @@ export default function Page() {
               </p>
             </li>
           </ol>
-        </main>
+        </div>
 
-        <Button type="button" onClick={() => router.push('/hosting/structure')}>
-          시작하기
-        </Button>
-      </div>
-    </div>
+        <div className="py-10 flex justify-end border border-dashed">
+          <Button onClick={handleStartHosting}>시작하기</Button>
+        </div>
+      </section>
+    </main>
   );
 }

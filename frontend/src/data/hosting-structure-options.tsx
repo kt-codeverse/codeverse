@@ -16,7 +16,7 @@ import {
   ConciergeBell,
 } from 'lucide-react';
 import type { ComponentProps } from 'react';
-import type RadioCardGroup from '@/src/components/RadioCardGroup';
+import type RadioCardGroup from '@/components/hosting/RadioCardGroup';
 
 type Option = ComponentProps<typeof RadioCardGroup>['options'][number];
 

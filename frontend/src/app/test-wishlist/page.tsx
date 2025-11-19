@@ -1,7 +1,7 @@
 // app/test-wishlist/page.tsx
 'use client';
 
-import WishlistHeartButton from '@/src/components/wishlist/WishlistHeartButton';
+import WishlistHeartButton from '@/components/wishlist/WishlistHeartButton';
 
 export default function TestWishlistPage() {
   return (

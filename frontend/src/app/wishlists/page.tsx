@@ -1,11 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Container from '@/src/components/layout/Container';
-import Header from '@/src/components/layout/header/Header';
-import Footer from '@/src/components/layout/footer/Footer';
-import WishlistCard from '@/src/components/wishlist/WishlistCard';
-import { http } from '@/src/lib/http';
+import Container from '@/components/layout/Container';
+import Header from '@/components/layout/header/Header';
+import Footer from '@/components/layout/footer/Footer';
+import WishlistCard from '@/components/wishlist/WishlistCard';
+import { http } from '@/lib/http';
 import { Wishlist } from '@/src/types/model';
 
 export default function WishlistsPage() {

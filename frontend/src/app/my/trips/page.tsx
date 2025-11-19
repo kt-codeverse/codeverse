@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { http } from '@/src/lib/http';
+import { http } from '@/lib/http';
 import Image from 'next/image';
 
 type Trip = { id: string; city: string; date: string; imageUrl: string };

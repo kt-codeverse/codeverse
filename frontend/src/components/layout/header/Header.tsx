@@ -5,8 +5,8 @@ import { usePathname } from 'next/navigation';
 import NavIcon from '../../NavIcon';
 import { Globe } from 'lucide-react';
 import { Button } from '../../ui/button';
-import { navIconUrls } from '@/src/data/urls';
-import SearchBar from '@/src/components/search/SearchBar';
+import { navIconUrls } from '@/data/urls';
+import SearchBar from '@/components/search/SearchBar';
 import HeaderMenuButton from './HeaderMenuButton';
 import HeaderHostingButton from './HeaderHostingButton';
 

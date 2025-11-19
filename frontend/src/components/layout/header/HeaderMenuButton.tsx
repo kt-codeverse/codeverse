@@ -5,7 +5,7 @@ import {
   // DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/src/components/ui/dropdown-menu';
+} from '@/components/ui/dropdown-menu';
 import { Button } from '../../ui/button';
 import { CircleQuestionMark, Menu } from 'lucide-react';
 import Link from 'next/link';
@@ -32,7 +32,7 @@ export default function HeaderMenuButton() {
         <DropdownMenuSeparator />
 
         <DropdownMenuItem asChild className="px-4 py-2 cursor-pointer">
-          <Link href="/my">마이 페이지</Link>
+          <Link href="/my/profile">마이 페이지</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild className="px-4 py-2 cursor-pointer">
           <Link href="/wishlist">위시리스트</Link>
