@@ -1,4 +1,4 @@
-import Container from '@/src/components/layout/Container';
+import Container from '@/components/layout/Container';
 
 export default function HomePage() {
   return (

@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { http } from '@/src/lib/http';
-import ProfileCard from '@/src/components/profile/ProfileCard';
+import { http } from '@/lib/http';
+import ProfileCard from '@/components/profile/ProfileCard';
 import { User, Review } from '@/src/types/model';
 
 export default function MyProfile() {

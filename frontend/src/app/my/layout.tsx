@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
-import Container from '@/src/components/layout/Container';
-import ProfileSidebar from '@/src/components/profile/ProfileSidebar';
+import Container from '@/components/layout/Container';
+import ProfileSidebar from '@/components/profile/ProfileSidebar';
 
 export const metadata = {
   title: 'TripNest - 마이페이지',

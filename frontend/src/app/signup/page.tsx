@@ -1,9 +1,9 @@
 'use client';
 
-import TextInput from '@/src/components/user/TextInput';
+import TextInput from '@/components/user/TextInput';
 import { Mail, User, Phone } from 'lucide-react';
-import PasswordInput from '@/src/components/user/PasswordInput';
-import AuthButton from '@/src/components/user/AuthButton';
+import PasswordInput from '@/components/user/PasswordInput';
+import AuthButton from '@/components/user/AuthButton';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 
