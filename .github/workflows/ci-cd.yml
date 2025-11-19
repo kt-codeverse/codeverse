@@ -1,102 +1,103 @@
-name: CI/CD (Docker Hub + EC2 Deploy)
+name: CI/CD (git-pull deploy to EC2)
 
 on:
   push:
-    branches: [dev]
-
-env:
-  IMAGE_TAG: ${{ github.sha }}
+    branches: [ dev ]
 
 jobs:
-  build-and-deploy:
+  build:
+    name: Build check
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Login to Docker Hub
-        uses: docker/login-action@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          node-version: '20'
 
-      # Backend 이미지 빌드 & Push
-      - name: Build & push backend image
+      - name: Install backend dependencies
+        working-directory: ./backend
         run: |
-          IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/TripNest-backend:${IMAGE_TAG}
-          IMAGE_LATEST=${{ secrets.DOCKERHUB_USERNAME }}/TripNest-backend:latest
-          docker build -t "$IMAGE" -f backend/Dockerfile backend
-          docker tag "$IMAGE" "$IMAGE_LATEST"
-          docker push "$IMAGE"
-          docker push "$IMAGE_LATEST"
+          npm ci --prefer-offline --no-audit --progress=false
 
-      # Frontend 이미지 빌드 & Push
-      - name: Build & push frontend image
+      - name: Build backend (typecheck + compile)
+        working-directory: ./backend
         run: |
-          IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/TripNest-frontend:${IMAGE_TAG}
-          IMAGE_LATEST=${{ secrets.DOCKERHUB_USERNAME }}/TripNest-frontend:latest
-          docker build -t "$IMAGE" -f frontend/Dockerfile frontend
-          docker tag "$IMAGE" "$IMAGE_LATEST"
-          docker push "$IMAGE"
-          docker push "$IMAGE_LATEST"
+          npm run build --if-present
 
-      # Prepare deploy package (contains docker-compose.prod.yml + .env)
-      - name: Prepare deploy package
+      - name: Install frontend dependencies
+        working-directory: ./frontend
         run: |
-          mkdir -p deploy_package
-          cat > deploy_package/.env <<EOF
-BACKEND_IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/TripNest-backend:${IMAGE_TAG}
-FRONTEND_IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/TripNest-frontend:${IMAGE_TAG}
-MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
-MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}
-NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
-EOF
-          cp docker-compose.prod.yml deploy_package/
+          npm ci --prefer-offline --no-audit --progress=false
 
-      - name: Ensure remote deploy directory exists
-        uses: appleboy/ssh-action@v0.1.9
+      - name: Build frontend
+        working-directory: ./frontend
+        run: |
+          npm run build --if-present
+
+  deploy:
+    name: Deploy to EC2 (git-pull & docker compose)
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Ensure remote deploy dir exists
+        uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
           script: |
             set -e
-            mkdir -p ~/deploy
+            mkdir -p ${DEPLOY_PATH:-~/deploy}
 
-      - name: Copy deploy package to EC2
-        uses: appleboy/scp-action@v0.1.10
+      - name: Remote git pull + compose deploy
+        uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          source: "deploy_package/*"
-          target: "~/deploy"
-
-      - name: Deploy on EC2
-        uses: appleboy/ssh-action@v0.1.9
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
           script: |
             set -euo pipefail
-            cd ~/deploy || exit 2
-            echo "Files in ~/deploy:"; ls -la || true
+            DEPLOY_DIR="${DEPLOY_PATH:-/home/${{ secrets.EC2_USER }}/deploy}"
+            echo "Using deploy dir: $DEPLOY_DIR"
+            mkdir -p "$DEPLOY_DIR"
+            cd "$DEPLOY_DIR"
 
-            if [ ! -f .env ]; then
-              echo ".env not found in ~/deploy - aborting"
-              exit 3
+            if [ -d codeverse/.git ]; then
+              cd codeverse
+              git fetch --all --prune
+              git reset --hard origin/${{ github.ref_name }} || git reset --hard origin/dev
+            else
+              git clone https://github.com/kt-codeverse/codeverse.git
+              cd codeverse
+              git checkout -f ${GITHUB_REF_NAME:-dev} || git checkout -f dev
             fi
 
-            # Login to Docker Hub on remote host (do not echo token)
-            echo "Logging into Docker Hub..."
-            echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+            # Basic checks for .env
+            if [ ! -f .env ]; then
+              echo "ERROR: .env not found in $PWD. Create .env with MYSQL_ROOT_PASSWORD and DATABASE_URL before running automatic deploy." >&2
+              ls -la
+              exit 2
+            fi
 
-            # Pull images (best-effort) and start services
-            docker compose -f docker-compose.prod.yml pull || true
-            docker compose -f docker-compose.prod.yml up -d --force-recreate --remove-orphans
-            echo "Deploy finished"
+            # Debug: list files and show masked .env header
+            echo "--- remote deploy files ---"
+            ls -la | sed -n '1,200p'
+            echo "--- .env (masked) ---"
+            sed -n '1,50p' .env | sed -E 's/(MYSQL_ROOT_PASSWORD=).*/\1***MASKED***/; s#(DATABASE_URL=)(mysql://root:)[^@]+@#\1\2***@#' || true
+
+            # Ensure docker compose is available (uses docker compose plugin)
+            docker compose --version || true
+
+            # Pull latest images if using image-based deploy; if using repo build this will rebuild
+            docker compose --env-file .env -f docker-compose.yml pull || true
+            docker compose --env-file .env -f docker-compose.yml up -d --build --remove-orphans
+
+            # Run Prisma migrations (if any) on the backend service
+            echo "Running Prisma migrations (if available)"
+            docker compose --env-file .env -f docker-compose.yml run --rm backend npx prisma migrate deploy || echo "migrate deploy failed or no migrations"
+
+            # Show status
+            docker compose --env-file .env -f docker-compose.yml ps
