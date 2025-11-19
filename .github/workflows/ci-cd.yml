@@ -3,6 +3,9 @@ name: CI/CD (git-pull deploy to EC2)
 on:
   push:
     branches: [dev]
+  pull_request:
+    branches: [dev]
+  workflow_dispatch: {}
 
 jobs:
   build:
@@ -154,3 +157,10 @@ jobs:
 
             # Show status
             docker compose --env-file .env -f docker-compose.yml ps
+
+            # Write a deploy success marker with commit and timestamp for easy verification
+            if [ -d "$REPO_PATH" ]; then
+              cd "$REPO_PATH" || true
+              echo "$(git rev-parse --short HEAD) $(date -u '+%Y-%m-%dT%H:%M:%SZ') deployed" > .deploy_success || true
+              chmod 644 .deploy_success || true
+            fi
