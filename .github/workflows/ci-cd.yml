@@ -41,18 +41,29 @@ jobs:
           docker push "$IMAGE"
           docker push "$IMAGE_LATEST"
 
-      # docker-compose.prod.yml → EC2 전송
-      - name: Copy compose file to EC2
+      # Prepare deploy package (contains docker-compose.prod.yml + .env)
+      - name: Prepare deploy package
+        run: |
+          mkdir -p deploy_package
+          cat > deploy_package/.env <<EOF
+BACKEND_IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/TripNest-backend:${IMAGE_TAG}
+FRONTEND_IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/TripNest-frontend:${IMAGE_TAG}
+MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
+MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}
+NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
+EOF
+          cp docker-compose.prod.yml deploy_package/
+
+      - name: Copy deploy package to EC2
         uses: appleboy/scp-action@v0.1.10
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
-          source: "docker-compose.prod.yml"
+          source: "deploy_package/*"
           target: "~/deploy"
 
-      # EC2에서 Pull & Run
       - name: Deploy on EC2
         uses: appleboy/ssh-action@v0.1.9
         with:
@@ -61,23 +72,20 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            set -e
-            cd ~/deploy
+            set -euo pipefail
+            cd ~/deploy || exit 2
+            echo "Files in ~/deploy:"; ls -la || true
 
-            # 이미지 설정
-            IMAGE_PREFIX=${{ secrets.DOCKERHUB_USERNAME }}
+            if [ ! -f .env ]; then
+              echo ".env not found in ~/deploy - aborting"
+              exit 3
+            fi
 
-            echo "BACKEND_IMAGE=$IMAGE_PREFIX/TripNest-backend:${IMAGE_TAG}" > .env
-            echo "FRONTEND_IMAGE=$IMAGE_PREFIX/TripNest-frontend:${IMAGE_TAG}" >> .env
-            echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> .env
-            echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> .env
-            echo "MYSQL_USER=${{ secrets.MYSQL_USER }}" >> .env
-            echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> .env
-            echo "NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}" >> .env
-
-            # Docker Hub 로그인
+            # Login to Docker Hub on remote host (do not echo token)
+            echo "Logging into Docker Hub..."
             echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
-            # Compose 실행
-            docker compose -f docker-compose.prod.yml pull
+            # Pull images (best-effort) and start services
+            docker compose -f docker-compose.prod.yml pull || true
             docker compose -f docker-compose.prod.yml up -d --force-recreate --remove-orphans
+            echo "Deploy finished"
