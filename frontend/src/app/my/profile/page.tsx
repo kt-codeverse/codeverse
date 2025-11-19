@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { http } from '@/lib/http';
 import ProfileCard from '@/components/profile/ProfileCard';
-import { User, Review } from '@/src/types/model';
+import { User, Review } from '@/types/model';
 
 export default function MyProfile() {
   const [user, setUser] = useState<User | null>(null);

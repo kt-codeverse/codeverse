@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, FormEvent } from 'react';
-import { Wishlist } from '@/src/types/model';
+import { Wishlist } from '@/types/model';
 import { http } from '@/lib/http';
 
 type CreateWishlistModalProps = {
