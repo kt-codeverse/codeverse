@@ -15,7 +15,7 @@ async function getRooms() {
 }
 
 export default async function Page() {
-  const rooms: Room[] = await getRooms();
+  // const rooms: Room[] = await getRooms();
   // console.log({ rooms });
 
   return (
@@ -27,9 +27,9 @@ export default async function Page() {
         sm:px-4 lg:px-4
         "
       >
-        {rooms.map((room) => (
+        {/* {rooms.map((room) => (
           <RoomCard key={room.id} room={room} />
-        ))}
+        ))} */}
       </section>
     </main>
   );
