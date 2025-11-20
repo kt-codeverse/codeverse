@@ -9,6 +9,7 @@ import { navIconUrls } from '@/data/urls';
 import SearchBar from '@/components/search/SearchBar';
 import HeaderMenuButton from './HeaderMenuButton';
 import HeaderHostingButton from './HeaderHostingButton';
+import { cn } from '@/lib/utils';
 
 export default function Header() {
   const pathname = usePathname();
@@ -34,12 +35,27 @@ export default function Header() {
             {navIconUrls.map((url, index) => (
               <li
                 key={index}
-                className="flex items-center group hover:cursor-pointer"
+                className={cn(
+                  'flex items-center group',
+                  url.href !== '/'
+                    ? 'cursor-not-allowed opacity-50' // 비활성화 스타일
+                    : 'hover:cursor-pointer', // 활성화 시 호버 효과
+                )}
               >
-                <span className="group-hover:scale-110 transition">
+                <span
+                  className={cn(
+                    'transition',
+                    url.href === '/' && 'group-hover:scale-110', // 활성화 시에만 호버 효과 적용
+                  )}
+                >
                   <NavIcon src={url.src} alt={url.alt} />
                 </span>
-                <Link href={url.href}>{url.text}</Link>
+                {/* href가 '/'가 아니면 Link 대신 span을 렌더링하여 내비게이션을 방지합니다. */}
+                {url.href === '/' ? (
+                  <Link href={url.href}>{url.text}</Link>
+                ) : (
+                  <span>{url.text}</span>
+                )}
               </li>
             ))}
           </ul>
