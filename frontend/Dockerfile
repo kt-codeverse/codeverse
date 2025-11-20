@@ -1,23 +1,26 @@
 FROM node:20-alpine AS builder
-WORKDIR /usr/src/app
+# Use `/app` to match existing build context and previous images
+WORKDIR /app
 
-# Install deps
+# Install deps (ensure devDependencies like TypeScript are available for build)
 COPY package*.json ./
-RUN npm ci --silent
+# Force install devDependencies in builder to allow transpiling `next.config.ts` during build
+RUN npm ci --silent --include=dev
 
 # Copy source and build
 COPY . .
 RUN npm run build
 
 FROM node:20-alpine AS runner
-WORKDIR /usr/src/app
+# Match builder working dir to avoid path mismatch during COPY
+WORKDIR /app
 ENV NODE_ENV=production
 
 # Copy production artifacts
-COPY --from=builder /usr/src/app/node_modules ./node_modules
-COPY --from=builder /usr/src/app/.next ./.next
-COPY --from=builder /usr/src/app/public ./public
-COPY --from=builder /usr/src/app/package*.json ./
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/package*.json ./
 
 EXPOSE 3000
 CMD ["npm", "start"]
