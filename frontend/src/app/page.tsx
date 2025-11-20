@@ -16,7 +16,7 @@ async function getRooms() {
 
 export default async function Page() {
   const rooms: Room[] = await getRooms();
-  // console.log({ rooms });
+  console.log({ rooms });
 
   return (
     <main>
