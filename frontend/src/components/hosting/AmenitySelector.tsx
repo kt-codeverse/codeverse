@@ -8,6 +8,7 @@ import type { AmenityCategory } from '@/data/hosting-amenities-options';
 interface AmenitySelectorProps {
   categories: AmenityCategory[];
   onSelectionChange: (selectedIds: string[]) => void;
+  initialSelection?: string[];
 }
 
 /**
@@ -18,8 +19,10 @@ interface AmenitySelectorProps {
 export default function AmenitySelector({
   categories,
   onSelectionChange,
+  initialSelection = [],
 }: AmenitySelectorProps) {
-  const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
+  const [selectedAmenities, setSelectedAmenities] =
+    useState<string[]>(initialSelection);
 
   /**
    * 편의시설 선택 상태를 토글하고, 변경된 선택 목록을 부모 컴포넌트로 전달합니다.

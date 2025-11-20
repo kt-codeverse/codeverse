@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -30,18 +30,26 @@ export default function TitleForm({
   const [title, setTitle] = useState(initialData.title);
   const [description, setDescription] = useState(initialData.description);
 
-  useEffect(() => {
-    onDataChange({ title, description });
-  }, [title, description, onDataChange]);
-
+  /**
+   * 제목 변경 시 호출되며, 부모 컴포넌트로 데이터를 전달합니다.
+   * @param e - 입력 이벤트
+   */
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTitle(e.target.value);
+    const newTitle = e.target.value;
+    setTitle(newTitle);
+    onDataChange({ title: newTitle, description });
   };
 
+  /**
+   * 설명 변경 시 호출되며, 부모 컴포넌트로 데이터를 전달합니다.
+   * @param e - 입력 이벤트
+   */
   const handleDescriptionChange = (
     e: React.ChangeEvent<HTMLTextAreaElement>,
   ) => {
-    setDescription(e.target.value);
+    const newDescription = e.target.value;
+    setDescription(newDescription);
+    onDataChange({ title, description: newDescription });
   };
 
   return (

@@ -8,7 +8,7 @@ import type { Room } from '@/types/room';
  */
 async function getRooms() {
   const url = `${process.env.API_URL}/rooms`;
-  console.log({ url });
+  // console.log({ url });
   const res = await fetch(url);
   if (!res.ok) return null;
   return res.json();

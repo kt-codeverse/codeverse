@@ -8,28 +8,31 @@ import { immer } from 'zustand/middleware/immer';
  * URL 경로와 컴포넌트 매핑에 사용됩니다.
  */
 export const HOSTING_STEPS = [
+  'structure',
   'privacy-type',
   'location',
   'floor-plan',
   'amenities',
   'photos',
   'title',
-  'description', // 제목과 설명을 함께 또는 별도로 관리할 수 있습니다.
-  'price',
-  'review', // 최종 검토 단계
+  // 'price',
+  // 'review', // 최종 검토 단계
 ];
 
 /**
- * @interface ListingData
+ * @type HostingStep
+ * @description 호스팅 프로세스의 각 단계를 나타내는 문자열 리터럴 타입.
+ */
+export type HostingStep = (typeof HOSTING_STEPS)[number];
+
+/**
+ * @interface HostingData
  * @description 호스팅할 숙소의 데이터를 정의하는 인터페이스.
  */
-interface ListingData {
-  privacyType: string | null;
-  location: {
-    address: string;
-    lat: number;
-    lng: number;
-  } | null;
+interface HostingData {
+  structure: string;
+  privacyType: string;
+  location: { address: string; lat: number; lng: number };
   floorPlan: {
     guests: number;
     bedrooms: number;
@@ -37,7 +40,7 @@ interface ListingData {
     bathrooms: number;
   };
   amenities: string[];
-  photos: string[]; // 업로드 후 URL 목록
+  photos: { [key: string]: unknown }[];
   title: string;
   description: string;
   price: number;
@@ -48,18 +51,23 @@ interface ListingData {
  * @description 호스팅 프로세스 상태 관리를 위한 스토어 인터페이스.
  */
 interface HostingStore {
-  step: number; // 현재 단계의 인덱스
-  listingData: Partial<ListingData>; // 단계별로 수집되는 숙소 데이터
-  setStep: (step: number) => void;
-  nextStep: () => void;
-  prevStep: () => void;
-  updateListingData: (data: Partial<ListingData>) => void;
+  step: HostingStep; // 현재 단계
+  hostingData: HostingData; // 단계별로 수집되는 숙소 데이터
+  setStep: (step: HostingStep) => void;
+  updateHostingData: (data: Partial<HostingData>) => void;
   reset: () => void;
 }
 
-const initialState = {
-  step: 0,
-  listingData: {
+export const initialState: Pick<HostingStore, 'step' | 'hostingData'> = {
+  step: HOSTING_STEPS[0],
+  hostingData: {
+    structure: '',
+    privacyType: '',
+    location: {
+      address: '',
+      lat: 0,
+      lng: 0,
+    },
     floorPlan: {
       guests: 1,
       bedrooms: 1,
@@ -68,6 +76,9 @@ const initialState = {
     },
     amenities: [],
     photos: [],
+    title: '',
+    description: '',
+    price: 0,
   },
 };
 
@@ -80,12 +91,8 @@ export const useHostingStore = create<HostingStore>()(
     immer((set) => ({
       ...initialState,
       setStep: (step) => set({ step }),
-      nextStep: () => set((state) => ({ step: state.step + 1 })),
-      prevStep: () => set((state) => ({ step: state.step - 1 })),
-      updateListingData: (data) =>
-        set((state) => {
-          state.listingData = { ...state.listingData, ...data };
-        }),
+      updateHostingData: (data) =>
+        set((state) => ({ hostingData: { ...state.hostingData, ...data } })),
       reset: () => set(initialState),
     })),
     {

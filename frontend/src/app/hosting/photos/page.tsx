@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useCallback, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { HOSTING_STEPS, useHostingStore } from '@/store/useHostingStore';
 import PhotoUploader from '@/components/hosting/PhotoUploader';
 
 /**
@@ -10,73 +11,63 @@ import PhotoUploader from '@/components/hosting/PhotoUploader';
  */
 export default function Page() {
   const router = useRouter();
-  const [photos, setPhotos] = useState<File[]>([]);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [isPending, startTransition] = useTransition();
+  const [isUploading, setIsUploading] = useState(false);
+  const updateHostingData = useHostingStore((state) => state.updateHostingData);
+  const step = useHostingStore((state) => state.step);
 
-  const handleFilesChange = useCallback(
-    (files: File[]) => {
-      setPhotos(files);
-    },
-    [setPhotos],
-  );
-
-  /**
-   * '다음' 버튼 클릭 시 실행되는 핸들러입니다.
-   * 선택된 사진 파일들을 서버로 업로드합니다.
-   */
-  const handleNext = async () => {
-    // 이전 에러 메시지 초기화
-    setError(null);
-
-    // 유효성 검사: 최소 5장의 사진 필요
-    // if (photos.length < 5) {
-    //   setError('사진을 5장 이상 업로드해주세요.');
-    //   return;
-    // }
-
-    startTransition(async () => {
-      try {
-        const formData = new FormData();
-        photos.forEach((photo) => {
-          // 'files' 키는 NestJS의 FilesInterceptor와 일치해야 합니다.
-          formData.append('files', photo);
-        });
-
-        const data = await uploadPhotos(formData);
-
-        // TODO: 응답 데이터(이미지 URL 등)를 상태 관리 또는 다음 페이지로 전달할 수 있습니다.
-        console.log('Upload successful:', data);
-
-        router.push('/hosting/title');
-      } catch (e: unknown) {
-        if (e instanceof Error) {
-          setError(e.message);
-        } else {
-          setError('알 수 없는 오류가 발생했습니다.');
-        }
-      }
-    });
+  const handleFilesChange = (files: File[]) => {
+    setSelectedFiles(files);
+    if (files.length > 0 && files.length < 5) {
+      setError('사진을 5장 이상 업로드해주세요.');
+    } else {
+      setError(null);
+    }
   };
 
   /**
    * FormData를 서버로 전송하여 사진을 업로드합니다.
    * @param formData - 업로드할 파일이 담긴 FormData 객체
-   * @returns 서버로부터 받은 JSON 응답
+   * @returns 서버로부터 받은 Photo 객체 배열
    */
   const uploadPhotos = async (formData: FormData) => {
-    const response = await fetch('http://localhost:8080/api/uploads/images', {
-      method: 'POST',
-      body: formData,
-    });
-
-    if (!response.ok) {
-      // 서버에서 구체적인 에러 메시지를 보냈을 경우를 대비
-      const errorData = await response.json().catch(() => null);
-      throw new Error(errorData?.message || '사진 업로드에 실패했습니다.');
-    }
-
+    const url = `${process.env.API_URL}/uploads/images`;
+    const response = await fetch(url, { method: 'POST', body: formData });
+    if (!response.ok) throw new Error('사진 업로드에 실패했습니다.');
     return response.json();
+  };
+
+  const handleNext = async () => {
+    // if (selectedFiles.length < 5) {
+    //   setError('사진을 5장 이상 업로드해주세요.');
+    //   return;
+    // }
+
+    setIsUploading(true);
+    setError(null);
+
+    try {
+      const formData = new FormData();
+      selectedFiles.forEach((file) => {
+        formData.append('files', file);
+      });
+
+      const newPhotos = await uploadPhotos(formData);
+      updateHostingData({ photos: newPhotos });
+
+      const currentIndex = HOSTING_STEPS.indexOf(step);
+      const nextStepPath = HOSTING_STEPS[currentIndex + 1];
+      if (nextStepPath) {
+        router.push(`/hosting/${nextStepPath}`);
+      }
+    } catch (e) {
+      setError(
+        e instanceof Error ? e.message : '사진 업로드 중 오류가 발생했습니다.',
+      );
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   return (
@@ -99,7 +90,6 @@ export default function Page() {
           </header>
 
           <PhotoUploader onFilesChange={handleFilesChange} />
-
           {error && <p className="text-sm text-red-500">{error}</p>}
         </div>
 
@@ -107,8 +97,15 @@ export default function Page() {
           <Button variant="ghost" onClick={() => router.back()}>
             이전
           </Button>
-          <Button onClick={handleNext} disabled={isPending}>
-            {isPending ? '업로드 중...' : '다음'}
+          <Button
+            onClick={handleNext}
+            disabled={
+              isUploading
+              // 실제 배포에서는 아래로 사용
+              // isUploading || selectedFiles.length < 5
+            }
+          >
+            {isUploading ? '업로드 중...' : '다음'}
           </Button>
         </div>
       </section>

@@ -2,9 +2,16 @@
 
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+// import { useHostingStore } from '../../store/useHostingStore';
 
 export default function Page() {
   const router = useRouter();
+  // const { reset } = useHostingStore();
+
+  // const handleStartHosting = useCallback(() => {
+  //   // reset(); // 스토어 상태 초기화
+  //   router.push('/hosting/structure');
+  // }, [reset, router]);
 
   const handleStartHosting = () => {
     router.push('/hosting/structure');
