@@ -1,40 +1,24 @@
-### Backend (Nest) multi-stage Dockerfile
 FROM node:20-alpine AS builder
-WORKDIR /app
+WORKDIR /usr/src/app
 
-# copy package manifests first for better cache
-COPY package.json package-lock.json* ./
-RUN npm ci --prefer-offline --no-audit --progress=false
+# Install dependencies
+COPY package*.json ./
+RUN npm ci --silent
 
-# copy source and build
-COPY tsconfig*.json ./
-COPY prisma ./prisma
-COPY src ./src
-
-# Generate Prisma client (needed for @prisma/client types/enums)
-RUN npx prisma generate
-
+# Copy source and build
+COPY . .
+## generate Prisma client (ensure schema.prisma exists under prisma/)
+RUN npx prisma generate || true
 RUN npm run build
 
-### Runtime image
 FROM node:20-alpine AS runner
-WORKDIR /app
+WORKDIR /usr/src/app
 ENV NODE_ENV=production
 
-# install production deps only
-COPY package.json package-lock.json* ./
-RUN npm ci --production --prefer-offline --no-audit --progress=false
+# Copy built files and node_modules from builder
+COPY --from=builder /usr/src/app/dist ./dist
+COPY --from=builder /usr/src/app/node_modules ./node_modules
+COPY --from=builder /usr/src/app/package*.json ./
 
-# copy built artifacts
-COPY --from=builder /app/dist ./dist
- 
-# copy generated Prisma client from builder (contains enums and runtime)
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
-
-# drop privileges: run as non-root 'node' user provided by the official image
-RUN chown -R node:node /app
-USER node
-
-EXPOSE 3000
+EXPOSE 8080
 CMD ["node", "dist/main"]

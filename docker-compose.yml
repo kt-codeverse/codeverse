@@ -1,47 +1,64 @@
-version: "3.8"
-
 services:
-  db:
-    image: mysql:8.0
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-    volumes:
-      - mysql_data:/var/lib/mysql
-    restart: always
-
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    environment:
-      DATABASE_HOST: db
-      DATABASE_PORT: 3306
-      DATABASE_URL: ${DATABASE_URL}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      # Swagger 제어용 환경변수 (값은 루트의 .env에서 로드됩니다)
-      ENABLE_SWAGGER: ${ENABLE_SWAGGER}
-      SWAGGER_BASE_URL: ${SWAGGER_BASE_URL}
-      NODE_ENV: production
-    depends_on:
-      - db
+    container_name: codeverse_backend
     ports:
-      - "3001:3000"
-    restart: always
+      - "8080:8080"
+    env_file:
+      - ./backend/.env
+    environment:
+      - NODE_ENV=production
+    networks:
+      - codeverse_net
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    environment:
-      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
-      NODE_ENV: production
+    container_name: codeverse_frontend
     ports:
       - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - codeverse_net
+
+  caddy:
+    image: caddy:2
+    container_name: codeverse_caddy
+    ports:
+      - "80:80"
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
     depends_on:
       - backend
-    restart: always
+      - frontend
+      - db
+    networks:
+      - codeverse_net
+
+  db:
+    image: mysql:8.0
+    container_name: codeverse_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: codeverse
+      MYSQL_USER: codeverse
+      MYSQL_PASSWORD: secret
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - codeverse_net
+
+networks:
+  codeverse_net:
+    driver: bridge
 
 volumes:
-  mysql_data:
+  db_data:
+    driver: local
