@@ -1,53 +1,72 @@
+// src/app/booking/[listingId]/page.tsx
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { http } from "@/lib/http";
-import { mockBooking } from "@/data/mockBooking";
+import { mockBookings } from "@/data/mockBooking";
 import type { Booking } from "@/types/booking";
+import { useBookingStore } from "@/store/bookingStore";
 
-type PaymentOption = "full" | "split";
+type BookingPageProps = {
+  params: { listingId: string };
+};
 
-export default function BookingPage() {
-  const [booking, setBooking] = useState<Booking | null>(null);
+export default function BookingPage({ params }: BookingPageProps) {
+  const { listingId } = params;
+
+  const {
+    booking,
+    setBooking,
+    paymentOption,
+    setPaymentOption,
+    paymentMethod,
+    setPaymentMethod,
+    guestInfo,
+    updateGuestInfo,
+    noteToHost,
+    setNoteToHost,
+  } = useBookingStore();
+
   const [loading, setLoading] = useState(true);
-  const [paymentOption, setPaymentOption] = useState<PaymentOption>("full");
   const [submitting, setSubmitting] = useState(false);
 
-  // 1) 예약 정보 불러오기 (실제 API + 목업 fallback)
+  // 1) 예약 프리뷰 불러오기 (API + 목업 fallback)
   useEffect(() => {
     (async () => {
       try {
-        // TODO: 추후 쿼리스트링/파라미터로 bookingId, listingId 받게 수정 가능
         const res = await http.get<Booking>("/bookings/preview", {
-          params: { listingId: mockBooking.listing.id },
+          params: { listingId },
         });
         setBooking(res.data);
       } catch (error) {
-        console.error("예약 프리뷰 불러오기 실패, 목업 사용:", error);
-        setBooking(mockBooking);
+        console.error("예약 프리뷰 실패, 목업 사용:", error);
+        const mock = mockBookings[listingId];
+        if (mock) {
+          setBooking(mock);
+        }
       } finally {
         setLoading(false);
       }
     })();
-  }, []);
+  }, [listingId, setBooking]);
 
   const handleSubmit = async () => {
     if (!booking || submitting) return;
 
     try {
       setSubmitting(true);
-
       await http.post("/bookings", {
         listingId: booking.listing.id,
         checkIn: booking.checkIn,
         checkOut: booking.checkOut,
-        guests: booking.guestInfo,
+        guests: guestInfo,
         paymentOption,
+        paymentMethod,
+        noteToHost,
       });
 
-      // TODO: 결제 완료 페이지 혹은 예약 완료 페이지로 라우팅
-      alert("예약 요청이 전송되었습니다. (실제 환경에서는 완료 페이지로 이동)");
+      alert("예약 요청이 전송되었습니다. (나중에 완료 페이지로 이동)");
     } catch (error) {
       console.error("예약 요청 실패:", error);
       alert("예약 요청 중 문제가 발생했습니다. 나중에 다시 시도해주세요.");
@@ -55,18 +74,6 @@ export default function BookingPage() {
       setSubmitting(false);
     }
   };
-
-  if (loading || !booking) {
-    return (
-      <main className="min-h-screen bg-neutral-50">
-        <div className="mx-auto max-w-6xl px-6 py-10">
-          <div className="h-10 w-32 animate-pulse rounded-full bg-neutral-200" />
-        </div>
-      </main>
-    );
-  }
-
-  const { listing, priceDetail, guestInfo } = booking;
 
   const formatCurrency = (value: number) =>
     new Intl.NumberFormat("ko-KR", {
@@ -86,6 +93,27 @@ export default function BookingPage() {
     return `${formatter.format(inDate)} ~ ${formatter.format(outDate)}`;
   };
 
+  const priceDetail = booking?.priceDetail;
+  const listing = booking?.listing;
+
+  const guestSummary = useMemo(() => {
+    const parts: string[] = [];
+    if (guestInfo.adults) parts.push(`성인 ${guestInfo.adults}명`);
+    if (guestInfo.children) parts.push(`어린이 ${guestInfo.children}명`);
+    if (guestInfo.infants) parts.push(`유아 ${guestInfo.infants}명`);
+    return parts.join(", ") || "게스트 없음";
+  }, [guestInfo]);
+
+  if (loading || !booking || !priceDetail || !listing) {
+    return (
+      <main className="min-h-screen bg-neutral-50">
+        <div className="mx-auto max-w-6xl px-6 py-10">
+          <div className="h-10 w-32 animate-pulse rounded-full bg-neutral-200" />
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-neutral-50">
       {/* 상단 헤더 */}
@@ -100,7 +128,7 @@ export default function BookingPage() {
       <div className="mx-auto flex max-w-6xl flex-col gap-8 px-6 py-10 lg:flex-row">
         {/* 왼쪽: 예약 단계 */}
         <section className="flex-1 space-y-4">
-          {/* 카드 1: 결제 시기 선택 */}
+          {/* 1. 결제 시기 선택 */}
           <div className="rounded-3xl bg-white p-6 shadow-sm">
             <div className="mb-4 text-lg font-semibold">1. 결제 시기 선택</div>
 
@@ -125,7 +153,7 @@ export default function BookingPage() {
                 </div>
               </label>
 
-              {/* 일부 결제 (목업용 설명) */}
+              {/* 일부 결제 */}
               <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-neutral-300 bg-white px-4 py-3 hover:border-neutral-500">
                 <input
                   type="radio"
@@ -141,45 +169,187 @@ export default function BookingPage() {
                   </div>
                   <p className="mt-1 text-xs text-neutral-500">
                     지금 {formatCurrency(Math.round(priceDetail.total * 0.45))}을
-                    결제하고, 나중에 나머지 금액이 청구됩니다. 추가 수수료는
-                    없습니다.
+                    결제하고, 나중에 나머지 금액이 청구됩니다.
                   </p>
                 </div>
               </label>
+            </div>
+          </div>
+
+          {/* 2. 결제 수단 추가 */}
+          <div className="rounded-3xl bg-white p-6 shadow-sm">
+            <div className="mb-4 text-lg font-semibold">2. 결제 수단 추가</div>
+
+            {/* 결제 수단 선택 */}
+            <div className="mb-4 space-y-2 text-sm">
+              <div className="mb-1 text-xs font-semibold text-neutral-600">
+                결제 수단
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  { value: "card", label: "신용/체크카드" },
+                  { value: "kakaopay", label: "카카오페이" },
+                  { value: "naverpay", label: "네이버페이" },
+                ].map((m) => (
+                  <button
+                    key={m.value}
+                    type="button"
+                    onClick={() =>
+                      setPaymentMethod(m.value as typeof paymentMethod)
+                    }
+                    className={`rounded-full border px-3 py-1 text-xs ${
+                      paymentMethod === m.value
+                        ? "border-neutral-900 bg-neutral-900 text-white"
+                        : "border-neutral-300 bg-white text-neutral-700 hover:border-neutral-500"
+                    }`}
+                  >
+                    {m.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* 카드 정보 입력 (카드 선택 시에만 보이게 설정 가능) */}
+            {paymentMethod === "card" && (
+              <div className="space-y-3 text-sm">
+                <div>
+                  <div className="mb-1 text-xs font-semibold text-neutral-600">
+                    카드 소유자 이름
+                  </div>
+                  <input
+                    type="text"
+                    className="w-full rounded-xl border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-900"
+                    placeholder="여권 또는 신분증의 영문 이름"
+                  />
+                </div>
+                <div>
+                  <div className="mb-1 text-xs font-semibold text-neutral-600">
+                    카드 번호
+                  </div>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={19}
+                    className="w-full rounded-xl border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-900"
+                    placeholder="0000 0000 0000 0000"
+                  />
+                </div>
+
+                <div className="flex gap-3">
+                  <div className="flex-1">
+                    <div className="mb-1 text-xs font-semibold text-neutral-600">
+                      유효기간 (MM/YY)
+                    </div>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={5}
+                      className="w-full rounded-xl border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-900"
+                      placeholder="12/27"
+                    />
+                  </div>
+                  <div className="w-24">
+                    <div className="mb-1 text-xs font-semibold text-neutral-600">
+                      CVC
+                    </div>
+                    <input
+                      type="password"
+                      maxLength={3}
+                      className="w-full rounded-xl border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-900"
+                      placeholder="***"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* 3. 요청 내용 확인 (게스트/메모) */}
+          <div className="rounded-3xl bg-white p-6 shadow-sm">
+            <div className="mb-4 text-lg font-semibold">3. 요청 내용 확인</div>
+
+            {/* 게스트 수 조정 */}
+            <div className="mb-6 space-y-3 text-sm">
+              <div className="text-xs font-semibold text-neutral-600">
+                게스트 수
+              </div>
+
+              {[
+                { key: "adults", label: "성인", desc: "만 13세 이상" },
+                { key: "children", label: "어린이", desc: "만 2~12세" },
+                { key: "infants", label: "유아", desc: "만 2세 미만" },
+              ].map((row) => {
+                const value = guestInfo[row.key as keyof typeof guestInfo] as number;
+
+                return (
+                  <div
+                    key={row.key}
+                    className="flex items-center justify-between border-b border-neutral-100 pb-3 last:border-none last:pb-0"
+                  >
+                    <div>
+                      <div className="font-medium">{row.label}</div>
+                      <div className="text-xs text-neutral-500">{row.desc}</div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          updateGuestInfo({
+                            [row.key]: Math.max(0, value - 1),
+                          })
+                        }
+                        className="flex h-7 w-7 items-center justify-center rounded-full border border-neutral-300 text-lg leading-none text-neutral-600 disabled:border-neutral-200 disabled:text-neutral-300"
+                        disabled={row.key === "adults" ? value <= 1 : value <= 0}
+                      >
+                        −
+                      </button>
+                      <span className="w-4 text-center text-sm">{value}</span>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          updateGuestInfo({
+                            [row.key]: value + 1,
+                          })
+                        }
+                        className="flex h-7 w-7 items-center justify-center rounded-full border border-neutral-300 text-lg leading-none text-neutral-700 hover:border-neutral-500"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* 호스트에게 메시지 */}
+            <div className="space-y-2 text-sm">
+              <div className="text-xs font-semibold text-neutral-600">
+                호스트에게 메모
+              </div>
+              <textarea
+                value={noteToHost}
+                onChange={(e) => setNoteToHost(e.target.value)}
+                rows={3}
+                className="w-full resize-none rounded-xl border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-900"
+                placeholder="호스트에게 전하고 싶은 요청사항이 있다면 적어주세요."
+              />
             </div>
 
             <div className="mt-6 flex justify-end">
               <button
                 type="button"
-                className="rounded-xl bg-neutral-900 px-6 py-2 text-sm font-semibold text-white hover:bg-black"
                 onClick={handleSubmit}
                 disabled={submitting}
+                className="rounded-xl bg-neutral-900 px-6 py-2 text-sm font-semibold text-white hover:bg-black disabled:bg-neutral-400"
               >
-                {submitting ? "요청 중..." : "다음"}
+                {submitting ? "요청 보내는 중..." : "예약 요청 보내기"}
               </button>
-            </div>
-          </div>
-
-          {/* 카드 2: 결제 수단 추가 (목업용, 접힌 상태) */}
-          <div className="rounded-3xl bg-white px-6 py-4 shadow-sm">
-            <div className="flex items-center justify-between">
-              <div className="text-base font-semibold">2. 결제 수단 추가</div>
-              <span className="text-sm text-neutral-400">나중에 구현 예정</span>
-            </div>
-          </div>
-
-          {/* 카드 3: 요청 내용 확인 (목업용, 접힌 상태) */}
-          <div className="rounded-3xl bg-white px-6 py-4 shadow-sm">
-            <div className="flex items-center justify-between">
-              <div className="text-base font-semibold">3. 요청 내용 확인</div>
-              <span className="text-sm text-neutral-400">나중에 구현 예정</span>
             </div>
           </div>
         </section>
 
-        {/* 오른쪽: 숙소 요약 */}
+        {/* 오른쪽: 숙소 요약 카드 (게스트 정보는 Zustand에서 읽기) */}
         <aside className="w-full max-w-md rounded-3xl bg-white p-6 shadow-lg lg:w-96">
-          {/* 상단 숙소 정보 */}
           <div className="mb-4 flex gap-4">
             <div className="relative h-24 w-24 overflow-hidden rounded-2xl">
               <Image
@@ -211,7 +381,6 @@ export default function BookingPage() {
 
           <hr className="my-4" />
 
-          {/* 취소 정책 요약 */}
           <div className="mb-4 text-xs text-neutral-700">
             <div className="font-semibold">취소 수수료 없음</div>
             <p className="mt-1 text-[11px] leading-relaxed text-neutral-500">
@@ -239,9 +408,7 @@ export default function BookingPage() {
           <div className="flex items-center justify-between py-2 text-sm">
             <div>
               <div className="font-semibold">게스트</div>
-              <div className="text-xs text-neutral-600">
-                성인 {guestInfo.adults}명
-              </div>
+              <div className="text-xs text-neutral-600">{guestSummary}</div>
             </div>
             <button className="rounded-lg border px-3 py-1 text-xs font-medium hover:bg-neutral-50">
               변경
@@ -256,9 +423,14 @@ export default function BookingPage() {
 
             <div className="flex justify-between text-xs text-neutral-700">
               <span>
-                {priceDetail.nights}박 × {formatCurrency(priceDetail.pricePerNight)}
+                {priceDetail.nights}박 ×{" "}
+                {formatCurrency(priceDetail.pricePerNight)}
               </span>
-              <span>{formatCurrency(priceDetail.pricePerNight * priceDetail.nights)}</span>
+              <span>
+                {formatCurrency(
+                  priceDetail.pricePerNight * priceDetail.nights,
+                )}
+              </span>
             </div>
 
             {priceDetail.cleaningFee > 0 && (
@@ -287,12 +459,9 @@ export default function BookingPage() {
             요금 상세 내역
           </button>
 
-          {/* 하단 문구 */}
           <div className="mt-6 flex gap-3 text-xs text-neutral-500">
             <span>💎</span>
-            <p>
-              흔치 않은 기회입니다. 이 숙소는 보통 예약이 가득 차 있습니다.
-            </p>
+            <p>흔치 않은 기회입니다. 이 숙소는 보통 예약이 가득 차 있습니다.</p>
           </div>
         </aside>
       </div>
