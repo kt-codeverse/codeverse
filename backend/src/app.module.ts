@@ -9,6 +9,7 @@ import { RoomsModule } from './rooms/rooms.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { BookingsModule } from './bookings/bookings.module';
 import { UploadsModule } from './uploads/uploads.module';
+import { ReviewsModule } from './reviews/reviews.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { UploadsModule } from './uploads/uploads.module';
     AuthModule,
     UserModule,
     RoomsModule,
+    ReviewsModule,
     BookingsModule,
     UploadsModule,
   ],
