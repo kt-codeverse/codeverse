@@ -7,16 +7,24 @@ import type { Room } from '@/types/room';
  * @returns Promise<Room[]> 숙소 목록
  */
 async function getRooms() {
-  const url = `${process.env.API_URL}/rooms`;
+  const API_URL = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? '';
+  const url = API_URL ? `${API_URL}/rooms` : '/api/rooms';
   console.log({ url });
-  const res = await fetch(url);
-  if (!res.ok) return null;
-  return res.json();
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return [];
+    return res.json();
+  } catch (e) {
+    console.error('Failed to fetch rooms', e);
+    return [];
+  }
 }
 
 export default async function Page() {
-  const rooms: Room[] = await getRooms();
-  console.log({ rooms });
+
+  const rooms: Room[] = (await getRooms()) ?? [];
+  // console.log({ rooms });
+
 
   return (
     <main>

@@ -6,7 +6,9 @@ import {
   Patch,
   Param,
   Request,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { BookingsService } from './bookings.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
@@ -24,6 +26,7 @@ export class BookingsController {
 
   @ApiOperation({ summary: '숙소 예약 생성' })
   @Post('rooms/:roomId/bookings')
+  @UseGuards(AuthGuard('jwt'))
   async create(
     @Param('roomId') roomId: string,
     @Body() createBookingDto: CreateBookingDto,
