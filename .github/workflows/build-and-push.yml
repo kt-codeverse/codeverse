@@ -6,12 +6,12 @@ permissions:
 
 on:
   push:
-    branches: [ "dev", "main" ]
+    branches: ["dev", "main"]
 
 env:
-  REGISTRY: ghcr.io
-  IMAGE_REPO_BACKEND: ${{ github.repository_owner }}/codeverse-backend
-  IMAGE_REPO_FRONTEND: ${{ github.repository_owner }}/codeverse-frontend
+  REGISTRY: docker.io
+  IMAGE_REPO_BACKEND: dbalsrl7648/codeverse-backend
+  IMAGE_REPO_FRONTEND: dbalsrl7648/codeverse-frontend
 
 jobs:
   test-and-build:
@@ -25,7 +25,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Cache node modules
         uses: actions/cache@v4
@@ -64,12 +64,12 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Login to GitHub Container Registry
+      - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
           registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: dbalsrl7648
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push backend image
         uses: docker/build-push-action@v5

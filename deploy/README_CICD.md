@@ -10,7 +10,7 @@ How it routes on the deployed port (Caddy):
 
 Quickstart (requires Docker & Docker Compose):
 
-```bash
+````bash
 # build and run all services
 docker compose up --build
 
@@ -34,7 +34,7 @@ docker compose up --build
 
 # stop and remove
 docker compose down
-```
+````
 
 Notes:
 
