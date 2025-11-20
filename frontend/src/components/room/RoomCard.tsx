@@ -24,14 +24,13 @@ export function RoomCard({ room }: { room: Room }) {
           <CarouselContent>
             {room.images.map((image) => (
               <CarouselItem key={image.id}>
-                <div className="relative w-full aspect-square">
-                  <Image
-                    src={image.url}
-                    alt={room.title}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
+                <Image
+                  src={image.url}
+                  alt={room.title}
+                  width={500}
+                  height={500}
+                  className="aspect-square h-auto w-full object-cover"
+                />
               </CarouselItem>
             ))}
           </CarouselContent>
