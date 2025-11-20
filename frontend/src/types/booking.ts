@@ -1,3 +1,8 @@
+// src/types/booking.ts
+
+export type PaymentOption = "full" | "split";
+export type PaymentMethod = "card" | "kakaopay" | "naverpay";
+
 export type GuestInfo = {
   adults: number;
   children: number;
@@ -31,5 +36,5 @@ export type Booking = {
   checkOut: string;  // ISO string
   guestInfo: GuestInfo;
   priceDetail: PriceDetail;
-  freeCancellationUntil: string; // ISO
+  freeCancellationUntil: string;
 };
