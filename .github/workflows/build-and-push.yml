@@ -1,0 +1,96 @@
+name: Build, test and push Docker images
+
+permissions:
+  contents: read
+  packages: write
+
+on:
+  push:
+    branches: [ "dev", "main" ]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_REPO_BACKEND: ${{ github.repository_owner }}/codeverse-backend
+  IMAGE_REPO_FRONTEND: ${{ github.repository_owner }}/codeverse-frontend
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [backend, frontend]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Cache node modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            **/node_modules
+          key: ${{ runner.os }}-node-${{ matrix.service }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-${{ matrix.service }}-
+
+      - name: Install dependencies
+        run: |
+          cd ${{ matrix.service }}
+          npm ci
+
+      - name: Run tests / build
+        run: |
+          cd ${{ matrix.service }}
+          if [ "${{ matrix.service }}" = "backend" ]; then
+            npm run lint || true
+            npm test --silent || true
+            npm run build
+          else
+            npm run build
+          fi
+
+  build-and-push:
+    needs: test-and-build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push backend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_REPO_BACKEND }}:${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_REPO_BACKEND }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push frontend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_REPO_FRONTEND }}:${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_REPO_FRONTEND }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

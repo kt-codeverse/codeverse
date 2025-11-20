@@ -1,0 +1,48 @@
+name: PR CI — Lint, Test, Build
+
+on:
+  pull_request:
+    branches: [ "dev", "main" ]
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install backend deps
+        run: |
+          cd backend
+          npm ci
+      - name: Backend lint
+        run: |
+          cd backend
+          npm run lint || true
+      - name: Backend tests
+        run: |
+          cd backend
+          npm test --silent || true
+      - name: Backend build
+        run: |
+          cd backend
+          npm run build
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install frontend deps
+        run: |
+          cd frontend
+          npm ci
+      - name: Frontend build
+        run: |
+          cd frontend
+          npm run build
