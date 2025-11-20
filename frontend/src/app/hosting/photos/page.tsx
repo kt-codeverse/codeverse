@@ -65,7 +65,7 @@ export default function Page() {
    * @returns 서버로부터 받은 JSON 응답
    */
   const uploadPhotos = async (formData: FormData) => {
-    const response = await fetch('http://localhost:8080/uploads/images', {
+    const response = await fetch('http://localhost:8080/api/uploads/images', {
       method: 'POST',
       body: formData,
     });
