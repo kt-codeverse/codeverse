@@ -20,7 +20,7 @@ interface AuthenticatedRequest extends ExpressRequest {
   user: { id: string; email: string; role: string };
 }
 
-@ApiTags('숙소서비스(rooms)')
+@ApiTags('rooms')
 @Controller('rooms')
 export class RoomsController {
   constructor(private readonly roomsService: RoomsService) {}

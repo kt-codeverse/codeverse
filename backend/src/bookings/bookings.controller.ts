@@ -18,7 +18,7 @@ interface AuthenticatedRequest extends Request {
   user: { id: string; email: string }; // JWT Payload에 따른 타입 정의
 }
 
-@ApiTags('예약서비스(bookings)')
+@ApiTags('bookings')
 @ApiBearerAuth()
 @Controller()
 export class BookingsController {
