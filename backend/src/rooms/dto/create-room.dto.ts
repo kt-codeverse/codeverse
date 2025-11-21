@@ -38,6 +38,24 @@ export class CreateRoomDto {
   @IsNotEmpty()
   city: string;
 
+  @ApiProperty({
+    description: '상세 주소',
+    example: '중구 세종대로 110',
+    required: false,
+  })
+  @IsString()
+  @IsOptional()
+  address?: string;
+
+  @ApiProperty({
+    description: '최대 게스트 수',
+    example: 4,
+  })
+  @IsNumber()
+  @IsNotEmpty()
+  @Min(1)
+  maxGuests: number;
+
   @ApiProperty({ description: '1박당 가격', example: 120 })
   @IsNumber()
   @Min(0)

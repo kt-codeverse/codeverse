@@ -14,10 +14,14 @@ import { type CarouselApi } from '@/components/ui/carousel';
 
 export interface Accommodation {
   id: number;
-  images: string[];
-  location: string;
+  images: {
+    id: string;
+    url: string;
+  }[];
+  city: string;
+  country: string;
   title: string;
-  price: number;
+  pricePerNight: number;
 }
 
 /**
@@ -61,9 +65,9 @@ export default function AccommodationCard({
       >
         <CarouselContent className="ml-0">
           {accommodation.images.map((image, index) => (
-            <CarouselItem key={index} className="pl-0">
+            <CarouselItem key={image.id} className="pl-0">
               <Image
-                src={image}
+                src={image.url}
                 alt={`${accommodation.title} ${index + 1}`}
                 width={500}
                 height={500}
@@ -110,7 +114,9 @@ export default function AccommodationCard({
       {/* 숙소 정보 */}
       <div className="mt-2">
         <div className="flex justify-between items-start">
-          <h3 className="font-semibold truncate">{accommodation.location}</h3>
+          <h3 className="font-semibold truncate">
+            {accommodation.city}, {accommodation.country}
+          </h3>
           {/* <div className="flex items-center gap-1">
             <Star className="w-4 h-4" />
             <span className="text-sm">4.8</span>
@@ -119,7 +125,7 @@ export default function AccommodationCard({
         <p className="text-gray-500 text-sm truncate">{accommodation.title}</p>
         <p className="mt-1">
           <span className="font-semibold">
-            ₩{accommodation.price.toLocaleString()}
+            ₩{accommodation.pricePerNight.toLocaleString()}
           </span>{' '}
           / 박
         </p>

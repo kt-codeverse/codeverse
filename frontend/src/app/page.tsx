@@ -1,18 +1,11 @@
 import { RoomCard } from '@/components/room/RoomCard';
 import type { Room } from '@/types/room';
 
-/**
- * 서버에서 숙소 목록 데이터를 가져옵니다.
- * 실제 애플리케이션에서는 API 엔드포인트에서 데이터를 가져와야 합니다.
- * @returns Promise<Room[]> 숙소 목록
- */
 async function getRooms() {
-  const API_URL = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? '';
-  const url = API_URL ? `${API_URL}/rooms` : '/api/rooms';
-  console.log({ url });
   try {
+    const url = `${process.env.API_URL}/rooms`;
     const res = await fetch(url);
-    if (!res.ok) return [];
+    if (!res.ok) throw new Error('Failed to fetch rooms');
     return res.json();
   } catch (e) {
     console.error('Failed to fetch rooms', e);
@@ -21,10 +14,8 @@ async function getRooms() {
 }
 
 export default async function Page() {
-
-  const rooms: Room[] = (await getRooms()) ?? [];
+  const rooms: Room[] = await getRooms();
   // console.log({ rooms });
-
 
   return (
     <main>

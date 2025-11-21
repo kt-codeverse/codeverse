@@ -122,6 +122,7 @@ async function seedRooms(
       country: 'South Korea',
       city: 'Seoul',
       pricePerNight: 120,
+      maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Kitchen', 'Air conditioning'],
       hostIndex: 0,
       lat: 37.555 + Math.random() * 0.05,
@@ -130,10 +131,12 @@ async function seedRooms(
     {
       identifier: 'Seoul Room2',
       title: '강남 스타일 모던 스튜디오',
-      description: '강남의 활기찬 분위기를 만끽할 수 있는 모던한 스튜디오입니다.',
+      description:
+        '강남의 활기찬 분위기를 만끽할 수 있는 모던한 스튜디오입니다.',
       country: 'South Korea',
       city: 'Seoul',
       pricePerNight: 150,
+      maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'TV', 'Pool'],
       hostIndex: 0,
       lat: 37.5 + Math.random() * 0.05,
@@ -147,6 +150,7 @@ async function seedRooms(
       country: 'South Korea',
       city: 'Osaka',
       pricePerNight: 130,
+      maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Kitchen'],
       hostIndex: 1,
       lat: 34.66 + Math.random() * 0.05,
@@ -160,6 +164,7 @@ async function seedRooms(
       country: 'South Korea',
       city: 'Osaka',
       pricePerNight: 160,
+      maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Free parking', 'TV'],
       hostIndex: 1,
       lat: 34.65 + Math.random() * 0.05,
@@ -173,6 +178,7 @@ async function seedRooms(
       country: 'South Korea',
       city: 'Osaka',
       pricePerNight: 140,
+      maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Air conditioning'],
       hostIndex: 1,
       lat: 34.66 + Math.random() * 0.05,
@@ -186,6 +192,7 @@ async function seedRooms(
       country: 'South Korea',
       city: 'Osaka',
       pricePerNight: 170,
+      maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Kitchen', 'TV'],
       hostIndex: 2,
       lat: 34.7 + Math.random() * 0.05,
@@ -194,10 +201,12 @@ async function seedRooms(
     {
       identifier: 'Osaka Room5',
       title: '오사카 신사이바시 쇼핑가 인접 숙소',
-      description: '신사이바시 쇼핑가와 가까워 쇼핑을 즐기기에 최적의 위치입니다.',
+      description:
+        '신사이바시 쇼핑가와 가까워 쇼핑을 즐기기에 최적의 위치입니다.',
       country: 'South Korea',
       city: 'Osaka',
       pricePerNight: 155,
+      maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Washer'],
       hostIndex: 2,
       lat: 34.67 + Math.random() * 0.05,
@@ -211,6 +220,7 @@ async function seedRooms(
       country: 'South Korea',
       city: 'Osaka',
       pricePerNight: 145,
+      maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Kitchen', 'Garden'],
       hostIndex: 2,
       lat: 34.64 + Math.random() * 0.05,
@@ -223,6 +233,7 @@ async function seedRooms(
       country: 'South Korea',
       city: 'Osaka',
       pricePerNight: 135,
+      maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Air conditioning'],
       hostIndex: 3,
       lat: 34.7 + Math.random() * 0.05,
@@ -236,6 +247,7 @@ async function seedRooms(
       country: 'South Korea',
       city: 'Osaka',
       pricePerNight: 180,
+      maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Kitchen', 'Pool', 'TV'],
       hostIndex: 3,
       lat: 34.64 + Math.random() * 0.05,
@@ -249,6 +261,7 @@ async function seedRooms(
       country: 'South Korea',
       city: 'Jeju',
       pricePerNight: 150,
+      maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['Kitchen', 'Free parking', 'Garden'],
       hostIndex: 2,
       lat: 33.4 + Math.random() * 0.05,
@@ -262,6 +275,7 @@ async function seedRooms(
       country: 'South Korea',
       city: 'Jeju',
       pricePerNight: 200,
+      maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Pool', 'Kitchen'],
       hostIndex: 2,
       lat: 33.25 + Math.random() * 0.05,
@@ -275,6 +289,7 @@ async function seedRooms(
       country: 'South Korea',
       city: 'Jeju',
       pricePerNight: 170,
+      maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Garden', 'TV'],
       hostIndex: 3,
       lat: 33.5 + Math.random() * 0.05,
@@ -288,6 +303,7 @@ async function seedRooms(
       country: 'South Korea',
       city: 'Jeju',
       pricePerNight: 190,
+      maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['Kitchen', 'Free parking', 'Air conditioning'],
       hostIndex: 3,
       lat: 33.36 + Math.random() * 0.05,
@@ -296,10 +312,12 @@ async function seedRooms(
     {
       identifier: 'Jeju Room5',
       title: '제주 애월읍 감성 카페거리 숙소',
-      description: '애월읍 카페거리와 가까워 젊은 감성을 느낄 수 있는 숙소입니다.',
+      description:
+        '애월읍 카페거리와 가까워 젊은 감성을 느낄 수 있는 숙소입니다.',
       country: 'South Korea',
       city: 'Jeju',
       pricePerNight: 160,
+      maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'TV', 'Washer'],
       hostIndex: 4,
       lat: 33.46 + Math.random() * 0.05,
@@ -313,6 +331,7 @@ async function seedRooms(
       country: 'South Korea',
       city: 'Jeju',
       pricePerNight: 110,
+      maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Kitchen'],
       hostIndex: 4,
       lat: 33.39 + Math.random() * 0.05,
@@ -321,10 +340,12 @@ async function seedRooms(
     {
       identifier: 'Jeju Room7',
       title: '제주 성산일출봉 뷰 호텔',
-      description: '성산일출봉이 보이는 객실에서 멋진 일출을 감상할 수 있습니다.',
+      description:
+        '성산일출봉이 보이는 객실에서 멋진 일출을 감상할 수 있습니다.',
       country: 'South Korea',
       city: 'Jeju',
       pricePerNight: 220,
+      maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Pool', 'Air conditioning'],
       hostIndex: 0,
       lat: 33.46 + Math.random() * 0.05,
@@ -338,6 +359,7 @@ async function seedRooms(
       country: 'South Korea',
       city: 'Jeju',
       pricePerNight: 250,
+      maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Pool', 'Free parking', 'TV'],
       hostIndex: 0,
       lat: 33.25 + Math.random() * 0.05,
@@ -351,6 +373,7 @@ async function seedRooms(
       country: 'South Korea',
       city: 'Gangneung',
       pricePerNight: 130,
+      maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Kitchen'],
       hostIndex: 4,
       lat: 37.76 + Math.random() * 0.05,
@@ -364,6 +387,7 @@ async function seedRooms(
       country: 'South Korea',
       city: 'Gangneung',
       pricePerNight: 160,
+      maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Free parking', 'Air conditioning'],
       hostIndex: 1,
       lat: 37.8 + Math.random() * 0.05,
@@ -376,6 +400,7 @@ async function seedRooms(
       country: 'South Korea',
       city: 'Gangneung',
       pricePerNight: 140,
+      maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Garden'],
       hostIndex: 1,
       lat: 37.79 + Math.random() * 0.05,
@@ -384,11 +409,11 @@ async function seedRooms(
     {
       identifier: 'Gangneung Room4',
       title: '강릉 주문진항 해산물 맛집 투어 숙소',
-      description:
-        '주문진항과 가까워 신선한 해산물을 맛볼 수 있는 숙소입니다.',
+      description: '주문진항과 가까워 신선한 해산물을 맛볼 수 있는 숙소입니다.',
       country: 'South Korea',
       city: 'Gangneung',
       pricePerNight: 125,
+      maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Kitchen', 'TV'],
       hostIndex: 2,
       lat: 37.88 + Math.random() * 0.05,
@@ -402,6 +427,7 @@ async function seedRooms(
       country: 'South Korea',
       city: 'Gangneung',
       pricePerNight: 180,
+      maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Pool', 'Air conditioning'],
       hostIndex: 2,
       lat: 37.68 + Math.random() * 0.05,
@@ -414,6 +440,7 @@ async function seedRooms(
       country: 'South Korea',
       city: 'Gangneung',
       pricePerNight: 115,
+      maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Washer'],
       hostIndex: 3,
       lat: 37.84 + Math.random() * 0.05,
@@ -427,6 +454,7 @@ async function seedRooms(
       country: 'South Korea',
       city: 'Gyeongju',
       pricePerNight: 160,
+      maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Air conditioning'],
       hostIndex: 3,
       lat: 35.83 + Math.random() * 0.05,
@@ -440,6 +468,7 @@ async function seedRooms(
       country: 'South Korea',
       city: 'Gyeongju',
       pricePerNight: 140,
+      maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Free parking', 'Garden'],
       hostIndex: 4,
       lat: 35.78 + Math.random() * 0.05,
@@ -452,6 +481,7 @@ async function seedRooms(
       country: 'South Korea',
       city: 'Gyeongju',
       pricePerNight: 180,
+      maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'TV', 'Kitchen'],
       hostIndex: 4,
       lat: 35.83 + Math.random() * 0.05,
@@ -465,6 +495,7 @@ async function seedRooms(
       country: 'South Korea',
       city: 'Gyeongju',
       pricePerNight: 200,
+      maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Pool', 'Free parking'],
       hostIndex: 0,
       lat: 35.84 + Math.random() * 0.05,
@@ -478,6 +509,7 @@ async function seedRooms(
       country: 'South Korea',
       city: 'Gyeongju',
       pricePerNight: 100,
+      maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Kitchen'],
       hostIndex: 0,
       lat: 35.83 + Math.random() * 0.05,
@@ -491,6 +523,7 @@ async function seedRooms(
       country: 'South Korea',
       city: 'Gyeongju',
       pricePerNight: 170,
+      maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['Garden', 'Free parking'],
       hostIndex: 1,
       lat: 36.0 + Math.random() * 0.05,
@@ -499,10 +532,12 @@ async function seedRooms(
     {
       identifier: 'Gyeongju Room7',
       title: '경주 감포항 바다 전망 펜션',
-      description: '감포항 바다가 시원하게 보이는 펜션입니다. 신선한 해산물을 즐기세요.',
+      description:
+        '감포항 바다가 시원하게 보이는 펜션입니다. 신선한 해산물을 즐기세요.',
       country: 'South Korea',
       city: 'Gyeongju',
       pricePerNight: 150,
+      maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Kitchen', 'Air conditioning'],
       hostIndex: 1,
       lat: 35.8 + Math.random() * 0.05,
@@ -511,10 +546,12 @@ async function seedRooms(
     {
       identifier: 'Gyeongju Room8',
       title: '경주 월정교 야경 감상 숙소',
-      description: '월정교의 아름다운 야경을 가까이서 감상할 수 있는 숙소입니다.',
+      description:
+        '월정교의 아름다운 야경을 가까이서 감상할 수 있는 숙소입니다.',
       country: 'South Korea',
       city: 'Gyeongju',
       pricePerNight: 165,
+      maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'TV'],
       hostIndex: 2,
       lat: 35.82 + Math.random() * 0.05,
@@ -539,7 +576,9 @@ async function seedRooms(
         `https://source.unsplash.com/random/800x600?bedroom,${roomData.city}`,
       );
     } else {
-      console.log(`'${identifier}'에 ${images.length}개의 이미지를 할당합니다.`);
+      console.log(
+        `'${identifier}'에 ${images.length}개의 이미지를 할당합니다.`,
+      );
     }
 
     const room = await prisma.room.create({

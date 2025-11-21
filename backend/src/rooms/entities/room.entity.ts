@@ -63,6 +63,12 @@ export class RoomEntity implements Room {
   @ApiProperty({ description: '도시' })
   city: string;
 
+  @ApiProperty({ description: '상세 주소', required: false, nullable: true })
+  address: string | null;
+
+  @ApiProperty({ description: '최대 게스트 수' })
+  maxGuests: number;
+
   @ApiProperty({ description: '숙소 규칙', required: false, nullable: true })
   rules: string | null;
 

@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Request,
+  Query,
 } from '@nestjs/common';
 import { Request as ExpressRequest } from 'express';
 import { RoomsService } from './rooms.service';
@@ -15,12 +16,13 @@ import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { SearchRoomsDto } from './dto/search-rooms.dto';
 
 interface AuthenticatedRequest extends ExpressRequest {
   user: { id: string; email: string; role: string };
 }
 
-@ApiTags('숙소서비스(rooms)')
+@ApiTags('rooms')
 @Controller('rooms')
 export class RoomsController {
   constructor(private readonly roomsService: RoomsService) {}
@@ -43,8 +45,8 @@ export class RoomsController {
 
   @ApiOperation({ summary: '숙소 전체 조회' })
   @Get()
-  findAll() {
-    return this.roomsService.findAll();
+  findAll(@Query() query: SearchRoomsDto) {
+    return this.roomsService.findAll(query);
   }
 
   @ApiOperation({ summary: '숙소 상세 조회' })
