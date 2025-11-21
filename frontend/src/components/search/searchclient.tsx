@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import { useSearchParams } from "next/navigation";
+import { useSearchParams } from 'next/navigation';
 
 export default function SearchClient() {
   const params = useSearchParams();
-  const destination = params.get("destination") ?? "";
-  const start = params.get("start") ?? "";
-  const end = params.get("end") ?? "";
-  const guests = params.get("guests") ?? "";
+  const destination = params.get('destination') ?? '';
+  const start = params.get('start') ?? '';
+  const end = params.get('end') ?? '';
+  const guests = params.get('guests') ?? '';
 
   // Dummy results based on params
   const items = new Array(8).fill(null).map((_, i) => ({
     id: i + 1,
-    title: `${destination || "추천"} 숙소 ${i + 1}`,
-    subtitle: `${start}${start && end ? ` — ${end}` : ""} · 최대 ${
+    title: `${destination || '추천'} 숙소 ${i + 1}`,
+    subtitle: `${start}${start && end ? ` — ${end}` : ''} · 최대 ${
       guests || 2
     }명`,
   }));

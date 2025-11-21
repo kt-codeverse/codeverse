@@ -33,30 +33,21 @@ export default function Header() {
         <div className="">
           <ul className="flex items-center justify-between">
             {navIconUrls.map((url, index) => (
-              <li
+              <Link
                 key={index}
+                href={url.href}
                 className={cn(
-                  'flex items-center group',
+                  'flex items-center gap-1 p-2 rounded-lg transition-colors group',
                   url.href !== '/'
-                    ? 'cursor-not-allowed opacity-50' // 비활성화 스타일
-                    : 'hover:cursor-pointer', // 활성화 시 호버 효과
+                    ? 'cursor-not-allowed opacity-50 pointer-events-none' // 비활성화
+                    : 'hover:bg-gray-100', // 활성화
                 )}
               >
-                <span
-                  className={cn(
-                    'transition',
-                    url.href === '/' && 'group-hover:scale-110', // 활성화 시에만 호버 효과 적용
-                  )}
-                >
+                <span className="group-hover:scale-110 transition">
                   <NavIcon src={url.src} alt={url.alt} />
                 </span>
-                {/* href가 '/'가 아니면 Link 대신 span을 렌더링하여 내비게이션을 방지합니다. */}
-                {url.href === '/' ? (
-                  <Link href={url.href}>{url.text}</Link>
-                ) : (
-                  <span>{url.text}</span>
-                )}
-              </li>
+                <span className="text-sm font-medium">{url.text}</span>
+              </Link>
             ))}
           </ul>
         </div>
