@@ -100,13 +100,14 @@ export default function ReviewsModal({
     setPage((p) => Math.min(totalPages, p + 1));
   };
 
-  // ✅ 모든 훅(useState/useEffect/useMemo) 선언 뒤에 early return 배치
+  // ✅ 모든 훅 뒤에 early return
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-40 bg-black/40 overflow-y-auto">
-      {/* 모달 박스: 위에서 약간 떨어진 위치 + 최대 높이 */}
-      <div className="mx-auto my-10 flex max-w-5xl flex-col overflow-hidden rounded-3xl bg-white shadow-xl max-h-[calc(100vh-80px)]">
+    // 👇 z-index를 크게 올리고, 가운데 정렬
+    <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/40">
+      {/* 모달 박스: 최대 높이 지정 + 내부 스크롤 */}
+      <div className="mx-4 my-8 flex w-full max-w-5xl max-h-[calc(100vh-80px)] flex-col overflow-hidden rounded-3xl bg-white shadow-xl">
         {/* 헤더 */}
         <div className="flex items-center justify-between border-b px-6 py-4">
           <button
