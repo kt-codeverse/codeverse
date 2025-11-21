@@ -20,7 +20,7 @@ export function RoomCard({ room }: { room: Room }) {
   return (
     <Card className="w-full overflow-hidden pt-0 gap-0">
       <CardHeader className="p-0">
-        <Carousel className="w-full">
+        <Carousel className="w-full group">
           <CarouselContent>
             {room.images.map((image) => (
               <CarouselItem key={image.id}>
@@ -34,8 +34,11 @@ export function RoomCard({ room }: { room: Room }) {
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselPrevious className="ml-16" />
-          <CarouselNext className="mr-16" />
+
+          <div className="absolute inset-0 flex items-center justify-between px-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <CarouselPrevious className="static translate-x-0 translate-y-0 left-0 bg-white/80 hover:bg-white" />
+            <CarouselNext className="static translate-x-0 translate-y-0 right-0 bg-white/80 hover:bg-white" />
+          </div>
         </Carousel>
       </CardHeader>
       <Link href={`/rooms/${room.id}`}>
