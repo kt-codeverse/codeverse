@@ -6,6 +6,9 @@ import PasswordInput from '@/components/user/PasswordInput';
 import AuthButton from '@/components/user/AuthButton';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
+//import { useEffect } from 'react';
+import { api } from '@/lib/http';
+import { useRouter } from 'next/navigation';
 
 type FormValues = {
   name: string;
@@ -16,11 +19,7 @@ type FormValues = {
 };
 
 export default function RegisterPage() {
-  // const [name, setName] = useState('');
-  // const [email, setEmail] = useState('');
-  // const [phone, setPhone] = useState('');
-  // const [password, setPassword] = useState('');
-  // const [checkedPW, setCheckedPW] = useState('');
+  const route = useRouter();
 
   const {
     register,
@@ -31,12 +30,32 @@ export default function RegisterPage() {
     mode: 'onChange', // 입력할때마다 유효성 검사 실행
   });
 
-  const onSubmit = (data: FormValues) => {
+  const onSubmit = async (data: FormValues) => {
     if (data.password !== data.checkedPW) {
       alert('비밀번호가 일치하지 않습니다.');
       return;
     }
     console.log('회원가입 데이터: ', data);
+
+    try {
+      const register = await api.post('/users/register', {
+        email: data.email,
+        password: data.password,
+        passwordConfirm: data.checkedPW,
+        name: data.name,
+        phoneNumber: data.phone,
+      });
+
+      const accessToken = register.data.access_token;
+      console.log('accessToken: ', accessToken);
+
+      localStorage.setItem('token', accessToken);
+
+      route.push('/signin');
+    } catch (error) {
+      console.log(error);
+      alert('회원가입 중 오류가 발생했습니다.');
+    }
   };
 
   // removed unused handleSignup helper; form uses handleSubmit(onSubmit)

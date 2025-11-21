@@ -23,7 +23,7 @@ export default function RoomDescription({ fullText }: Props) {
     : fullText;
 
   return (
-    <div className="py-6 border-b">
+    <div className="py-6 ">
       <p className="text-gray-700 whitespace-pre-line">{previewText}</p>
 
       {isLong && (
