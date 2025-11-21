@@ -1,10 +1,10 @@
 :80
 
-handle_path /docs* {
+handle /docs* {
     reverse_proxy backend:8080
 }
 
-handle_path /api* {
+handle /api* {
     reverse_proxy backend:8080
 }
 
