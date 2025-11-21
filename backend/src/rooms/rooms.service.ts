@@ -7,6 +7,7 @@ import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { Role, Prisma } from '@prisma/client';
+import { SearchRoomsDto } from './dto/search-rooms.dto';
 
 @Injectable()
 export class RoomsService {
@@ -49,9 +50,53 @@ export class RoomsService {
     });
   }
 
-  async findAll() {
+  /**
+   * 조건에 맞는 숙소를 검색하거나 전체 숙소 목록을 조회합니다.
+   * @param query - 검색 필터 (destination, dates, guests)
+   * @returns 검색 조건에 맞는 숙소 목록
+   */
+  async findAll(query: SearchRoomsDto) {
+    const { destination, startDate, endDate, guests } = query;
+
+    const where: Prisma.RoomWhereInput = {};
+
+    // 1. 목적지(destination) 필터링
+    if (destination) {
+      where.OR = [
+        { country: { contains: destination } },
+        { city: { contains: destination } },
+        { address: { contains: destination } },
+        { title: { contains: destination } },
+      ];
+    }
+
+    // 2. 게스트 수(guests) 필터링
+    if (guests) {
+      where.maxGuests = {
+        gte: guests,
+      };
+    }
+
+    // 3. 날짜(startDate, endDate) 필터링
+    // 해당 기간에 예약이 없는 방을 찾습니다.
+    if (startDate && endDate) {
+      where.bookings = {
+        none: {
+          // 요청된 기간과 겹치는 예약이 하나도 없어야 함
+          OR: [{ startDate: { lte: endDate }, endDate: { gte: startDate } }],
+          // 취소된 예약은 겹치는 예약으로 간주하지 않음
+          status: { not: 'CANCELLED' },
+        },
+      };
+    }
+
     return this.prismaService.room.findMany({
-      include: { images: true, amenities: true },
+      where,
+      include: {
+        images: true,
+        amenities: true,
+        host: { select: { name: true, avatar: true } },
+      },
     });
   }
 

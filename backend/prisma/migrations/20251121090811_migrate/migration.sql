@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE `Room` ADD COLUMN `address` VARCHAR(191) NULL,
+    ADD COLUMN `maxGuests` INTEGER NOT NULL DEFAULT 1;
