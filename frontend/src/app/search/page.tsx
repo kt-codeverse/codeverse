@@ -22,6 +22,7 @@ async function getAccommodations(searchParams: {
     }
   });
   url.search = params.toString();
+  console.log({ url });
 
   try {
     const res = await fetch(url);
@@ -33,14 +34,13 @@ async function getAccommodations(searchParams: {
   }
 }
 
-export default async function SearchPage({
+export default async function Page({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const params = await searchParams;
   const accommodations: Accommodation[] = await getAccommodations(params);
-  // console.log({ accommodations });
 
   return (
     <main>
@@ -48,8 +48,8 @@ export default async function SearchPage({
         <h1 className="text-2xl font-semibold mb-4">검색 결과</h1>
         <Filter
           destination={(params.destination as string) ?? ''}
-          checkIn={(params.start as string) ?? ''}
-          checkOut={(params.end as string) ?? ''}
+          checkIn={(params.startDate as string) ?? ''}
+          checkOut={(params.endDate as string) ?? ''}
           guests={(params.guests as string) ?? ''}
         />
         <AccommodationList accommodations={accommodations} />

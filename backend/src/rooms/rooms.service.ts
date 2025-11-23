@@ -57,6 +57,7 @@ export class RoomsService {
    */
   async findAll(query: SearchRoomsDto) {
     const { destination, startDate, endDate, guests } = query;
+    console.log({ query });
 
     const where: Prisma.RoomWhereInput = {};
 
