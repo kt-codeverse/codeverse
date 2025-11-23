@@ -14,7 +14,7 @@ export default function DestinationStep({
   onSelect: (v: string) => void;
 }) {
   // TODO: 이 데이터는 향후 API로부터 받아오도록 수정될 수 있습니다.
-  const locations = ['서울', '부산', '제주', '강릉', '가평'];
+  const locations = ['오사카', '강릉', '경주', '제주', '서울역'];
 
   return (
     <div className="p-4">

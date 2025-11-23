@@ -24,9 +24,12 @@ export default function Header() {
       <section className="max-w-7xl mx-auto grid grid-cols-3 items-center border border-dashed">
         {/* 좌측 */}
         <div className="relative flex items-center h-10 cursor-pointer my-auto shrink-0">
-          <span className="text-2xl font-bold text-[#FF385C] ml-2 hidden md:inline-block uppercase">
+          <Link
+            href="/"
+            className="text-2xl font-bold text-[#FF385C] ml-2 hidden md:inline-block uppercase"
+          >
             tripnest
-          </span>
+          </Link>
         </div>
 
         {/* 중간 */}

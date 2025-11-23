@@ -52,8 +52,8 @@ export default function SearchBar() {
 
     const params = new URLSearchParams();
     if (destination) params.set('destination', destination);
-    if (dates.start) params.set('start', dates.start);
-    if (dates.end) params.set('end', dates.end);
+    if (dates.start) params.set('startDate', dates.start);
+    if (dates.end) params.set('endDate', dates.end);
     if (guests) params.set('guests', guests.toString());
 
     router.push(`/search?${params.toString()}`);
