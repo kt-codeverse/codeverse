@@ -3,6 +3,7 @@ import BookCard from '@/components/room/BookCard';
 import RoomHeader from '@/components/room/RoomHeader';
 import RoomImages from '@/components/room/RoomImages';
 import RoomInfo from '@/components/room/RoomInfo';
+import KakaoMap from '@/components/room/Map';
 
 export default function RoomPage() {
   // 임시 데이터
@@ -92,6 +93,7 @@ export default function RoomPage() {
 ✅ 합법 등록 숙소 안내
 본 숙소는 미스터멘션 실증특례 제도에 따라 정식 등록된 합법 숙소입니다.
 국내외 게스트 모두 안심하고 이용하실 수 있습니다. 🙏`,
+    position: '서울',
   };
 
   const images = [
@@ -108,6 +110,8 @@ export default function RoomPage() {
     '무료 주차 공간',
     '세탁기 및 건조기',
   ];
+
+  const address = '서울 중구 명동2가 32-2'; // → 있을 수도 없을 수도
 
   return (
     <>
@@ -133,10 +137,17 @@ export default function RoomPage() {
                 <RoomDescription fullText={roomData.explanation} />
               </div> */}
             </div>
+
             {/* 오른쪽 예약 카드 */}
             <div className="lg:col-span-1">
               <BookCard />
             </div>
+          </div>
+          <br></br>
+          <div className="border-t">
+            <h1 className="pb-3 pt-8 text-2xl">위치</h1>
+            <p className="pb-3">{roomData.position}</p>
+            <KakaoMap address={address} />
           </div>
         </div>
       </div>
