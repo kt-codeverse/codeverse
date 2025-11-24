@@ -121,6 +121,7 @@ async function seedRooms(
         '서울의 중심에서 도시의 활기를 느껴보세요. 교통이 편리하고 주변에 맛집이 많습니다.',
       country: 'South Korea',
       city: 'Seoul',
+      address: '서울특별시 중구 만리재로 207',
       pricePerNight: 120,
       maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Kitchen', 'Air conditioning'],
@@ -135,6 +136,7 @@ async function seedRooms(
         '강남의 활기찬 분위기를 만끽할 수 있는 모던한 스튜디오입니다.',
       country: 'South Korea',
       city: 'Seoul',
+      address: '서울 강남구 논현동 279-135',
       pricePerNight: 150,
       maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'TV', 'Pool'],
@@ -260,6 +262,7 @@ async function seedRooms(
         '조용한 제주 시골 마을에서 즐기는 힐링 타임. 돌담과 귤밭이 어우러진 풍경을 제공합니다.',
       country: 'South Korea',
       city: 'Jeju',
+      address: '제주특별자치도 제주시 노형3길 6-9',
       pricePerNight: 150,
       maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['Kitchen', 'Free parking', 'Garden'],
@@ -274,6 +277,7 @@ async function seedRooms(
         '서귀포 바다가 한눈에 보이는 아름다운 펜션입니다. 휴식에 최적화되어 있습니다.',
       country: 'South Korea',
       city: 'Jeju',
+      address: '제주특별자치도 서귀포시 도순동 20',
       pricePerNight: 200,
       maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Pool', 'Kitchen'],
@@ -288,6 +292,7 @@ async function seedRooms(
         '제주 동쪽 해안도로를 따라 위치한 감성적인 숙소입니다. 일출을 감상하기 좋습니다.',
       country: 'South Korea',
       city: 'Jeju',
+      address: '제주특별자치도 제주시 한경면 신창리 1322-1',
       pricePerNight: 170,
       maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Garden', 'TV'],
@@ -302,6 +307,7 @@ async function seedRooms(
         '한라산 등반 후 편안하게 쉴 수 있는 독채 펜션입니다. 자연 속에서 힐링하세요.',
       country: 'South Korea',
       city: 'Jeju',
+      address: '제주특별자치도 제주시 516로 2596-117',
       pricePerNight: 190,
       maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['Kitchen', 'Free parking', 'Air conditioning'],
@@ -316,6 +322,7 @@ async function seedRooms(
         '애월읍 카페거리와 가까워 젊은 감성을 느낄 수 있는 숙소입니다.',
       country: 'South Korea',
       city: 'Jeju',
+      address: '제주특별자치도 제주시 애월읍 고내리 692',
       pricePerNight: 160,
       maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'TV', 'Washer'],
@@ -330,6 +337,7 @@ async function seedRooms(
         '협재 해변에서 도보 거리에 위치한 게스트하우스입니다. 서핑과 해수욕을 즐기세요.',
       country: 'South Korea',
       city: 'Jeju',
+      address: '제주특별자치도 제주시 한림읍 협재리 2872',
       pricePerNight: 110,
       maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Kitchen'],
@@ -344,6 +352,7 @@ async function seedRooms(
         '성산일출봉이 보이는 객실에서 멋진 일출을 감상할 수 있습니다.',
       country: 'South Korea',
       city: 'Jeju',
+      address: '제주특별자치도 서귀포시 성산읍 성산중앙로40번길 12',
       pricePerNight: 220,
       maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Pool', 'Air conditioning'],
@@ -358,6 +367,7 @@ async function seedRooms(
         '중문 관광단지와 가까워 다양한 관광지를 편리하게 이용할 수 있습니다.',
       country: 'South Korea',
       city: 'Jeju',
+      address: '제주특별자치도 서귀포시 대포동 1343-7',
       pricePerNight: 250,
       maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Pool', 'Free parking', 'TV'],
@@ -372,6 +382,7 @@ async function seedRooms(
         '커피향 가득한 강릉에서 특별한 하룻밤. 안목해변이 바로 앞에 있습니다.',
       country: 'South Korea',
       city: 'Gangneung',
+      address: '강원특별자치도 강릉시 창해로14번길 20',
       pricePerNight: 130,
       maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Kitchen'],
@@ -386,6 +397,7 @@ async function seedRooms(
         '경포대 해변에서 도보 거리에 위치한 펜션입니다. 여름 휴가에 좋습니다.',
       country: 'South Korea',
       city: 'Gangneung',
+      address: '강원특별자치도 강릉시 저동 96',
       pricePerNight: 160,
       maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Free parking', 'Air conditioning'],
@@ -399,6 +411,7 @@ async function seedRooms(
       description: '오죽헌과 가까운 전통 한옥에서 고즈넉한 시간을 보내세요.',
       country: 'South Korea',
       city: 'Gangneung',
+      address: '강원특별자치도 강릉시 율곡로3139번길 24',
       pricePerNight: 140,
       maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Garden'],
@@ -412,6 +425,7 @@ async function seedRooms(
       description: '주문진항과 가까워 신선한 해산물을 맛볼 수 있는 숙소입니다.',
       country: 'South Korea',
       city: 'Gangneung',
+      address: '강원특별자치도 강릉시 주문진읍 교항리 167-64',
       pricePerNight: 125,
       maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Kitchen', 'TV'],
@@ -426,6 +440,7 @@ async function seedRooms(
         '정동진 일출을 객실에서 감상할 수 있는 펜션입니다. 로맨틱한 여행에 추천합니다.',
       country: 'South Korea',
       city: 'Gangneung',
+      address: '강원특별자치도 강릉시 강동면 정동진리 257-2',
       pricePerNight: 180,
       maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Pool', 'Air conditioning'],
@@ -439,6 +454,7 @@ async function seedRooms(
       description: '사천 해변에서 서핑을 즐기기에 좋은 게스트하우스입니다.',
       country: 'South Korea',
       city: 'Gangneung',
+      address: '강원특별자치도 강릉시 사천면 방동리 산 282-1',
       pricePerNight: 115,
       maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Washer'],
@@ -453,6 +469,7 @@ async function seedRooms(
         '전통 한옥의 멋과 현대적인 편리함이 공존하는 공간. 황리단길 중심에 위치해 있습니다.',
       country: 'South Korea',
       city: 'Gyeongju',
+      address: '경북 경주시 봉황로 40-1 2층',
       pricePerNight: 160,
       maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Air conditioning'],
@@ -467,6 +484,7 @@ async function seedRooms(
         '불국사와 석굴암 방문에 편리한 조용한 펜션입니다. 역사 탐방에 좋습니다.',
       country: 'South Korea',
       city: 'Gyeongju',
+      address: '경북 경주시 진현동 71-10',
       pricePerNight: 140,
       maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Free parking', 'Garden'],
@@ -480,6 +498,7 @@ async function seedRooms(
       description: '동궁과 월지의 아름다운 야경을 감상할 수 있는 숙소입니다.',
       country: 'South Korea',
       city: 'Gyeongju',
+      address: '경북 경주시 구황동 785',
       pricePerNight: 180,
       maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'TV', 'Kitchen'],
@@ -494,6 +513,7 @@ async function seedRooms(
         '보문호수의 아름다운 풍경을 즐길 수 있는 리조트입니다. 휴양에 적합합니다.',
       country: 'South Korea',
       city: 'Gyeongju',
+      address: '경북 경주시 신평동 719-203',
       pricePerNight: 200,
       maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Pool', 'Free parking'],
@@ -508,6 +528,7 @@ async function seedRooms(
         '첨성대와 대릉원 등 주요 유적지와 가까운 게스트하우스입니다.',
       country: 'South Korea',
       city: 'Gyeongju',
+      address: '경북 경주시 인왕동 813-5',
       pricePerNight: 100,
       maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Kitchen'],
@@ -522,6 +543,7 @@ async function seedRooms(
         '유네스코 세계유산 양동마을에서 전통 한옥을 체험할 수 있는 숙소입니다.',
       country: 'South Korea',
       city: 'Gyeongju',
+      address: '경북 경주시 강동면 양동리 175',
       pricePerNight: 170,
       maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['Garden', 'Free parking'],
@@ -536,6 +558,7 @@ async function seedRooms(
         '감포항 바다가 시원하게 보이는 펜션입니다. 신선한 해산물을 즐기세요.',
       country: 'South Korea',
       city: 'Gyeongju',
+      address: '경상북도 경주시 감포읍 감포항구길 61',
       pricePerNight: 150,
       maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'Kitchen', 'Air conditioning'],
@@ -550,6 +573,7 @@ async function seedRooms(
         '월정교의 아름다운 야경을 가까이서 감상할 수 있는 숙소입니다.',
       country: 'South Korea',
       city: 'Gyeongju',
+      address: '경북 경주시 인왕동 355-1',
       pricePerNight: 165,
       maxGuests: Math.floor(Math.random() * 4) + 2, // 2~5
       amenityNames: ['WiFi', 'TV'],
