@@ -1,20 +1,26 @@
-'use client';
-import BookCard from '@/components/room/BookCard';
-import RoomHeader from '@/components/room/RoomHeader';
-import RoomImages from '@/components/room/RoomImages';
-import RoomInfo from '@/components/room/RoomInfo';
-import KakaoMap from '@/components/room/Map';
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import Image from 'next/image';
-import RoomAmenity from '@/components/room/RoomAmenity';
+// src/app/rooms/[id]/page.tsx
+"use client";
+
+import { useState } from "react";
+import Image from "next/image";
+
+import BookCard from "@/components/room/BookCard";
+import RoomHeader from "@/components/room/RoomHeader";
+import RoomImages from "@/components/room/RoomImages";
+import RoomInfo from "@/components/room/RoomInfo";
+import KakaoMap from "@/components/room/Map";
+import RoomAmenity from "@/components/room/RoomAmenity";
+import { Button } from "@/components/ui/button";
+import ReviewsModal from "@/components/review/ReviewsModal";
 
 export default function RoomPage() {
-  // 임시 데이터
+  // 임시 데이터 (나중에 API로 교체)
   const roomData = {
-    id: '1',
-    title: 'Modern Stay | Winter Seoul Mood | 명동·동대문·경복궁 접근 편리',
-    description: '한국의 집 전체',
+    id: "haeundae-111", // 👉 리뷰 모달에 넘겨줄 roomId
+    title: "Modern Stay | Winter Seoul Mood | 명동·동대문·경복궁 접근 편리",
+    description: "한국의 집 전체",
+    rating: 5.0,
+    reviewCount: 23,
     explanation: `Located near Seoul’s top attractions like Myeongdong, Hongdae, Gyeongbokgung, Seongsu (the Brooklyn of Seoul), and the lively Jongno 3-ga Night Market.
 
 안녕하세요! 호스트 Yong입니다. 😊
@@ -31,62 +37,40 @@ export default function RoomPage() {
 ✅ 4호선 성신여대입구역 도보 2분, 완벽한 교통 접근성
 
 동대문디자인플라자(DDP): 지하철로 10분
-
 명동 / 남산타워: 지하철로 15~20분
-
 경복궁 / 광화문: 버스 또는 지하철로 20~25분
-
 홍대: 지하철 환승 30~35분
-
 인천공항: 공항철도 + 환승 약 1시간 20분
-
 김포공항: 공항철도 + 환승 약 50분
 
 ✅ 서울 어디든 편리한 중심 입지
-
 성신여대입구역 1번 출구 도보 2분
-
 명동, 경복궁 등 주요 명소와 가깝지만 조용한 주거 지역
 
 ✅ 주변 하이라이트
-
 편의시설: 다이소(3분), 올리브영(1분), 스타벅스(옆 건물)
-
 현지 분위기: 카페, 베이커리, 한식당이 모여 있는 로컬 거리
-
 돈암시장(도보 5분): 떡볶이, 호떡, 순대 등 서울식 길거리 음식
-
 산책 코스: 성북천(5분) / 북한산 정릉 탐방센터(15분)
 
 ✅ 숙소 구성 및 편의시설
-
 퀸사이즈 침대 2개
-
 에어컨(냉방) / 온돌 바닥난방
-
 주방: 전자레인지, 전기포트, 조리도구, 냉장고
-
 욕실: 샴푸, 트리트먼트, 바디워시, 수건 제공
 (칫솔·치약은 위생상 제공되지 않습니다)
 
 기타: Wi-Fi, TV(OTT 시청 가능), 세탁기, 건조기 완비
 
 ✅ 체크인 / 체크아웃
-
 체크인: 오후 3시 이후
-
 체크아웃: 오전 11시 (시간 연장 시 추가 요금 발생)
 
 ✅ 이용 안내
-
 실내 금연 (흡연 시 퇴실 및 청소비 부과)
-
 소음 자제 (이웃 민원 시 퇴실 조치 가능)
-
 분리배출 필수 (객실 내 안내문 참고)
-
 반려동물 불가
-
 냄새가 강한 요리(튀김, 장류 등) 제한
 
 ✅ 로컬 감성 & 편안한 숙소
@@ -97,105 +81,115 @@ export default function RoomPage() {
 ✅ 합법 등록 숙소 안내
 본 숙소는 미스터멘션 실증특례 제도에 따라 정식 등록된 합법 숙소입니다.
 국내외 게스트 모두 안심하고 이용하실 수 있습니다. 🙏`,
-    position: '서울',
+    position: "서울",
   };
 
   const images = [
-    'https://res.cloudinary.com/dgvgxnwos/image/upload/v1763134157/3f6a77c9-d87f-41be-9f51-96ca892d19db_wq8nod.avif',
-    'https://res.cloudinary.com/dgvgxnwos/image/upload/v1763134521/00e2b2db-f89c-485d-9450-cf71d7f4aa43_oqjxdp.avif',
-    'https://res.cloudinary.com/dgvgxnwos/image/upload/v1763134521/3f2ef16c-c99c-4377-99f9-dbbb06a23d91_vry34b.avif',
-    'https://res.cloudinary.com/dgvgxnwos/image/upload/v1763134521/7af1b43e-74d7-4436-b3a5-ca9ca186e116_pcxt3y.avif',
-    'https://res.cloudinary.com/dgvgxnwos/image/upload/v1763134520/c4350a2e-bd5b-4487-8484-afb3887a60c7_egje2a.avif',
-    'https://res.cloudinary.com/dgvgxnwos/image/upload/v1763813677/22cce545-c53d-4c28-9a70-1e88ab48f766_r5f24n.avif',
-    'https://res.cloudinary.com/dgvgxnwos/image/upload/v1763813676/5f2de156-4117-4909-975a-336ea5db3a64_zvx0wn.avif',
-    'https://res.cloudinary.com/dgvgxnwos/image/upload/v1763813676/1b6c4943-bf18-417a-a44f-5516e1430b54_gttwof.avif',
-  ];
-  const amenities = [
-    '성신여대입구역 근처',
-    '셀프체크인',
-    '여행 가방 보관 가능',
-    '무료 주차 공간',
-    '세탁기 및 건조기',
+    "https://res.cloudinary.com/dgvgxnwos/image/upload/v1763134157/3f6a77c9-d87f-41be-9f51-96ca892d19db_wq8nod.avif",
+    "https://res.cloudinary.com/dgvgxnwos/image/upload/v1763134521/00e2b2db-f89c-485d-9450-cf71d7f4aa43_oqjxdp.avif",
+    "https://res.cloudinary.com/dgvgxnwos/image/upload/v1763134521/3f2ef16c-c99c-4377-99f9-dbbb06a23d91_vry34b.avif",
+    "https://res.cloudinary.com/dgvgxnwos/image/upload/v1763134521/7af1b43e-74d7-4436-b3a5-ca9ca186e116_pcxt3y.avif",
+    "https://res.cloudinary.com/dgvgxnwos/image/upload/v1763134520/c4350a2e-bd5b-4487-8484-afb3887a60c7_egje2a.avif",
+    "https://res.cloudinary.com/dgvgxnwos/image/upload/v1763813677/22cce545-c53d-4c28-9a70-1e88ab48f766_r5f24n.avif",
+    "https://res.cloudinary.com/dgvgxnwos/image/upload/v1763813676/5f2de156-4117-4909-975a-336ea5db3a64_zvx0wn.avif",
+    "https://res.cloudinary.com/dgvgxnwos/image/upload/v1763813676/1b6c4943-bf18-417a-a44f-5516e1430b54_gttwof.avif",
   ];
 
-  const address = '서울 중구 명동2가 32-2'; // → 있을 수도 없을 수도
+  const amenities = [
+    "성신여대입구역 근처",
+    "셀프체크인",
+    "여행 가방 보관 가능",
+    "무료 주차 공간",
+    "세탁기 및 건조기",
+  ];
+
+  const address = "서울 중구 명동2가 32-2";
+
   const [showAllPhotos, setShowAllPhotos] = useState(false);
+  const [openReviews, setOpenReviews] = useState(false);
 
   return (
     <>
-      <div className="min-h-screen bg-white">
-        {/* 사진 모두 보기 */}
-        {showAllPhotos && (
-          <div className="fixed  inset-0 bg-white z-50 overflow-y-auto ">
-            <div className="min-h-screen p-8">
-              <Button
-                onClick={() => setShowAllPhotos(false)}
-                variant="ghost"
-                className="fixed gap-2 text-black font-bold"
-              >
-                닫기
-              </Button>
-              <div className="max-w-2xl mx-auto space-y-4 pt-14">
-                {images.map((img, index) => (
-                  <div key={index}>
-                    <Image
-                      src={img}
-                      alt={`숙소사진 ${index + 1}`}
-                      width={230}
-                      height={250}
-                      className="w-full rounded-2xl"
-                    />
-                  </div>
-                ))}
-              </div>
+      {/* 사진 모두 보기 오버레이 */}
+      {showAllPhotos && (
+        <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
+          <div className="min-h-screen p-8">
+            <Button
+              onClick={() => setShowAllPhotos(false)}
+              variant="ghost"
+              className="fixed gap-2 font-bold text-black"
+            >
+              닫기
+            </Button>
+            <div className="mx-auto max-w-2xl space-y-4 pt-14">
+              {images.map((img, index) => (
+                <div key={index}>
+                  <Image
+                    src={img}
+                    alt={`숙소사진 ${index + 1}`}
+                    width={230}
+                    height={250}
+                    className="w-full rounded-2xl"
+                  />
+                </div>
+              ))}
             </div>
           </div>
-        )}
+        </div>
+      )}
 
-        <div className="max-w-[1120px] mx-auto px-6 py-6">
+      {/* 메인 페이지 */}
+      <div className="min-h-screen bg-white">
+        <div className="mx-auto max-w-[1120px] px-6 py-6">
+          {/* 상단 헤더 (제목만) */}
           <div className="mb-6">
             <RoomHeader title={roomData.title} />
           </div>
 
-          {/* 사진 */}
+          {/* 사진 영역 */}
           <RoomImages
             images={images}
-            onOpenAllPhotos={() => {
-              setShowAllPhotos(true);
-            }}
+            onOpenAllPhotos={() => setShowAllPhotos(true)}
           />
 
-          {/* 이미지 하단 정보 */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-6">
+          {/* 아래 정보 + 예약 카드 */}
+          <div className="grid grid-cols-1 gap-8 pb-6 lg:grid-cols-3">
             <div className="lg:col-span-2">
               <RoomInfo
                 description={roomData.description}
                 explanation={roomData.explanation}
                 amenities={amenities}
+                rating={roomData.rating}
+                reviewCount={roomData.reviewCount}
+                onOpenReviews={() => setOpenReviews(true)} // ⬅️ 여기서 모달 오픈
               />
-
-              {/* <div className="p-4">
-                <RoomDescription fullText={roomData.explanation} />
-              </div> */}
             </div>
 
-            {/* 오른쪽 예약 카드 */}
             <div className="lg:col-span-1">
               <BookCard />
             </div>
           </div>
-          <div className="border-t border-b pb-12">
+
+          {/* 위치 */}
+          <div className="border-b border-t pb-12">
             <h1 className="pb-3 pt-8 text-2xl">위치</h1>
             <p className="pb-3">{roomData.position}</p>
             <KakaoMap address={address} />
           </div>
 
           {/* 숙소 편의 시설 */}
-          <div className="border-b pb-12 gap-4">
+          <div className="gap-4 border-b pb-12">
             <RoomAmenity />
           </div>
         </div>
       </div>
+
+      {/* 리뷰 모달 – 아래 ‘후기 23개’에서만 열림 */}
+      <ReviewsModal
+        open={openReviews}
+        onClose={() => setOpenReviews(false)}
+        listingId={roomData.id}
+      />
     </>
   );
 }
