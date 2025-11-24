@@ -45,7 +45,13 @@ export class RoomsService {
         lat: lat ?? 0,
         lng: lng ?? 0,
         images: { create: (images ?? []).map((url) => ({ url })) },
-        amenities: { connect: (amenities ?? []).map((name) => ({ name })) },
+        // amenities: { connect: (amenities ?? []).map((name) => ({ name })) },
+        amenities: {
+          connectOrCreate: (amenities ?? []).map((name) => ({
+            where: { name },
+            create: { name },
+          })),
+        },
       },
     });
   }
@@ -56,7 +62,8 @@ export class RoomsService {
    * @returns 검색 조건에 맞는 숙소 목록
    */
   async findAll(query: SearchRoomsDto) {
-    const { destination, startDate, endDate, guests } = query;
+    const { destination, startDate, endDate, guests, structure, privacyType } =
+      query;
     console.log({ query });
 
     const where: Prisma.RoomWhereInput = {};
@@ -89,6 +96,16 @@ export class RoomsService {
           status: { not: 'CANCELLED' },
         },
       };
+    }
+
+    // 4. 숙소 유형(structure) 필터링
+    if (structure) {
+      where.structure = structure;
+    }
+
+    // 5. 공간 유형(privacyType) 필터링
+    if (privacyType) {
+      where.privacyType = privacyType;
     }
 
     return this.prismaService.room.findMany({

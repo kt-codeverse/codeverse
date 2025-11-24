@@ -119,6 +119,8 @@ async function seedRooms(
       title: '서울역 근처 아늑한 아파트',
       description:
         '서울의 중심에서 도시의 활기를 느껴보세요. 교통이 편리하고 주변에 맛집이 많습니다.',
+      structure: '아파트',
+      privacyType: '공간 전체',
       country: 'South Korea',
       city: 'Seoul',
       pricePerNight: 120,
@@ -133,6 +135,8 @@ async function seedRooms(
       title: '강남 스타일 모던 스튜디오',
       description:
         '강남의 활기찬 분위기를 만끽할 수 있는 모던한 스튜디오입니다.',
+      structure: '아파트',
+      privacyType: '개인실',
       country: 'South Korea',
       city: 'Seoul',
       pricePerNight: 150,
@@ -147,6 +151,8 @@ async function seedRooms(
       title: '오사카 도톤보리 근처 아파트',
       description:
         '오사카의 번화가 도톤보리에서 가까운 아파트입니다. 편리한 교통과 다양한 먹거리를 즐기세요.',
+      structure: '아파트',
+      privacyType: '공간 전체',
       country: 'South Korea',
       city: 'Osaka',
       pricePerNight: 130,
@@ -161,6 +167,8 @@ async function seedRooms(
       title: '오사카 유니버셜 스튜디오 근처 숙소',
       description:
         '유니버셜 스튜디오 재팬 방문에 최적화된 숙소입니다. 가족 여행에 좋습니다.',
+      structure: '주택',
+      privacyType: '공간 전체',
       country: 'South Korea',
       city: 'Osaka',
       pricePerNight: 160,
@@ -175,6 +183,8 @@ async function seedRooms(
       title: '오사카 난바역 도보 5분 거리',
       description:
         '난바역에서 도보 5분 거리에 위치한 편리한 숙소입니다. 쇼핑과 관광에 용이합니다.',
+      structure: '아파트',
+      privacyType: '개인실',
       country: 'South Korea',
       city: 'Osaka',
       pricePerNight: 140,
@@ -189,6 +199,8 @@ async function seedRooms(
       title: '오사카 우메다 스카이빌딩 뷰 아파트',
       description:
         '우메다 스카이빌딩이 보이는 멋진 야경을 자랑하는 아파트입니다.',
+      structure: '아파트',
+      privacyType: '공간 전체',
       country: 'South Korea',
       city: 'Osaka',
       pricePerNight: 170,
@@ -203,6 +215,8 @@ async function seedRooms(
       title: '오사카 신사이바시 쇼핑가 인접 숙소',
       description:
         '신사이바시 쇼핑가와 가까워 쇼핑을 즐기기에 최적의 위치입니다.',
+      structure: '아파트',
+      privacyType: '개인실',
       country: 'South Korea',
       city: 'Osaka',
       pricePerNight: 155,
@@ -217,6 +231,8 @@ async function seedRooms(
       title: '오사카 텐노지 동물원 근처 가족 숙소',
       description:
         '텐노지 동물원과 가까워 아이들과 함께하는 가족 여행에 좋습니다.',
+      structure: '주택',
+      privacyType: '공간 전체',
       country: 'South Korea',
       city: 'Osaka',
       pricePerNight: 145,
@@ -230,6 +246,8 @@ async function seedRooms(
       identifier: 'Osaka Room7',
       title: '오사카 교토 당일치기 여행에 좋은 숙소',
       description: '교토로의 당일치기 여행이 편리한 위치에 있습니다.',
+      structure: '게스트하우스',
+      privacyType: '다인실',
       country: 'South Korea',
       city: 'Osaka',
       pricePerNight: 135,
@@ -244,6 +262,8 @@ async function seedRooms(
       title: '오사카 아베노 하루카스 뷰 아파트',
       description:
         '아베노 하루카스 타워가 보이는 고층 아파트에서 멋진 전망을 즐기세요.',
+      structure: '아파트',
+      privacyType: '공간 전체',
       country: 'South Korea',
       city: 'Osaka',
       pricePerNight: 180,
@@ -258,6 +278,8 @@ async function seedRooms(
       title: '제주 돌담길 감성 숙소',
       description:
         '조용한 제주 시골 마을에서 즐기는 힐링 타임. 돌담과 귤밭이 어우러진 풍경을 제공합니다.',
+      structure: '독특한 숙소',
+      privacyType: '공간 전체',
       country: 'South Korea',
       city: 'Jeju',
       pricePerNight: 150,
@@ -272,6 +294,8 @@ async function seedRooms(
       title: '제주 서귀포 오션뷰 펜션',
       description:
         '서귀포 바다가 한눈에 보이는 아름다운 펜션입니다. 휴식에 최적화되어 있습니다.',
+      structure: '주택',
+      privacyType: '공간 전체',
       country: 'South Korea',
       city: 'Jeju',
       pricePerNight: 200,
@@ -286,6 +310,8 @@ async function seedRooms(
       title: '제주 동쪽 해안도로 감성 숙소',
       description:
         '제주 동쪽 해안도로를 따라 위치한 감성적인 숙소입니다. 일출을 감상하기 좋습니다.',
+      structure: '주택',
+      privacyType: '개인실',
       country: 'South Korea',
       city: 'Jeju',
       pricePerNight: 170,
@@ -300,6 +326,8 @@ async function seedRooms(
       title: '제주 한라산 근처 독채 펜션',
       description:
         '한라산 등반 후 편안하게 쉴 수 있는 독채 펜션입니다. 자연 속에서 힐링하세요.',
+      structure: '주택',
+      privacyType: '공간 전체',
       country: 'South Korea',
       city: 'Jeju',
       pricePerNight: 190,
@@ -314,6 +342,8 @@ async function seedRooms(
       title: '제주 애월읍 감성 카페거리 숙소',
       description:
         '애월읍 카페거리와 가까워 젊은 감성을 느낄 수 있는 숙소입니다.',
+      structure: '독특한 숙소',
+      privacyType: '개인실',
       country: 'South Korea',
       city: 'Jeju',
       pricePerNight: 160,
@@ -328,6 +358,8 @@ async function seedRooms(
       title: '제주 협재 해변 근처 게스트하우스',
       description:
         '협재 해변에서 도보 거리에 위치한 게스트하우스입니다. 서핑과 해수욕을 즐기세요.',
+      structure: '게스트하우스',
+      privacyType: '다인실',
       country: 'South Korea',
       city: 'Jeju',
       pricePerNight: 110,
@@ -342,6 +374,8 @@ async function seedRooms(
       title: '제주 성산일출봉 뷰 호텔',
       description:
         '성산일출봉이 보이는 객실에서 멋진 일출을 감상할 수 있습니다.',
+      structure: '호텔',
+      privacyType: '개인실',
       country: 'South Korea',
       city: 'Jeju',
       pricePerNight: 220,
@@ -356,6 +390,8 @@ async function seedRooms(
       title: '제주 중문 관광단지 인접 리조트',
       description:
         '중문 관광단지와 가까워 다양한 관광지를 편리하게 이용할 수 있습니다.',
+      structure: '호텔',
+      privacyType: '공간 전체',
       country: 'South Korea',
       city: 'Jeju',
       pricePerNight: 250,
@@ -370,6 +406,8 @@ async function seedRooms(
       title: '강릉 커피거리 감성 카페 2층',
       description:
         '커피향 가득한 강릉에서 특별한 하룻밤. 안목해변이 바로 앞에 있습니다.',
+      structure: '독특한 숙소',
+      privacyType: '공간 전체',
       country: 'South Korea',
       city: 'Gangneung',
       pricePerNight: 130,
@@ -384,6 +422,8 @@ async function seedRooms(
       title: '강릉 경포대 해변 근처 펜션',
       description:
         '경포대 해변에서 도보 거리에 위치한 펜션입니다. 여름 휴가에 좋습니다.',
+      structure: '주택',
+      privacyType: '공간 전체',
       country: 'South Korea',
       city: 'Gangneung',
       pricePerNight: 160,
@@ -397,6 +437,8 @@ async function seedRooms(
       identifier: 'Gangneung Room3',
       title: '강릉 오죽헌 근처 한옥 스테이',
       description: '오죽헌과 가까운 전통 한옥에서 고즈넉한 시간을 보내세요.',
+      structure: '독특한 숙소',
+      privacyType: '개인실',
       country: 'South Korea',
       city: 'Gangneung',
       pricePerNight: 140,
@@ -410,6 +452,8 @@ async function seedRooms(
       identifier: 'Gangneung Room4',
       title: '강릉 주문진항 해산물 맛집 투어 숙소',
       description: '주문진항과 가까워 신선한 해산물을 맛볼 수 있는 숙소입니다.',
+      structure: '게스트하우스',
+      privacyType: '개인실',
       country: 'South Korea',
       city: 'Gangneung',
       pricePerNight: 125,
@@ -424,6 +468,8 @@ async function seedRooms(
       title: '강릉 정동진 일출 명소 펜션',
       description:
         '정동진 일출을 객실에서 감상할 수 있는 펜션입니다. 로맨틱한 여행에 추천합니다.',
+      structure: '주택',
+      privacyType: '공간 전체',
       country: 'South Korea',
       city: 'Gangneung',
       pricePerNight: 180,
@@ -437,6 +483,8 @@ async function seedRooms(
       identifier: 'Gangneung Room6',
       title: '강릉 사천 해변 서핑 게스트하우스',
       description: '사천 해변에서 서핑을 즐기기에 좋은 게스트하우스입니다.',
+      structure: '게스트하우스',
+      privacyType: '다인실',
       country: 'South Korea',
       city: 'Gangneung',
       pricePerNight: 115,
@@ -451,6 +499,8 @@ async function seedRooms(
       title: '경주 황리단길 한옥 스테이',
       description:
         '전통 한옥의 멋과 현대적인 편리함이 공존하는 공간. 황리단길 중심에 위치해 있습니다.',
+      structure: '독특한 숙소',
+      privacyType: '개인실',
       country: 'South Korea',
       city: 'Gyeongju',
       pricePerNight: 160,
@@ -465,6 +515,8 @@ async function seedRooms(
       title: '경주 불국사 근처 조용한 펜션',
       description:
         '불국사와 석굴암 방문에 편리한 조용한 펜션입니다. 역사 탐방에 좋습니다.',
+      structure: '주택',
+      privacyType: '공간 전체',
       country: 'South Korea',
       city: 'Gyeongju',
       pricePerNight: 140,
@@ -478,6 +530,8 @@ async function seedRooms(
       identifier: 'Gyeongju Room3',
       title: '경주 동궁과 월지 야경 뷰 숙소',
       description: '동궁과 월지의 아름다운 야경을 감상할 수 있는 숙소입니다.',
+      structure: '아파트',
+      privacyType: '공간 전체',
       country: 'South Korea',
       city: 'Gyeongju',
       pricePerNight: 180,
@@ -492,6 +546,8 @@ async function seedRooms(
       title: '경주 보문단지 호수 뷰 리조트',
       description:
         '보문호수의 아름다운 풍경을 즐길 수 있는 리조트입니다. 휴양에 적합합니다.',
+      structure: '호텔',
+      privacyType: '공간 전체',
       country: 'South Korea',
       city: 'Gyeongju',
       pricePerNight: 200,
@@ -506,6 +562,8 @@ async function seedRooms(
       title: '경주 첨성대 근처 게스트하우스',
       description:
         '첨성대와 대릉원 등 주요 유적지와 가까운 게스트하우스입니다.',
+      structure: '게스트하우스',
+      privacyType: '다인실',
       country: 'South Korea',
       city: 'Gyeongju',
       pricePerNight: 100,
@@ -520,6 +578,8 @@ async function seedRooms(
       title: '경주 양동마을 전통 한옥 체험',
       description:
         '유네스코 세계유산 양동마을에서 전통 한옥을 체험할 수 있는 숙소입니다.',
+      structure: '독특한 숙소',
+      privacyType: '공간 전체',
       country: 'South Korea',
       city: 'Gyeongju',
       pricePerNight: 170,
@@ -534,6 +594,8 @@ async function seedRooms(
       title: '경주 감포항 바다 전망 펜션',
       description:
         '감포항 바다가 시원하게 보이는 펜션입니다. 신선한 해산물을 즐기세요.',
+      structure: '주택',
+      privacyType: '공간 전체',
       country: 'South Korea',
       city: 'Gyeongju',
       pricePerNight: 150,
@@ -548,6 +610,8 @@ async function seedRooms(
       title: '경주 월정교 야경 감상 숙소',
       description:
         '월정교의 아름다운 야경을 가까이서 감상할 수 있는 숙소입니다.',
+      structure: '아파트',
+      privacyType: '개인실',
       country: 'South Korea',
       city: 'Gyeongju',
       pricePerNight: 165,

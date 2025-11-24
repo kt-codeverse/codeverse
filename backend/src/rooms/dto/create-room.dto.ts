@@ -28,6 +28,22 @@ export class CreateRoomDto {
   @IsNotEmpty()
   description: string;
 
+  @ApiProperty({
+    description: '숙소 유형',
+    example: '아파트',
+  })
+  @IsString()
+  @IsNotEmpty()
+  structure: string;
+
+  @ApiProperty({
+    description: '공간 유형',
+    example: '공간 전체',
+  })
+  @IsString()
+  @IsNotEmpty()
+  privacyType: string;
+
   @ApiProperty({ description: '국가', example: 'South Korea' })
   @IsString()
   @IsNotEmpty()

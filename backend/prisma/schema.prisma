@@ -39,6 +39,8 @@ model Room {
   id            String     @id @default(uuid()) // 방 ID
   title         String                        // 숙소 제목
   description   String     @db.Text             // 숙소 설명
+  structure     String                        // 숙소 유형 (예: 집, 아파트)
+  privacyType   String                        // 공간 유형 (예: 전체, 개인실)
   country       String                        // 숙소 국가
   city          String                        // 숙소 도시
   address       String?                       // 상세 주소 (선택)

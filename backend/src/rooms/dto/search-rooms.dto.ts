@@ -29,4 +29,20 @@ export class SearchRoomsDto {
   @IsInt()
   @Min(1)
   guests?: number;
+
+  @ApiProperty({
+    description: '숙소 유형',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  structure?: string;
+
+  @ApiProperty({
+    description: '공간 유형',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  privacyType?: string;
 }

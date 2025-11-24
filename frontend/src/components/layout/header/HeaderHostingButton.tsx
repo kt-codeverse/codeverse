@@ -60,12 +60,12 @@ function HostingTypeButton({
     <Button
       type="button"
       variant={selectedType === type ? 'default' : 'outline'}
-      className="h-28 flex-col gap-2"
+      className="h-full flex-col gap-2 p-2 sm:p-10"
       onClick={() => onSelect(type)}
       disabled={type !== 'rooms'}
     >
-      <div className="relative size-30">
-        <Image src={src} alt={alt} fill style={{ objectFit: 'contain' }} />
+      <div>
+        <Image src={src} alt={alt} width={300} height={300} />
       </div>
       <span>{label}</span>
     </Button>
@@ -90,14 +90,14 @@ export default function HeaderHostingButton() {
             호스팅 하기
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="w-[90vw] sm:max-w-4xl! p-6 sm:p-8">
           <DialogHeader>
             <DialogTitle>원하시는 호스팅 유형을 선택하세요</DialogTitle>
             <DialogDescription>
               호스팅할 유형을 선택하고 다음 단계로 진행하세요.
             </DialogDescription>
           </DialogHeader>
-          <div className="grid grid-cols-3 gap-4 py-4">
+          <div className="grid grid-cols-3 gap-2 sm:gap-4 py-4">
             {hostingTypes.map((option) => (
               <HostingTypeButton
                 key={option.type}

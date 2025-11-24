@@ -57,6 +57,12 @@ export class RoomEntity implements Room {
   @ApiProperty({ description: '숙소 설명' })
   description: string;
 
+  @ApiProperty({ description: '숙소 유형' })
+  structure: string;
+
+  @ApiProperty({ description: '공간 유형' })
+  privacyType: string;
+
   @ApiProperty({ description: '국가' })
   country: string;
 
