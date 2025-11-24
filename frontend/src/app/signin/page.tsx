@@ -1,5 +1,5 @@
 'use client';
-//import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 //import axios from 'axios';
 import TextInput from '@/components/user/TextInput';
 import PasswordInput from '@/components/user/PasswordInput';
@@ -7,6 +7,7 @@ import { Mail } from 'lucide-react';
 import AuthButton from '@/components/user/AuthButton';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
+import { api } from '@/lib/http';
 
 type FormValues = {
   email: string;
@@ -14,6 +15,7 @@ type FormValues = {
 };
 
 export default function LoginPage() {
+  const route = useRouter();
   const {
     register,
     handleSubmit,
@@ -22,8 +24,24 @@ export default function LoginPage() {
     mode: 'onChange',
   });
 
-  const onSubmit = (data: FormValues) => {
+  const onSubmit = async (data: FormValues) => {
     console.log('로그인 데이터 : ', data);
+
+    try {
+      const register = await api.post('auth/login', {
+        email: data.email,
+        password: data.password,
+      });
+      const accessToken = register.data.access_token;
+      console.log(accessToken);
+      localStorage.setItem('token', accessToken);
+      alert('로그인에 성공했습니다');
+
+      route.push('/');
+    } catch (error) {
+      console.log(error);
+      alert('로그인에 실패했습니다');
+    }
   };
 
   //const router = useRouter();

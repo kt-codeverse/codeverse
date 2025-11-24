@@ -4,6 +4,10 @@ import RoomHeader from '@/components/room/RoomHeader';
 import RoomImages from '@/components/room/RoomImages';
 import RoomInfo from '@/components/room/RoomInfo';
 import KakaoMap from '@/components/room/Map';
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import Image from 'next/image';
+import RoomAmenity from '@/components/room/RoomAmenity';
 
 export default function RoomPage() {
   // 임시 데이터
@@ -102,6 +106,9 @@ export default function RoomPage() {
     'https://res.cloudinary.com/dgvgxnwos/image/upload/v1763134521/3f2ef16c-c99c-4377-99f9-dbbb06a23d91_vry34b.avif',
     'https://res.cloudinary.com/dgvgxnwos/image/upload/v1763134521/7af1b43e-74d7-4436-b3a5-ca9ca186e116_pcxt3y.avif',
     'https://res.cloudinary.com/dgvgxnwos/image/upload/v1763134520/c4350a2e-bd5b-4487-8484-afb3887a60c7_egje2a.avif',
+    'https://res.cloudinary.com/dgvgxnwos/image/upload/v1763813677/22cce545-c53d-4c28-9a70-1e88ab48f766_r5f24n.avif',
+    'https://res.cloudinary.com/dgvgxnwos/image/upload/v1763813676/5f2de156-4117-4909-975a-336ea5db3a64_zvx0wn.avif',
+    'https://res.cloudinary.com/dgvgxnwos/image/upload/v1763813676/1b6c4943-bf18-417a-a44f-5516e1430b54_gttwof.avif',
   ];
   const amenities = [
     '성신여대입구역 근처',
@@ -112,20 +119,54 @@ export default function RoomPage() {
   ];
 
   const address = '서울 중구 명동2가 32-2'; // → 있을 수도 없을 수도
+  const [showAllPhotos, setShowAllPhotos] = useState(false);
 
   return (
     <>
       <div className="min-h-screen bg-white">
+        {/* 사진 모두 보기 */}
+        {showAllPhotos && (
+          <div className="fixed  inset-0 bg-white z-50 overflow-y-auto ">
+            <div className="min-h-screen p-8">
+              <Button
+                onClick={() => setShowAllPhotos(false)}
+                variant="ghost"
+                className="fixed gap-2 text-black font-bold"
+              >
+                닫기
+              </Button>
+              <div className="max-w-2xl mx-auto space-y-4 pt-14">
+                {images.map((img, index) => (
+                  <div key={index}>
+                    <Image
+                      src={img}
+                      alt={`숙소사진 ${index + 1}`}
+                      width={230}
+                      height={250}
+                      className="w-full rounded-2xl"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="max-w-[1120px] mx-auto px-6 py-6">
           <div className="mb-6">
             <RoomHeader title={roomData.title} />
           </div>
 
           {/* 사진 */}
-          <RoomImages images={images} />
+          <RoomImages
+            images={images}
+            onOpenAllPhotos={() => {
+              setShowAllPhotos(true);
+            }}
+          />
 
           {/* 이미지 하단 정보 */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 ">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-6">
             <div className="lg:col-span-2">
               <RoomInfo
                 description={roomData.description}
@@ -143,11 +184,15 @@ export default function RoomPage() {
               <BookCard />
             </div>
           </div>
-          <br></br>
-          <div className="border-t">
+          <div className="border-t border-b pb-12">
             <h1 className="pb-3 pt-8 text-2xl">위치</h1>
             <p className="pb-3">{roomData.position}</p>
             <KakaoMap address={address} />
+          </div>
+
+          {/* 숙소 편의 시설 */}
+          <div className="border-b pb-12 gap-4">
+            <RoomAmenity />
           </div>
         </div>
       </div>
