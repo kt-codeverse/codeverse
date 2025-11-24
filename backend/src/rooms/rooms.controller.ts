@@ -30,15 +30,13 @@ export class RoomsController {
   // @UseGuards(AuthGuard('jwt'))
   // @ApiBearerAuth()
   @ApiOperation({ summary: '숙소 생성' })
-  @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
   @Post()
   create(
     @Request() req: AuthenticatedRequest,
     @Body() createRoomDto: CreateRoomDto,
   ) {
-    // 인증서비스가 완료되면 사용자아이디를 사용
-    // const hostId = req.user.id;
     const hostId = req.user?.id;
     return this.roomsService.create(createRoomDto, hostId);
   }
