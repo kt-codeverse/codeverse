@@ -1,82 +1,108 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { http } from '@/lib/http';
-import ProfileCard from '@/components/profile/ProfileCard';
-import { User, Review } from '@/types/model';
+import { useEffect, useState } from "react";
+import Container from "@/components/layout/Container";
+import ProfileCard from "@/components/profile/ProfileCard";
+import { api } from "@/lib/http";
+import type { User, Review } from "@/types/model";
 
-export default function MyProfile() {
+export default function MyProfilePage() {
   const [user, setUser] = useState<User | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
       try {
-        const me = await http.get<User>('/users/me');
+        // TODO: 백엔드 완전히 붙으면 /users/me 응답 구조에 맞춰 User 타입 수정
+        const me = await api.get<User>("/users/me");
         setUser(me.data);
 
-        const rv = await http.get<Review[]>(`/reviews?userId=${me.data.id}`);
+        const rv = await api.get<Review[]>(`/reviews?userId=${me.data.id}`);
         setReviews(rv.data);
-      } catch {
+      } catch (error) {
+        console.error("프로필 API 실패, 목업 사용:", error);
+
+        // 임시 더미 데이터
         setUser({
-          name: '민기',
-          role: '게스트',
+          id: "dummy-user",
+          name: "민기",
+          role: "게스트",
           trips: 1,
-          reviews: 1,
-          memberFor: '4개월',
-          verified: true,
-        });
+          reviewsCount: 1,
+          memberFor: "4개월",
+          avatar: null,
+        } as User);
 
         setReviews([
           {
-            id: 'r1',
-            author: '리나',
-            date: '2025년 7월',
-            content: '감사합니다 🙂',
-          },
+            id: "r1",
+            author: "리나",
+            date: "2025년 7월",
+            content: "감사합니다 🙂",
+          } as Review,
         ]);
+      } finally {
+        setLoading(false);
       }
     })();
   }, []);
 
-  if (!user) return <p>로딩 중...</p>;
+  if (loading || !user) {
+    return (
+      <main className="min-h-dvh flex flex-col bg-white">
+        <Container>
+          <section className="py-10">로딩 중...</section>
+        </Container>
+      </main>
+    );
+  }
 
   return (
-    <>
-      <div className="flex items-center justify-between">
-        <h3 className="text-3xl font-extrabold">자기소개</h3>
-        <button className="rounded-full border px-3 py-1.5 text-sm shadow-sm hover:bg-gray-50">
-          수정
-        </button>
-      </div>
+    <main className="min-h-dvh flex flex-col bg-white">
+      {/* ✅ Header / Footer 는 전역 layout 에서 렌더링되므로 여기선 안 씀 */}
+      <Container>
+        <section className="flex gap-10 py-10">
+          {/* ✅ 내부 사이드바(프로필 / 이전 여행 / 인연) 제거하고,
+              상위 레이아웃에 있는 사이드바만 사용 */}
 
-      <div className="mt-6">
-        {}
-        <ProfileCard user={user} />
-      </div>
+          {/* 오른쪽 내용만 남기기 */}
+          <section className="flex-1">
+            {/* 상단 제목 */}
+            <div className="flex items-center justify-between">
+              <h3 className="text-3xl font-extrabold">자기소개</h3>
+            </div>
 
-      <div className="mt-8 flex items-center gap-2 text-gray-700">
-        <span className="inline-block h-5 w-5 rounded-full border" />
-        <span className="underline">본인 인증 완료</span>
-      </div>
+            {/* 프로필 카드 (아바타는 user.avatar 사용) */}
+            <div className="mt-6">
+              <ProfileCard
+                user={user}
+                reviewsCount={reviews.length}
+                avatarUrl={user.avatar ?? null}
+              />
+            </div>
 
-      <hr className="my-10" />
-
-      <div className="mt-6">
-        <h4 className="text-2xl font-bold">후기</h4>
-        <ul className="mt-6 space-y-6">
-          {reviews.map((r) => (
-            <li key={r.id} className="flex items-start gap-3">
-              <div className="h-9 w-9 shrink-0 overflow-hidden rounded-full bg-gray-200" />
-              <div>
-                <div className="font-medium">{r.author}</div>
-                <div className="text-sm text-gray-500">{r.date}</div>
-                <p className="mt-2">{r.content}</p>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </>
+            {/* 후기 리스트 */}
+            <div className="mt-10">
+              <h4 className="text-2xl font-bold">후기</h4>
+              <ul className="mt-6 space-y-6">
+                {reviews.map((r) => (
+                  <li key={r.id} className="flex items-start gap-3">
+                    <div className="h-9 w-9 shrink-0 overflow-hidden rounded-full bg-gray-200" />
+                    <div>
+                      <div className="font-medium">{r.author}</div>
+                      <div className="text-sm text-gray-500">{r.date}</div>
+                      <p className="mt-2 text-sm text-neutral-800">
+                        {r.content}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </section>
+        </section>
+      </Container>
+    </main>
   );
 }

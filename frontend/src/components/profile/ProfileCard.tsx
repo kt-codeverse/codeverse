@@ -1,55 +1,65 @@
-// components/profile/ProfileCard.tsx
-type User = {
-  name: string;
-  role: string;
-  trips: number;
-  reviews: number;
-  memberFor: string;
-  verified?: boolean;
+"use client";
+
+import type { User, Review } from "@/types/model";
+import {
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+} from "@/components/ui/avatar";
+
+type ProfileCardProps = {
+  user: User;
+  reviewsCount: number;
+  /** 헤더에서 쓰는 사용자 아바타 URL (없으면 이니셜로 대체) */
+  avatarUrl?: string | null;
 };
 
-export default function ProfileCard({ user }: { user: User }) {
+export default function ProfileCard({
+  user,
+  reviewsCount,
+  avatarUrl,
+}: ProfileCardProps) {
+  const initial = user.name?.[0] ?? "게";
+
   return (
-    <div className="w-full max-w-md rounded-3xl border bg-white p-6 shadow-md">
-      {/* 아바타 + 이름 */}
-      <div className="flex items-center gap-4">
-        <div className="relative">
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gray-900 text-2xl font-bold text-white">
-            {user.name.slice(0, 1)}
-          </div>
-          {user.verified && (
-            <span
-              className="absolute -right-1 bottom-2 inline-flex h-6 w-6 items-center justify-center rounded-full bg-rose-500 text-white text-xs ring-4 ring-white"
-              title="Verified"
-            >
-              ✓
-            </span>
+    <section className="flex items-center gap-8 rounded-2xl border border-neutral-200 bg-white p-8 shadow-sm">
+      {/* 아바타 영역 */}
+      <div className="flex flex-col items-center gap-2">
+        <Avatar className="h-20 w-20 text-xl">
+          {avatarUrl && (
+            <AvatarImage src={avatarUrl} alt={user.name ?? "프로필"} />
           )}
-        </div>
-        <div>
-          <div className="text-xl font-extrabold">{user.name}</div>
-          <div className="text-sm text-gray-600">{user.role}</div>
+          <AvatarFallback>{initial}</AvatarFallback>
+        </Avatar>
+        <div className="text-sm font-semibold">{user.name}</div>
+        <div className="text-xs text-neutral-500">
+          {user.role ?? "게스트"}
         </div>
       </div>
 
-      {/* 구분선 */}
-      <hr className="my-6" />
-
-      {/* 통계 */}
-      <dl className="grid grid-cols-2 gap-4 text-sm">
-        <div>
-          <dt className="text-gray-500">TripNest를 통한 여행</dt>
-          <dd className="mt-1 text-lg font-semibold">{user.trips}회</dd>
+      {/* 통계 영역 */}
+      <div className="flex-1">
+        <div className="mb-6 flex gap-12 text-sm">
+          <div>
+            <div className="text-neutral-500">TripNest를 통한 여행</div>
+            <div className="mt-1 text-lg font-semibold">
+              {user.trips ?? 0}회
+            </div>
+          </div>
+          <div>
+            <div className="text-neutral-500">후기</div>
+            <div className="mt-1 text-lg font-semibold">
+              {reviewsCount}개
+            </div>
+          </div>
+          <div>
+            <div className="text-neutral-500">가입 기간</div>
+            <div className="mt-1 text-lg font-semibold">
+              {user.memberFor ?? "-"}
+            </div>
+          </div>
         </div>
-        <div>
-          <dt className="text-gray-500">후기</dt>
-          <dd className="mt-1 text-lg font-semibold">{user.reviews}개</dd>
-        </div>
-        <div className="col-span-2">
-          <dt className="text-gray-500">가입 기간</dt>
-          <dd className="mt-1 text-lg font-semibold">{user.memberFor}</dd>
-        </div>
-      </dl>
-    </div>
+      </div>
+    </section>
   );
 }
