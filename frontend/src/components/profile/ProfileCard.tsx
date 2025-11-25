@@ -59,11 +59,6 @@ export default function ProfileCard({
             </div>
           </div>
         </div>
-
-        <p className="text-sm text-neutral-600">
-          아직 자기소개를 작성하지 않았어요. 여행 스타일이나 관심사를
-          추가해보세요.
-        </p>
       </div>
     </section>
   );
