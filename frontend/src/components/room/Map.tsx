@@ -19,7 +19,6 @@ export default function Map({ address }: MapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    console.log('window.kakao 확인:', window.kakao);
     const loadMap = () => {
       if (!window.kakao || !window.kakao.maps) return;
 

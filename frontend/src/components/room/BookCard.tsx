@@ -18,8 +18,12 @@ interface Guests {
   infants: number;
 }
 
-export default function BookCard() {
-  const nightlyRate = 120000; // 예시 요금
+interface BookCardProps {
+  pricePerNight: number;
+}
+
+export default function BookCard({ pricePerNight }: BookCardProps) {
+  // const nightlyRate = 120000; // 예시 요금
   const [checkIn, setCheckIn] = useState<Date | null>(null);
   const [checkOut, setCheckOut] = useState<Date | null>(null);
   const [guests, setGuests] = useState<Guests>({
@@ -79,7 +83,7 @@ export default function BookCard() {
       {/* 요금 */}
       <div className="flex items-baseline gap-1 ">
         <span className="text-[22px] underline font-bold">
-          ₩{nightlyRate.toLocaleString()}
+          ₩{pricePerNight.toLocaleString()}
         </span>
         <span className="text-gray-600">· {nights}박</span>
       </div>

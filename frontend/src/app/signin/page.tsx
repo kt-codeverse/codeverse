@@ -25,7 +25,7 @@ export default function LoginPage() {
   });
 
   const onSubmit = async (data: FormValues) => {
-    console.log('로그인 데이터 : ', data);
+    //console.log('로그인 데이터 : ', data);
 
     try {
       const register = await api.post('auth/login', {
@@ -33,9 +33,8 @@ export default function LoginPage() {
         password: data.password,
       });
       const accessToken = register.data.access_token;
-      console.log(accessToken);
+      //console.log(accessToken);
       localStorage.setItem('token', accessToken);
-      alert('로그인에 성공했습니다');
 
       route.push('/');
     } catch (error) {

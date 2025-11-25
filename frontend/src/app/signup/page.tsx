@@ -6,7 +6,6 @@ import PasswordInput from '@/components/user/PasswordInput';
 import AuthButton from '@/components/user/AuthButton';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
-//import { useEffect } from 'react';
 import { api } from '@/lib/http';
 import { useRouter } from 'next/navigation';
 
@@ -35,7 +34,7 @@ export default function RegisterPage() {
       alert('비밀번호가 일치하지 않습니다.');
       return;
     }
-    console.log('회원가입 데이터: ', data);
+    //console.log('회원가입 데이터: ', data);
 
     try {
       const register = await api.post('/users/register', {
@@ -47,7 +46,7 @@ export default function RegisterPage() {
       });
 
       const accessToken = register.data.access_token;
-      console.log('accessToken: ', accessToken);
+      //console.log('accessToken: ', accessToken);
 
       localStorage.setItem('token', accessToken);
 
