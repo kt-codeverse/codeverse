@@ -29,7 +29,7 @@ export default function RootLayout({
         <Footer />
         {/* [2] 앱 전체에 채팅 위젯 추가 */}
         {/* 역할: 모든 페이지의 콘텐츠(children)와 푸터 위에 채팅 위젯을 고정 배치합니다. */}
-        <ChatWidget /> //
+        <ChatWidget />
       </body>
     </html>
   );

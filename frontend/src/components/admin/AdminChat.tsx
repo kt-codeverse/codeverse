@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 // Firebase SDK 모듈
 import {
@@ -11,11 +11,11 @@ import {
   setDoc,
   serverTimestamp,
   Timestamp,
-} from "firebase/firestore";
-import { db } from "@/lib/firebase"; // 수정된 경로
+} from 'firebase/firestore';
+import { db } from '@/lib/firebase'; // 수정된 경로
 
 // React
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 
 // ====================================================================
 // 타입 정의
@@ -28,7 +28,7 @@ interface Space {
 
 interface Message {
   id: string;
-  sender: "admin" | "user";
+  sender: 'admin' | 'user';
   text: string;
   createdAt: Timestamp;
 }
@@ -46,14 +46,14 @@ function ChatList({ onSelectSpace, selectedSpaceId, spaces }: ChatListProps) {
   return (
     <div
       style={{
-        width: "30%",
-        borderRight: "1px solid #ddd",
-        overflowY: "auto",
-        background: "#f8f8f8",
+        width: '30%',
+        borderRight: '1px solid #ddd',
+        overflowY: 'auto',
+        background: '#f8f8f8',
       }}
     >
       <h3
-        style={{ padding: "15px", margin: 0, borderBottom: "1px solid #ddd" }}
+        style={{ padding: '15px', margin: 0, borderBottom: '1px solid #ddd' }}
       >
         활성 채팅 공간 ({spaces.length})
       </h3>
@@ -63,18 +63,18 @@ function ChatList({ onSelectSpace, selectedSpaceId, spaces }: ChatListProps) {
           key={space.id}
           onClick={() => onSelectSpace(space.id)}
           style={{
-            padding: "15px",
-            cursor: "pointer",
-            borderBottom: "1px solid #eee",
-            background: space.id === selectedSpaceId ? "#e0f7fa" : "white",
-            fontWeight: space.id === selectedSpaceId ? "bold" : "normal",
+            padding: '15px',
+            cursor: 'pointer',
+            borderBottom: '1px solid #eee',
+            background: space.id === selectedSpaceId ? '#e0f7fa' : 'white',
+            fontWeight: space.id === selectedSpaceId ? 'bold' : 'normal',
           }}
         >
-          <div style={{ fontSize: "14px", color: "#555" }}>
+          <div style={{ fontSize: '14px', color: '#555' }}>
             고객 ID: {space.id.substring(5, 12)}...
           </div>
-          <div style={{ fontSize: "16px", marginTop: "5px" }}>
-            {space.lastMessage || "새로운 채팅 시작"}
+          <div style={{ fontSize: '16px', marginTop: '5px' }}>
+            {space.lastMessage || '새로운 채팅 시작'}
           </div>
         </div>
       ))}
@@ -90,31 +90,35 @@ interface ChatViewProps {
 }
 
 function ChatView({ spaceId }: ChatViewProps) {
+  // spaceId가 있을 때만 메시지를 관리하고, 없으면 빈 배열을 사용합니다.
   const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState("");
+  // 최종적으로 렌더링할 메시지 목록
+  // spaceId가 있으면 state의 messages를, 없으면 빈 배열을 사용합니다.
+  const displayedMessages = spaceId ? messages : [];
+
+  const [input, setInput] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!spaceId) {
-      setMessages([]);
-      return;
+    if (spaceId) {
+      const q = query(
+        collection(db, 'messages', spaceId, 'chats'),
+        orderBy('createdAt'),
+      );
+
+      const unsubscribe = onSnapshot(
+        q,
+        (snap) => {
+          const data = snap.docs.map(
+            (d) => ({ id: d.id, ...d.data() } as Message),
+          );
+          setMessages(data);
+        },
+        (err) => console.error('메시지 구독 오류:', err),
+      );
+
+      return () => unsubscribe();
     }
-
-    const q = query(
-      collection(db, "messages", spaceId, "chats"),
-      orderBy("createdAt")
-    );
-
-    const unsubscribe = onSnapshot(
-      q,
-      (snap) => {
-        const data = snap.docs.map((d) => ({ id: d.id, ...d.data() } as Message));
-        setMessages(data);
-      },
-      (err) => console.error("메시지 구독 오류:", err)
-    );
-
-    return () => unsubscribe();
   }, [spaceId]);
 
   useEffect(() => {
@@ -128,25 +132,25 @@ function ChatView({ spaceId }: ChatViewProps) {
       if (!input.trim() || !spaceId) return;
 
       const messageData = {
-        sender: "admin" as const,
+        sender: 'admin' as const,
         text: input,
         createdAt: serverTimestamp(),
       };
 
-      await addDoc(collection(db, "messages", spaceId, "chats"), messageData);
+      await addDoc(collection(db, 'messages', spaceId, 'chats'), messageData);
 
       await setDoc(
-        doc(db, "active_chats", spaceId),
+        doc(db, 'active_chats', spaceId),
         {
           lastMessage: input,
           timestamp: serverTimestamp(),
         },
-        { merge: true }
+        { merge: true },
       );
 
-      setInput("");
+      setInput('');
     },
-    [input, spaceId]
+    [input, spaceId],
   );
 
   if (!spaceId) {
@@ -154,16 +158,16 @@ function ChatView({ spaceId }: ChatViewProps) {
       <div
         style={{
           flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          color: "#888",
-          textAlign: "center",
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          color: '#888',
+          textAlign: 'center',
         }}
       >
         <p>왼쪽 목록에서 채팅 공간을 선택하세요.</p>
-        <p style={{ fontSize: "0.9em", color: "#aaa" }}>
+        <p style={{ fontSize: '0.9em', color: '#aaa' }}>
           활성 채팅 공간이 없으면, 클라이언트(예: 웹사이트)에서 먼저 채팅을
           시작해야 합니다.
         </p>
@@ -172,12 +176,12 @@ function ChatView({ spaceId }: ChatViewProps) {
   }
 
   return (
-    <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
       <div
         style={{
-          padding: "15px",
-          borderBottom: "1px solid #ddd",
-          background: "white",
+          padding: '15px',
+          borderBottom: '1px solid #ddd',
+          background: 'white',
         }}
       >
         <strong>{spaceId.substring(5, 12)}... 고객과의 채팅 공간</strong>
@@ -185,25 +189,25 @@ function ChatView({ spaceId }: ChatViewProps) {
 
       <div
         ref={scrollRef}
-        style={{ flex: 1, overflowY: "auto", padding: "15px" }}
+        style={{ flex: 1, overflowY: 'auto', padding: '15px' }}
       >
-        {messages.map((m) => (
+        {displayedMessages.map((m) => (
           <div
             key={m.id}
             style={{
-              marginBottom: "10px",
-              textAlign: m.sender === "admin" ? "right" : "left",
+              marginBottom: '10px',
+              textAlign: m.sender === 'admin' ? 'right' : 'left',
             }}
           >
             <div
               style={{
-                display: "inline-block",
-                padding: "10px",
-                borderRadius: "15px",
-                background: m.sender === "admin" ? "#1e88e5" : "#f1f1f1",
-                color: m.sender === "admin" ? "white" : "black",
-                maxWidth: "70%",
-                wordBreak: "break-word",
+                display: 'inline-block',
+                padding: '10px',
+                borderRadius: '15px',
+                background: m.sender === 'admin' ? '#1e88e5' : '#f1f1f1',
+                color: m.sender === 'admin' ? 'white' : 'black',
+                maxWidth: '70%',
+                wordBreak: 'break-word',
               }}
             >
               {m.text}
@@ -215,17 +219,17 @@ function ChatView({ spaceId }: ChatViewProps) {
       <form
         onSubmit={sendMessage}
         style={{
-          display: "flex",
-          padding: "10px",
-          borderTop: "1px solid #ddd",
+          display: 'flex',
+          padding: '10px',
+          borderTop: '1px solid #ddd',
         }}
       >
         <input
           style={{
             flex: 1,
-            padding: "10px",
-            border: "1px solid #ccc",
-            borderRadius: "5px",
+            padding: '10px',
+            border: '1px solid #ccc',
+            borderRadius: '5px',
           }}
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -233,12 +237,12 @@ function ChatView({ spaceId }: ChatViewProps) {
         />
         <button
           style={{
-            marginLeft: "10px",
-            padding: "10px 15px",
-            background: "#1e88e5",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
+            marginLeft: '10px',
+            padding: '10px 15px',
+            background: '#1e88e5',
+            color: 'white',
+            border: 'none',
+            borderRadius: '5px',
           }}
         >
           전송
@@ -257,15 +261,18 @@ export default function AdminChat() {
 
   useEffect(() => {
     const q = query(
-      collection(db, "active_chats"),
-      orderBy("timestamp", "desc")
+      collection(db, 'active_chats'),
+      orderBy('timestamp', 'desc'),
     );
 
     const unsubscribe = onSnapshot(q, (snap) => {
       const list = snap.docs.map((d) => ({ id: d.id, ...d.data() } as Space));
       setSpaces(list);
 
-      if (selectedSpaceId && !list.some((space) => space.id === selectedSpaceId)) {
+      if (
+        selectedSpaceId &&
+        !list.some((space) => space.id === selectedSpaceId)
+      ) {
         setSelectedSpaceId(null);
       } else if (!selectedSpaceId && list.length > 0) {
         setSelectedSpaceId(list[0].id);
@@ -276,7 +283,7 @@ export default function AdminChat() {
   }, [selectedSpaceId]); // selectedSpaceId 종속성 추가
 
   return (
-    <div style={{ display: "flex", height: "100vh" }}>
+    <div style={{ display: 'flex', height: '100vh' }}>
       <ChatList
         onSelectSpace={setSelectedSpaceId}
         selectedSpaceId={selectedSpaceId}

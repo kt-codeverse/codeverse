@@ -67,7 +67,7 @@ export default function ChatWindow({ onClose }: ChatWindowProps) {
 
     // 클린업 함수: 컴포넌트 언마운트 시 구독 해제
     return () => unsub();
-  }, [roomId]);
+  }, []);
 
   // 메시지 수신 시 스크롤 최하단으로 이동
   useEffect(() => {
