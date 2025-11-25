@@ -1,8 +1,7 @@
+"use client";
+
 // Firebase SDK 모듈
-const { initializeApp } = require("firebase/app");
-const {
-  getFirestore,
-  initializeFirestore,
+import {
   collection,
   query,
   orderBy,
@@ -11,41 +10,39 @@ const {
   doc,
   setDoc,
   serverTimestamp,
-} = require("firebase/firestore");
+  Timestamp,
+} from "firebase/firestore";
+import { db } from "@/lib/firebase"; // 수정된 경로
 
 // React
-const React = require("react");
-const ReactDOM = require("react-dom/client");
-const { useState, useEffect, useRef, useCallback } = React;
+import React, { useState, useEffect, useRef, useCallback } from "react";
 
-// ======================
-// Firebase 설정
-// ======================
-const firebaseConfig = {
-  apiKey: process.env.FIREBASE_API_KEY,
-  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.FIREBASE_PROJECT_ID,
-  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.FIREBASE_APP_ID,
-  measurementId: process.env.FIREBASE_MEASUREMENT_ID,
-};
+// ====================================================================
+// 타입 정의
+// ====================================================================
+interface Space {
+  id: string;
+  lastMessage?: string;
+  timestamp: Timestamp;
+}
 
-// Firebase 시작
-const firebaseApp = initializeApp(firebaseConfig);
-
-// Electron WebView 오류 해결 — Firestore는 반드시 LongPolling 요구
-initializeFirestore(firebaseApp, {
-  experimentalForceLongPolling: true,
-  useFetchStreams: false,
-});
-
-const db = getFirestore(firebaseApp);
+interface Message {
+  id: string;
+  sender: "admin" | "user";
+  text: string;
+  createdAt: Timestamp;
+}
 
 // ====================================================================
 // Chat List Component
 // ====================================================================
-function ChatList({ onSelectSpace, selectedSpaceId, spaces }) {
+interface ChatListProps {
+  onSelectSpace: (spaceId: string) => void;
+  selectedSpaceId: string | null;
+  spaces: Space[];
+}
+
+function ChatList({ onSelectSpace, selectedSpaceId, spaces }: ChatListProps) {
   return (
     <div
       style={{
@@ -88,10 +85,14 @@ function ChatList({ onSelectSpace, selectedSpaceId, spaces }) {
 // ====================================================================
 // Chat View Component
 // ====================================================================
-function ChatView({ spaceId }) {
-  const [messages, setMessages] = useState([]);
+interface ChatViewProps {
+  spaceId: string | null;
+}
+
+function ChatView({ spaceId }: ChatViewProps) {
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
-  const scrollRef = useRef(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!spaceId) {
@@ -107,7 +108,7 @@ function ChatView({ spaceId }) {
     const unsubscribe = onSnapshot(
       q,
       (snap) => {
-        const data = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+        const data = snap.docs.map((d) => ({ id: d.id, ...d.data() } as Message));
         setMessages(data);
       },
       (err) => console.error("메시지 구독 오류:", err)
@@ -122,42 +123,26 @@ function ChatView({ spaceId }) {
   }, [messages]);
 
   const sendMessage = useCallback(
-    async (e) => {
+    async (e: React.FormEvent) => {
       e.preventDefault();
       if (!input.trim() || !spaceId) return;
 
       const messageData = {
-        sender: "admin",
+        sender: "admin" as const,
         text: input,
-        createdAt: serverTimestamp(), // Corrected
+        createdAt: serverTimestamp(),
       };
-      console.log("AdminApp: Sending message data to Firestore:", messageData);
 
-      try {
-        await addDoc(collection(db, "messages", spaceId, "chats"), messageData);
-        console.log("AdminApp: 메시지가 성공적으로 전송되었습니다.");
-      } catch (error) {
-        console.error("AdminApp: 메시지 전송 실패 (addDoc):", error);
-        return;
-      }
+      await addDoc(collection(db, "messages", spaceId, "chats"), messageData);
 
-      const activeChatUpdateData = {
-        lastMessage: input,
-        timestamp: serverTimestamp(), // Corrected
-      };
-      console.log(
-        "AdminApp: Updating active_chats with data:",
-        activeChatUpdateData
+      await setDoc(
+        doc(db, "active_chats", spaceId),
+        {
+          lastMessage: input,
+          timestamp: serverTimestamp(),
+        },
+        { merge: true }
       );
-
-      try {
-        await setDoc(doc(db, "active_chats", spaceId), activeChatUpdateData, {
-          merge: true,
-        });
-        console.log("AdminApp: 채팅방의 마지막 메시지가 업데이트되었습니다.");
-      } catch (error) {
-        console.error("AdminApp: 마지막 메시지 업데이트 실패 (setDoc):", error);
-      }
 
       setInput("");
     },
@@ -266,45 +251,29 @@ function ChatView({ spaceId }) {
 // ====================================================================
 // 메인 앱
 // ====================================================================
-function AdminApp() {
-  const [selectedSpaceId, setSelectedSpaceId] = useState(null);
-  const [spaces, setSpaces] = useState([]);
+export default function AdminChat() {
+  const [selectedSpaceId, setSelectedSpaceId] = useState<string | null>(null);
+  const [spaces, setSpaces] = useState<Space[]>([]);
 
   useEffect(() => {
-    console.log(
-      "AdminApp: Setting up Firestore listener for 'active_chats'..."
-    );
     const q = query(
       collection(db, "active_chats"),
       orderBy("timestamp", "desc")
     );
 
-    const unsubscribe = onSnapshot(
-      q,
-      (snap) => {
-        console.log(
-          "AdminApp: Received snapshot for 'active_chats'. Snapshot empty:",
-          snap.empty
-        );
-        const list = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-        console.log("AdminApp: Processed active spaces list:", list);
-        setSpaces(list);
+    const unsubscribe = onSnapshot(q, (snap) => {
+      const list = snap.docs.map((d) => ({ id: d.id, ...d.data() } as Space));
+      setSpaces(list);
 
-        // 첫 공간 자동 선택
-        if (!selectedSpaceId && list.length > 0) {
-          setSelectedSpaceId(list[0].id);
-        }
-      },
-      (err) => console.error("AdminApp: 'active_chats' 구독 실패:", err)
-    );
+      if (selectedSpaceId && !list.some((space) => space.id === selectedSpaceId)) {
+        setSelectedSpaceId(null);
+      } else if (!selectedSpaceId && list.length > 0) {
+        setSelectedSpaceId(list[0].id);
+      }
+    });
 
-    return () => {
-      console.log(
-        "AdminApp: Cleaning up Firestore listener for 'active_chats'."
-      );
-      unsubscribe();
-    };
-  }, []);
+    return () => unsubscribe();
+  }, [selectedSpaceId]); // selectedSpaceId 종속성 추가
 
   return (
     <div style={{ display: "flex", height: "100vh" }}>
@@ -313,18 +282,7 @@ function AdminApp() {
         selectedSpaceId={selectedSpaceId}
         spaces={spaces}
       />
-
       <ChatView spaceId={selectedSpaceId} />
     </div>
   );
 }
-
-// ======================
-// React 렌더링
-// ======================
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(
-  <React.StrictMode>
-    <AdminApp />
-  </React.StrictMode>
-);
