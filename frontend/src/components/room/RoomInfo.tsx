@@ -64,9 +64,9 @@ export default function RoomInfo({
         <Image
           src="https://res.cloudinary.com/dgvgxnwos/image/upload/v1763448528/%E1%84%83%E1%85%A1%E1%84%8B%E1%85%AE%E1%86%AB%E1%84%85%E1%85%A9%E1%84%83%E1%85%B3_gkc9vu.jpg"
           alt="호스트 프로필"
-          width={40}
-          height={25}
-          className="rounded-full"
+          width={48}
+          height={48}
+          className="rounded-full w-12 h-12 object-cover"
         />
         <div>
           <p className="text-md">호스트: Yong 님</p>
