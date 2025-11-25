@@ -1,3 +1,5 @@
+import RoomDetail from '@/components/room/RoomDetail';
+
 async function getRoomDetail(id: string) {
   try {
     const url = `${process.env.API_URL}/rooms/${id}`;
@@ -7,7 +9,7 @@ async function getRoomDetail(id: string) {
     return res.json();
   } catch (e) {
     console.error('Failed to fetch rooms', e);
-    return [];
+    return null;
   }
 }
 
@@ -24,7 +26,7 @@ export default async function Page({
     <main>
       <section>
         {/* 상세 컴포넌트 */}
-        {/* <RoomDetail /> */}
+        <RoomDetail room={room} />
       </section>
     </main>
   );

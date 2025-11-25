@@ -2,9 +2,10 @@
 import { Grip } from 'lucide-react';
 import React from 'react';
 import Image from 'next/image';
+import { RoomImage } from '@/types/room';
 
 interface RoomImagesProps {
-  images: string[];
+  images: RoomImage[];
   onOpenAllPhotos: () => void;
 }
 
@@ -19,7 +20,7 @@ export default function RoomImages({
           <div className="flex items-center justify-center w-full h-full bg-gray-100">
             {/* 큰 메인 이미지 */}
             <Image
-              src={images[0]}
+              src={images[0].url}
               alt="메인 숙소 사진"
               width={300}
               height={300}
@@ -32,7 +33,7 @@ export default function RoomImages({
         {images.slice(1, 5).map((img, index) => (
           <div key={index} className="relative">
             <Image
-              src={img}
+              src={img.url}
               alt={`숙소 사진 ${index + 2}`}
               width={100}
               height={100}

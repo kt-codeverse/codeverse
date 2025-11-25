@@ -90,16 +90,18 @@ export default function RoomAmenity() {
               숙소 편의시설
             </DialogTitle>
 
-            <DialogDescription>
-              {amenities.map((item, idx) => {
-                const Icon = item.icon;
-                return (
-                  <div className="flex p-5 border-b gap-4" key={idx}>
-                    <Icon className="h-5 w-5 " />
-                    {item.label}
-                  </div>
-                );
-              })}
+            <DialogDescription asChild>
+              <div>
+                {amenities.map((item, idx) => {
+                  const Icon = item.icon;
+                  return (
+                    <div className="flex p-5 border-b gap-4" key={idx}>
+                      <Icon className="h-5 w-5 " />
+                      {item.label}
+                    </div>
+                  );
+                })}
+              </div>
             </DialogDescription>
 
             {/* 닫기 버튼 */}
