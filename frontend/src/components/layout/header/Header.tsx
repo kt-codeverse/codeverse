@@ -10,10 +10,10 @@ import SearchBar from '@/components/search/SearchBar';
 import HeaderMenuButton from './HeaderMenuButton';
 import HeaderHostingButton from './HeaderHostingButton';
 import { cn } from '@/lib/utils';
+import HeaderAvatar from './HeaderAvatar';
 
 export default function Header() {
   const pathname = usePathname();
-
   const hiddenPages = ['/signin', '/signup', '/hosting'];
   const isHiddenPage = hiddenPages.some((page) => pathname.startsWith(page));
   if (isHiddenPage) return null;
@@ -65,6 +65,7 @@ export default function Header() {
           >
             <Globe />
           </Button>
+          <HeaderAvatar />
           <HeaderMenuButton />
         </div>
       </section>
