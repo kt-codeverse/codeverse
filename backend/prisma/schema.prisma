@@ -166,3 +166,5 @@ enum PaymentMethod {
   BANK      // 계좌이체
   PAYPAL    // 페이팔 결제
 }
+
+
