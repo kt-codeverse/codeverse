@@ -55,7 +55,7 @@ export default function HeaderMenuButton() {
               <Link href="/my/profile">마이 페이지</Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild className="px-4 py-2 cursor-pointer">
-              <Link href="/wishlist">위시리스트</Link>
+              <Link href="/wishlists">위시리스트</Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
