@@ -6,7 +6,7 @@ export type User = {
   reviewsCount: number;
   memberFor: string;
   verified: boolean;
-  avatar: string;
+  avatar: string | null;
 };
 
 export type Review = {
