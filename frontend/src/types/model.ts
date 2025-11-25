@@ -3,9 +3,10 @@ export type User = {
   name: string;
   role: string;
   trips: number;
-  reviews: number;
+  reviewsCount: number;
   memberFor: string;
   verified: boolean;
+  avatar: string;
 };
 
 export type Review = {
