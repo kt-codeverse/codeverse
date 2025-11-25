@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>관리자 채팅 프로그램</title>
+
+    <!-- Content Security Policy (Firebase + Electron 개발용) -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data:;
+                   connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://firestore.googleapis.com;
+                   img-src 'self' data:;
+                   script-src 'self' 'unsafe-inline' 'unsafe-eval';
+                   style-src 'self' 'unsafe-inline';"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <!-- esbuild가 생성하는 번들 -->
+    <script src="dist/bundle.js"></script>
+  </body>
+</html>

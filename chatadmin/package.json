@@ -1,0 +1,25 @@
+{
+  "name": "chatadmin",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "npm run build && electron .",
+    "build": "esbuild renderer.js --bundle --outfile=dist/bundle.js --loader:.js=jsx"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "electron": "^39.2.3",
+    "firebase": "^12.6.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "cross-env": "^10.1.0",
+    "dotenv-cli": "^11.0.0",
+    "esbuild": "^0.23.0"
+  }
+}
