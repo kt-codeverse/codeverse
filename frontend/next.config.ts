@@ -15,14 +15,14 @@ const nextConfig: NextConfig = {
   env: {
     API_URL: process.env.API_URL,
   },
-  async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: 'http://localhost:8080/api/:path*', // 백엔드 서버 주소
-      },
-    ];
-  },
+  // async rewrites() {
+  //   return [
+  //     {
+  //       source: '/api/:path*',
+  //       destination: 'http://localhost:8080/api/:path*', // 백엔드 서버 주소
+  //     },
+  //   ];
+  // },
 };
 
 export default nextConfig;
