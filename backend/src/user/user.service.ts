@@ -2,7 +2,9 @@ import {
   Injectable,
   ConflictException,
   NotFoundException,
+  Logger,
 } from '@nestjs/common';
+import util from 'util';
 import { UserEntity } from './entities/user.entity';
 import { User as PrismaUser } from '@prisma/client';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -62,14 +64,34 @@ export class UserService {
 
     const hashed = await bcrypt.hash(dto.password, 10);
 
-    const created = await prisma.user.create({
-      data: {
-        email: dto.email,
-        password: hashed,
-        name: dto.name ?? '',
-        avatar: dto.avatar ?? null,
-      },
-    });
+    let created;
+    try {
+      created = await prisma.user.create({
+        data: {
+          email: dto.email,
+          password: hashed,
+          name: dto.name ?? '',
+          avatar: dto.avatar ?? null,
+        },
+      });
+    } catch (err: unknown) {
+      // Log detailed Prisma/DB error for debugging
+      if (err instanceof Error) {
+        Logger.error(
+          'Prisma create user failed: ' + err.message,
+          err.stack,
+          'UserService',
+        );
+      } else {
+        Logger.error(
+          'Prisma create user failed (non-Error): ' +
+            util.inspect(err, { depth: 5 }),
+          undefined,
+          'UserService',
+        );
+      }
+      throw err;
+    }
 
     const { password: _password, ...rest } = created as unknown as UserEntity;
     void _password;
