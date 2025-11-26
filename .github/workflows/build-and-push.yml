@@ -92,6 +92,8 @@ jobs:
       - name: Upload deploy script to EC2
         uses: appleboy/scp-action@v0.1.1
         with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           port: ${{ secrets.DEPLOY_SSH_PORT }}
           source: "deploy/deploy.sh"
