@@ -7,6 +7,9 @@ RUN npm ci --silent
 
 # Copy source and build
 COPY . .
+# Ensure Prisma schema is included so `prisma generate` can run
+# (some .dockerignore setups may exclude the prisma folder; add explicit copy)
+COPY prisma ./prisma
 ## generate Prisma client (ensure schema.prisma exists under prisma/)
 RUN npx prisma generate || true
 RUN npm run build
