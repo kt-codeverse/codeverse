@@ -27,7 +27,9 @@ export const api = axios.create({
 api.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     // 요청 보내기전 수행할 작업
-    const token = AuthStorage.getToken(); // 토큰 미사용시 무시
+    const token = localStorage.getItem('token'); // 토큰 미사용시 무시
+    // const token = AuthStorage.getToken(); // 토큰 미사용시 무시
+    console.log({ token });
     if (token) {
       // 토큰 사용시 헤더에 토큰 추가
       config.headers.Authorization = `Bearer ${token}`;
@@ -67,15 +69,15 @@ api.interceptors.response.use(
 );
 
 export const AuthStorage = {
-  async setToken(accessToken: string) {
-    await localStorage.setItem('accessToken', accessToken);
+  async setToken(token: string) {
+    await localStorage.setItem('token', token);
   },
 
   async getToken(): Promise<string | null> {
-    return await localStorage.getItem('accessToken');
+    return await localStorage.getItem('token');
   },
 
   async clear() {
-    await localStorage.removeItem('accessToken');
+    await localStorage.removeItem('token');
   },
 };

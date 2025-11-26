@@ -24,6 +24,7 @@ export default async function Page() {
         grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5
         gap-x-5 gap-y-10 
         sm:px-4 lg:px-4
+        pt-10
         "
       >
         {rooms.map((room) => (

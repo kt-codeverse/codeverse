@@ -1,52 +1,75 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import Container from "@/components/layout/Container";
-import ProfileCard from "@/components/profile/ProfileCard";
-import { api } from "@/lib/http";
-import type { User, Review } from "@/types/model";
+import { useEffect, useState } from 'react';
+import Container from '@/components/layout/Container';
+import ProfileCard from '@/components/profile/ProfileCard';
+import type { User, Review } from '@/types/model';
+import { useRouter } from 'next/navigation';
 
 export default function MyProfilePage() {
   const [user, setUser] = useState<User | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     (async () => {
       try {
-        // TODO: 백엔드 완전히 붙으면 /users/me 응답 구조에 맞춰 User 타입 수정
-        const me = await api.get<User>("/users/me");
-        setUser(me.data);
+        // 2. 로컬 스토리지에서 액세스 토큰을 가져옵니다.
+        const token = localStorage.getItem('token');
+        if (!token) {
+          router.push('/signin');
+          return;
+        }
+        // console.log({ token });
 
-        const rv = await api.get<Review[]>(`/reviews?userId=${me.data.id}`);
-        setReviews(rv.data);
+        const res1 = await fetch(`${process.env.API_URL}/users/me`, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const me = await res1.json();
+        setUser(me);
+        console.log({ me });
+
+        // 리뷰 서비스에서 숙소에 대한 리뷰가 아니라 사용자에 대한 리뷰를 제공받는 엔드포인트가 필요함
+        // const res2 = await fetch(`${process.env.API_URL}/reviews`, {
+        //   headers: {
+        //     'Content-Type': 'application/json',
+        //     Authorization: `Bearer ${token}`,
+        //   },
+        // });
+        // const reviews = await res2.json();
+        // setReviews(reviews);
+        // console.log({ reviews });
       } catch (error) {
-        console.error("프로필 API 실패, 목업 사용:", error);
+        console.error('프로필 API 실패, 목업 사용:', error);
 
         // 임시 더미 데이터
         setUser({
-          id: "dummy-user",
-          name: "민기",
-          role: "게스트",
+          id: 'dummy-user',
+          name: '민기',
+          role: '게스트',
           trips: 1,
           reviewsCount: 1,
-          memberFor: "4개월",
+          memberFor: '4개월',
           avatar: null,
         } as User);
 
         setReviews([
           {
-            id: "r1",
-            author: "리나",
-            date: "2025년 7월",
-            content: "감사합니다 🙂",
+            id: 'r1',
+            author: '리나',
+            date: '2025년 7월',
+            content: '감사합니다 🙂',
           } as Review,
         ]);
       } finally {
         setLoading(false);
       }
     })();
-  }, []);
+  }, [router]);
 
   if (loading || !user) {
     return (
