@@ -3,13 +3,14 @@
 import { useEffect, useState } from 'react';
 import Container from '@/components/layout/Container';
 import ProfileCard from '@/components/profile/ProfileCard';
-import { api } from '@/lib/http';
 import type { User, Review } from '@/types/model';
+import { useRouter } from 'next/navigation';
 
 export default function MyProfilePage() {
   const [user, setUser] = useState<User | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     (async () => {
@@ -17,29 +18,31 @@ export default function MyProfilePage() {
         // 2. 로컬 스토리지에서 액세스 토큰을 가져옵니다.
         const token = localStorage.getItem('token');
         if (!token) {
-          // alert('로그인이 필요합니다. 로그인 페이지로 이동합니다.');
-          // router.push('/signin');
-          // setIsSubmitting(false); // 로딩 상태 해제
+          router.push('/signin');
           return;
         }
-        console.log({ token });
+        // console.log({ token });
 
-        // TODO: 백엔드 완전히 붙으면 /users/me 응답 구조에 맞춰 User 타입 수정
-        // const me = await api.get<User>('/users/me');
-        // const me = await api.get<User>('/users/me');
-        const url = `${process.env.API_URL}/users/me`;
-        const me = await fetch(url, {
+        const res1 = await fetch(`${process.env.API_URL}/users/me`, {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
         });
-        // setUser(me.data);
-        const data = await me.json();
-        console.log({ data });
+        const me = await res1.json();
+        setUser(me);
+        console.log({ me });
 
-        // const rv = await api.get<Review[]>(`/reviews?userId=${me.data.id}`);
-        // setReviews(rv.data);
+        // 리뷰 서비스에서 숙소에 대한 리뷰가 아니라 사용자에 대한 리뷰를 제공받는 엔드포인트가 필요함
+        // const res2 = await fetch(`${process.env.API_URL}/reviews`, {
+        //   headers: {
+        //     'Content-Type': 'application/json',
+        //     Authorization: `Bearer ${token}`,
+        //   },
+        // });
+        // const reviews = await res2.json();
+        // setReviews(reviews);
+        // console.log({ reviews });
       } catch (error) {
         console.error('프로필 API 실패, 목업 사용:', error);
 
@@ -66,7 +69,7 @@ export default function MyProfilePage() {
         setLoading(false);
       }
     })();
-  }, []);
+  }, [router]);
 
   if (loading || !user) {
     return (

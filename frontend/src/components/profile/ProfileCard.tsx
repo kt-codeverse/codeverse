@@ -1,11 +1,7 @@
-"use client";
+'use client';
 
-import type { User, Review } from "@/types/model";
-import {
-  Avatar,
-  AvatarImage,
-  AvatarFallback,
-} from "@/components/ui/avatar";
+import type { User } from '@/types/model';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
 type ProfileCardProps = {
   user: User;
@@ -19,7 +15,7 @@ export default function ProfileCard({
   reviewsCount,
   avatarUrl,
 }: ProfileCardProps) {
-  const initial = user.name?.[0] ?? "게";
+  const initial = user.name?.[0] ?? '게';
 
   return (
     <section className="flex items-center gap-8 rounded-2xl border border-neutral-200 bg-white p-8 shadow-sm">
@@ -27,14 +23,12 @@ export default function ProfileCard({
       <div className="flex flex-col items-center gap-2">
         <Avatar className="h-20 w-20 text-xl">
           {avatarUrl && (
-            <AvatarImage src={avatarUrl} alt={user.name ?? "프로필"} />
+            <AvatarImage src={avatarUrl} alt={user.name ?? '프로필'} />
           )}
           <AvatarFallback>{initial}</AvatarFallback>
         </Avatar>
         <div className="text-sm font-semibold">{user.name}</div>
-        <div className="text-xs text-neutral-500">
-          {user.role ?? "게스트"}
-        </div>
+        <div className="text-xs text-neutral-500">{user.role ?? '게스트'}</div>
       </div>
 
       {/* 통계 영역 */}
@@ -48,14 +42,12 @@ export default function ProfileCard({
           </div>
           <div>
             <div className="text-neutral-500">후기</div>
-            <div className="mt-1 text-lg font-semibold">
-              {reviewsCount}개
-            </div>
+            <div className="mt-1 text-lg font-semibold">{reviewsCount}개</div>
           </div>
           <div>
             <div className="text-neutral-500">가입 기간</div>
             <div className="mt-1 text-lg font-semibold">
-              {user.memberFor ?? "-"}
+              {user.memberFor ?? '-'}
             </div>
           </div>
         </div>
