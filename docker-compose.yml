@@ -20,8 +20,11 @@ services:
     container_name: codeverse_frontend
     ports:
       - "3000:3000"
+    env_file:
+      - ./frontend/.env.local
     environment:
       - NODE_ENV=production
+      - API_URL=http://54.116.28.243/api
     networks:
       - codeverse_net
 
