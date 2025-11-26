@@ -22,6 +22,8 @@ ENV NODE_ENV=production
 COPY --from=builder /usr/src/app/dist ./dist
 COPY --from=builder /usr/src/app/node_modules ./node_modules
 COPY --from=builder /usr/src/app/package*.json ./
+# Copy prisma schema into runtime image so migrations/CLI can access it
+COPY --from=builder /usr/src/app/prisma ./prisma
 
 EXPOSE 8080
 CMD ["node", "dist/main"]
