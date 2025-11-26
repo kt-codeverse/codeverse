@@ -105,7 +105,9 @@ export default function RoomDetail({ room }: RoomDetailProps) {
             </div>
 
             <div className="lg:col-span-1">
-              <BookCard pricePerNight={room.pricePerNight} />
+              <BookCard pricePerNight={room.pricePerNight} 
+              roomId={room.id}
+              />
             </div>
           </div>
 
