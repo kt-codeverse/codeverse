@@ -4,6 +4,7 @@ import type { Room } from '@/types/room';
 async function getRooms() {
   try {
     const url = `${process.env.API_URL}/rooms`;
+    console.log({ url });
     const res = await fetch(url);
     if (!res.ok) throw new Error('Failed to fetch rooms');
     return res.json();
@@ -15,7 +16,7 @@ async function getRooms() {
 
 export default async function Page() {
   const rooms: Room[] = await getRooms();
-  // console.log({ rooms });
+  console.log({ rooms });
 
   return (
     <main>
