@@ -6,7 +6,8 @@ import axios, {
 } from 'axios';
 
 export const http = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:4000/api',
+  baseURL:
+    (process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost') + '/api',
   withCredentials: true,
   timeout: 10000,
 });
@@ -20,7 +21,7 @@ http.interceptors.response.use(
 );
 
 export const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://54.116.28.243/api',
+  baseURL: (process.env.NEXT_PUBLIC_API_URL || 'http://54.116.28.243') + '/api',
   timeout: 10000,
 });
 
