@@ -57,7 +57,7 @@ export default function WishlistsPage() {
           },
           {
             id: 'mingi',
-            name: '민기',
+            name: '김민준',
             coverImages: [
               'https://images.unsplash.com/photo-1556912173-3bb406ef7e77?auto=format&fit=crop&w=800&q=80',
             ],

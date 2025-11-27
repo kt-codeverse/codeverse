@@ -51,7 +51,7 @@ export default function MyProfilePage() {
         // 임시 더미 데이터
         setUser({
           id: 'dummy-user',
-          name: '민기',
+          name: '김민준',
           role: '게스트',
           trips: 1,
           reviewsCount: 1,
