@@ -10,7 +10,12 @@ const nextConfig: NextConfig = {
   //   // prefer modern image formats when available
   // },
   images: {
-    remotePatterns: [{ protocol: 'https', hostname: '*' }],
+    // Allow Cloudinary as an external image host
+    domains: ['res.cloudinary.com'],
+    remotePatterns: [
+      { protocol: 'https', hostname: 'res.cloudinary.com', pathname: '/**' },
+    ],
+    unoptimized: true,
   },
   env: {
     API_URL: process.env.API_URL,
