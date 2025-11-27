@@ -86,7 +86,7 @@ export default function BookCard({ pricePerNight, roomId }: BookCardProps) {
     }
 
     const baseUrl =
-      process.env.NEXT_PUBLIC_API_URL || 'http://54.116.28.243/api';
+      process.env.NEXT_PUBLIC_API_URL || 'http://54.116.28.243';
 
     const payload = {
       startDate: checkIn.toISOString(), // Nest DTO: IsDateString
@@ -100,7 +100,7 @@ export default function BookCard({ pricePerNight, roomId }: BookCardProps) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`, // ✅ jwt 인증
+          Authorization: `Bearer ${token}`, // 
         },
         body: JSON.stringify(payload),
       });

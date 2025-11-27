@@ -9,7 +9,7 @@ import type { Booking } from "@/types/booking";
 import { useBookingStore } from "@/store/bookingStore";
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:4000/api";
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080/api";
 
 export default function BookingPage() {
   // ✅ Next 15에서는 useParams()로 받아야 함
