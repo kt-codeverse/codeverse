@@ -44,7 +44,7 @@ interface BookingStore {
    * 새로운 예약 정보를 업데이트하는 액션.
    * @param {Partial<BookingStore['newBooking']>} details - 업데이트할 예약 정보의 일부.
    */
-  setNewBookingDetails: (details: Partial<BookingStore['newBooking']>) => void;
+  setBookingData: (details: Partial<BookingStore['newBooking']>) => void;
   /**
    * `newBooking` 상태를 초기값으로 리셋하는 액션.
    * 예약 프로세스를 새로 시작할 때 사용됩니다.
@@ -74,7 +74,7 @@ export const useBookingStore = create<BookingStore>()(
   persist(
     immer((set) => ({
       newBooking: initialState,
-      setNewBookingDetails: (details) =>
+      setBookingData: (details) =>
         set((state) => {
           state.newBooking = { ...state.newBooking, ...details };
         }),
