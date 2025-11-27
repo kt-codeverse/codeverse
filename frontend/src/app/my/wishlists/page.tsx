@@ -96,8 +96,6 @@ export default function WishlistsPage() {
           )}
         </section>
       </Container>
-
-      <Footer />
     </main>
   );
 }
