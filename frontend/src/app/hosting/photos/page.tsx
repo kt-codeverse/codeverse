@@ -72,9 +72,9 @@ export default function Page() {
 
   return (
     <main>
-      <section className="h-screen flex flex-col border border-dashed">
+      <section className="h-screen flex flex-col border/ border-dashed/">
         <div
-          className="sm:min-w-2xl mx-auto border border-dashed 
+          className="sm:min-w-2xl mx-auto border/ border-dashed/ 
           flex-1 py-10 flex flex-col justify-center gap-10"
         >
           <header>
@@ -93,7 +93,7 @@ export default function Page() {
           {error && <p className="text-sm text-red-500">{error}</p>}
         </div>
 
-        <div className="py-10 flex justify-between border border-dashed">
+        <div className="py-10 flex justify-between border/ border-dashed/">
           <Button variant="ghost" onClick={() => router.back()}>
             이전
           </Button>

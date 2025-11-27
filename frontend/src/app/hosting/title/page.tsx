@@ -35,8 +35,8 @@ export default function Page() {
 
   return (
     <main>
-      <section className="h-screen flex flex-col border border-dashed">
-        <div className="max-w-4xl mx-auto flex-1 py-10 flex flex-col items-center justify-center gap-10">
+      <section className="h-screen flex flex-col border/ border-dashed/">
+        <div className="max-w-xl w-full mx-auto flex-1 py-10 flex flex-col items-center justify-center gap-10">
           <header className="text-center">
             <h1 className="text-3xl font-bold tracking-tight">
               숙소에 멋진 이름을 지어주세요
@@ -54,7 +54,7 @@ export default function Page() {
           />
         </div>
 
-        <div className="py-10 flex justify-between border border-dashed">
+        <div className="py-10 flex justify-between border/ border-dashed/">
           <Button variant="ghost" onClick={() => router.back()}>
             이전
           </Button>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState, useEffect, useRef } from 'react'; // useRef 추가
+import { useCallback, useState, useEffect, useRef } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { UploadCloud, X } from 'lucide-react';
 import Image from 'next/image';
@@ -10,24 +10,18 @@ interface FileWithPreview extends File {
   preview: string;
 }
 
-/**
- * 숙소 사진을 업로드하기 위한 드래그 앤 드롭 컴포넌트입니다.
- * 이미지 미리보기와 삭제 기능을 제공합니다.
- */
 export default function PhotoUploader({
   onFilesChange,
 }: {
   onFilesChange: (files: File[]) => void;
 }) {
   const [files, setFiles] = useState<FileWithPreview[]>([]);
-  const createdObjectUrls = useRef<string[]>([]); // 생성된 모든 Object URL을 추적하기 위한 ref
-
+  const createdObjectUrls = useRef<string[]>([]);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: useCallback(<T extends File>(acceptedFiles: T[]): void => {
       const newFiles = acceptedFiles.map((file) =>
         Object.assign(file, {
           preview: URL.createObjectURL(file),
-          // 생성된 URL을 추적 목록에 추가
         }),
       );
 
@@ -72,7 +66,7 @@ export default function PhotoUploader({
       createdObjectUrls.current.forEach((url) => URL.revokeObjectURL(url));
       createdObjectUrls.current = []; // ref 초기화
     };
-  }, []); // 빈 의존성 배열로 컴포넌트 마운트/언마운트 시에만 실행
+  }, []);
 
   return (
     <div className="w-full">

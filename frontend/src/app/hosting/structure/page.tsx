@@ -28,9 +28,9 @@ export default function Page() {
 
   return (
     <main>
-      <section className="h-screen flex flex-col border border-dashed">
+      <section className="h-screen flex flex-col border/ border-dashed/">
         <div
-          className="flex-1 py-10 border border-dashed
+          className="flex-1 py-10 border/ border-dashed/
           flex flex-col justify-center gap-10 "
         >
           <div className="text-center">
@@ -42,14 +42,16 @@ export default function Page() {
             </p>
           </div>
 
-          <RadioCardGroup
-            options={hostingStructureOptions}
-            value={hostingData.structure ?? undefined}
-            onValueChange={handleValueChange}
-          />
+          <div className="w-full max-w-4xl mx-auto">
+            <RadioCardGroup
+              options={hostingStructureOptions}
+              value={hostingData.structure ?? undefined}
+              onValueChange={handleValueChange}
+            />
+          </div>
         </div>
 
-        <div className="py-10 flex justify-between border border-dashed">
+        <div className="py-10 flex justify-between border/ border-dashed/">
           <Button variant="ghost" onClick={() => router.back()}>
             이전
           </Button>

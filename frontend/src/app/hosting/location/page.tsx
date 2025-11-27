@@ -76,7 +76,7 @@ export default function Page() {
         strategy="afterInteractive"
       />
       <main>
-        <section className="h-screen flex flex-col border border-dashed">
+        <section className="h-screen flex flex-col border/ border-dashed/">
           <div className="max-w-4xl mx-auto flex-1 py-10 flex flex-col items-center justify-center gap-10">
             <header className="text-center">
               <h1 className="text-3xl font-bold tracking-tight">
@@ -90,7 +90,7 @@ export default function Page() {
             <AddressForm onAddressChange={handleAddressChange} />
           </div>
 
-          <div className="py-10 flex justify-between border border-dashed">
+          <div className="py-10 flex justify-between border/ border-dashed/">
             <Button variant="ghost" onClick={() => router.back()}>
               이전
             </Button>

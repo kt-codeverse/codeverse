@@ -6,7 +6,7 @@ import { useHostingStore } from '@/store/useHostingStore';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, Check } from 'lucide-react';
 import { CreateRoomDto } from '@/types/room.dto';
-// import HostingReview from './HostingReview';
+import HostingReview from './HostingReview';
 
 /**
  * @description 호스팅할 숙소 정보를 최종 검토하는 페이지
@@ -109,12 +109,12 @@ export default function ReviewPage() {
 
   return (
     <main>
-      <section className="h-screen flex flex-col border border-dashed">
+      <section className="h-screen flex flex-col border/ border-dashed/">
         <div className="container mx-auto flex-1 overflow-y-auto py-10">
-          {/* <HostingReview /> */}
+          <HostingReview />
         </div>
 
-        <div className="py-10 flex justify-between border border-dashed">
+        <div className="py-10 flex justify-between border/ border-dashed/">
           <Button variant="ghost" onClick={() => router.back()}>
             <ChevronLeft className="mr-2 h-4 w-4" />
             이전

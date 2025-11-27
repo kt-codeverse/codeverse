@@ -13,8 +13,8 @@ export default function Footer() {
   if (isHiddenPage) return null;
 
   return (
-    <footer className="py-8 text-center text-sm text-zinc-500">
-      <section className="max-w-7xl mx-auto px-4 border border-dashed">
+    <footer className="mt-30 py-8 text-center text-sm text-zinc-500">
+      <section>
         <FooterRecommendations />
         <FooterLinks />
         <FooterInfo />

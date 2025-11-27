@@ -1,10 +1,10 @@
 import Filter from '@/components/search/Filter';
-import AccommodationList from '@/components/room/AccommodationList';
-import type { Accommodation } from '@/components/room/AccommodationCard';
+import RoomCard from '@/components/room/RoomCard';
+import { Room } from '@/types/room';
 
-async function getAccommodations(searchParams: {
+async function getRooms(searchParams: {
   [key: string]: string | string[] | undefined;
-}): Promise<Accommodation[]> {
+}) {
   const baseUrl = process.env.API_URL;
   if (!baseUrl) {
     console.error('환경 변수 API_URL이 설정되지 않았습니다.');
@@ -26,10 +26,10 @@ async function getAccommodations(searchParams: {
 
   try {
     const res = await fetch(url);
-    if (!res.ok) throw new Error('Failed to fetch accommodations');
+    if (!res.ok) throw new Error('Failed to fetch rooms');
     return res.json();
   } catch (error) {
-    console.error('Error fetching accommodations:', error);
+    console.error('Error fetching rooms:', error);
     return [];
   }
 }
@@ -40,7 +40,7 @@ export default async function Page({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const params = await searchParams;
-  const accommodations: Accommodation[] = await getAccommodations(params);
+  const rooms: Room[] = await getRooms(params);
 
   return (
     <main>
@@ -52,7 +52,14 @@ export default async function Page({
           checkOut={(params.endDate as string) ?? ''}
           guests={(params.guests as string) ?? ''}
         />
-        <AccommodationList accommodations={accommodations} />
+        <ul
+          className="grid 
+          grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+        >
+          {rooms.map((room) => (
+            <RoomCard key={room.id} room={room} />
+          ))}
+        </ul>
       </section>
     </main>
   );
