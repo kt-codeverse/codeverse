@@ -29,7 +29,7 @@ export default function BookCard({
   useEffect(() => {
     resetNewBooking();
     setBookingData({ listingId: roomId });
-  }, [roomId]);
+  }, [roomId, resetNewBooking, setBookingData]);
 
   const handleGuestsChange = (amount: number) => {
     setBookingData({ guests: Math.max(1, guests + amount) });

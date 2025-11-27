@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useBookingStore } from '@/store/useBookingStore';
 import { useAuthStore } from '@/components/layout/header/useAuthStore';
