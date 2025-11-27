@@ -52,7 +52,6 @@ export default function WishlistsPage() {
 
   return (
     <main className="min-h-dvh flex flex-col">
-      <Header />
 
       <Container>
         <section className="py-10">
