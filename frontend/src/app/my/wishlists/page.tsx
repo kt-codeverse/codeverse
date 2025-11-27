@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import Container from '@/components/layout/Container';
-import Header from '@/components/layout/header/Header';
 import Footer from '@/components/layout/footer/Footer';
 import WishlistCard from '@/components/wishlist/WishlistCard';
 import { http } from '@/lib/http';
