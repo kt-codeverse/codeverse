@@ -53,7 +53,7 @@ export default function TitleForm({
   };
 
   return (
-    <div className="max-w-2xl mx-auto space-y-8">
+    <div className="w-full space-y-8">
       <div className="space-y-2">
         <Label htmlFor="title">숙소 이름</Label>
         <Input
@@ -75,7 +75,7 @@ export default function TitleForm({
           value={description}
           onChange={handleDescriptionChange}
           maxLength={MAX_DESC_LENGTH}
-          className="h-32 resize-none"
+          className="h-100 resize-none"
         />
         <p className="text-sm text-right text-muted-foreground">
           {description.length} / {MAX_DESC_LENGTH}

@@ -119,11 +119,13 @@
   body {
     @apply bg-background text-foreground;
 
-    > main {
+    > main,
+    header,
+    footer {
       /* @apply pt-[200px]; */
       > section {
         @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
-        @apply border border-dashed;
+        /* @apply border border-dashed; */
       }
     }
 
@@ -138,6 +140,9 @@
   button {
     @apply cursor-pointer;
     @apply transition;
+  }
+  li {
+    @apply list-none;
   }
 }
 

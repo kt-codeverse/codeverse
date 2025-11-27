@@ -18,13 +18,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 bg-white shadow-md p-4 md:px-10 pt-4 pb-8 space-y-4 whitespace-nowrap">
-      {/* 상단 */}
-      <section
-        className="max-w-7xl mx-auto  
-        flex justify-between
-        lg:grid lg:grid-cols-3
-        items-center border border-dashed"
-      >
+      <section className="flex items-center justify-between lg:grid lg:grid-cols-3">
         {/* 좌측 */}
         <div className="relative flex items-center h-10 cursor-pointer my-auto shrink-0">
           <Link
@@ -55,8 +49,7 @@ export default function Header() {
         </div>
       </section>
 
-      {/* 하단 */}
-      <section className="max-w-7xl mx-auto border border-dashed">
+      <section>
         <div className="hidden md:block">
           <SearchBar />
         </div>

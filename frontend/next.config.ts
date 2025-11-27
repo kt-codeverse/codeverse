@@ -5,17 +5,14 @@ const nextConfig: NextConfig = {
     // Optimize package imports for libraries like lucide-react
     optimizePackageImports: ['lucide-react'],
   },
-  // images: {
-  //   formats: ['image/webp', 'image/avif'],
-  //   // prefer modern image formats when available
-  // },
   images: {
-    // Allow Cloudinary as an external image host
-    domains: ['res.cloudinary.com'],
     remotePatterns: [
-      { protocol: 'https', hostname: 'res.cloudinary.com', pathname: '/**' },
+      {
+        protocol: 'https',
+        hostname: '**', // 또는 특정 패턴: '**.domain.com'
+        pathname: '/**', // 전체 경로 허용
+      },
     ],
-    unoptimized: true,
   },
   env: {
     API_URL: process.env.API_URL,
