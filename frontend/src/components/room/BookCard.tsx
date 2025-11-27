@@ -11,6 +11,7 @@ import { ko } from 'date-fns/locale';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { ChevronDown } from 'lucide-react';
 import { useBookingStore } from '@/store/bookingStore'; // ✅ zustand
+import { Booking } from '@/types/booking';
 
 type GuestType = 'adults' | 'children' | 'infants';
 
@@ -95,7 +96,12 @@ export default function BookCard({ pricePerNight, roomId }: BookCardProps) {
     const checkInIso = checkIn.toISOString();
     const checkOutIso = checkOut.toISOString();
 
-    const draftBooking = {
+    const guestInfo = {
+      adults: guests.adults,
+      children: guests.children,
+      infants: guests.infants,
+    };
+    const draftBooking: Booking = {
       // 이 부분 타입은 '@/types/booking' 구조에 맞춰서 저장
       checkIn: checkInIso,
       checkOut: checkOutIso,
@@ -103,6 +109,9 @@ export default function BookCard({ pricePerNight, roomId }: BookCardProps) {
         nights,
         pricePerNight,
         total: pricePerNight * nights,
+        cleaningFee: 0, // TODO: 실제 청소비 데이터가 있다면 연동 필요
+        serviceFee: 0, // TODO: 실제 서비스 수수료 데이터가 있다면 연동 필요
+        currency: 'KRW',
       },
       listing: {
         id: roomId,
@@ -114,17 +123,13 @@ export default function BookCard({ pricePerNight, roomId }: BookCardProps) {
         rating: 5.0,
         reviewCount: 0,
       },
+      id: '', // 예약 생성 전이므로 임시로 빈 문자열을 할당합니다.
+      guestInfo,
+      freeCancellationUntil: '', // 예약 생성 전이므로 임시로 빈 문자열을 할당합니다.
     };
 
     // zustand에 예약 정보 저장 (타입 안 맞으면 as any로 우선 맞춰줌)
-    setBooking(draftBooking as any);
-
-    // 게스트 정보도 zustand에 저장
-    updateGuestInfo({
-      adults: guests.adults,
-      children: guests.children,
-      infants: guests.infants,
-    });
+    setBooking(draftBooking);
 
     // ➡️ 예약 상세 페이지로 이동
     router.push(`/booking/${roomId}`);
