@@ -6,8 +6,8 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 type ProfileCardProps = {
   user: User;
   reviewsCount: number;
-  /** 헤더에서 쓰는 사용자 아바타 URL (없으면 이니셜로 대체) */
-  avatarUrl?: string | null;
+  /** 헤더에서 쓰는 사용자 아바타 URL (없으면 shadcn 기본 이미지 사용) */
+  avatarUrl?: string;
 };
 
 export default function ProfileCard({
@@ -16,15 +16,14 @@ export default function ProfileCard({
   avatarUrl,
 }: ProfileCardProps) {
   const initial = user.name?.[0] ?? '게';
+  const finalAvatarUrl = avatarUrl || 'https://github.com/shadcn.png';
 
   return (
     <section className="flex items-center gap-8 rounded-2xl border border-neutral-200 bg-white p-8 shadow-sm">
       {/* 아바타 영역 */}
       <div className="flex flex-col items-center gap-2">
         <Avatar className="h-20 w-20 text-xl">
-          {avatarUrl && (
-            <AvatarImage src={avatarUrl} alt={user.name ?? '프로필'} />
-          )}
+          <AvatarImage src={finalAvatarUrl} alt={user.name ?? '프로필'} />
           <AvatarFallback>{initial}</AvatarFallback>
         </Avatar>
         <div className="text-sm font-semibold">{user.name}</div>

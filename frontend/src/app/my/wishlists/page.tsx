@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import Container from '@/components/layout/Container';
-import Footer from '@/components/layout/footer/Footer';
 import WishlistCard from '@/components/wishlist/WishlistCard';
 import { Wishlist } from '@/types/model';
 import { useRouter } from 'next/navigation';
@@ -96,8 +95,6 @@ export default function WishlistsPage() {
           )}
         </section>
       </Container>
-
-      <Footer />
     </main>
   );
 }
