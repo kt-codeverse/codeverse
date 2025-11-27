@@ -2,7 +2,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation'; // 🔥 추가
+import { useRouter } from 'next/navigation';
 import { Card } from './Card';
 import { Button } from '../ui/button';
 import DatePicker from 'react-datepicker';
@@ -10,7 +10,8 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { ko } from 'date-fns/locale';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { ChevronDown } from 'lucide-react';
-// import axios from 'axios';  // ❌ 더 이상 사용 안 함, 제거해도 됨
+import { useBookingStore } from '@/store/bookingStore'; // ✅ zustand
+import { Booking } from '@/types/booking';
 
 type GuestType = 'adults' | 'children' | 'infants';
 
@@ -22,11 +23,16 @@ interface Guests {
 
 interface BookCardProps {
   pricePerNight: number;
-  roomId: string; // ✅ 이 숙소의 roomId (rooms/:id에서 내려줌)
+  roomId: string; // ✅ rooms/[id]에서 내려주는 실제 roomId
 }
 
 export default function BookCard({ pricePerNight, roomId }: BookCardProps) {
   const router = useRouter();
+
+  const {
+    setBooking,      // Booking 초깃값 저장
+    updateGuestInfo, // 게스트 수 저장
+  } = useBookingStore();
 
   const [checkIn, setCheckIn] = useState<Date | null>(null);
   const [checkOut, setCheckOut] = useState<Date | null>(null);
@@ -36,7 +42,6 @@ export default function BookCard({ pricePerNight, roomId }: BookCardProps) {
     infants: 0,
   });
   const [showGuests, setShowGuests] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleIncrement = (type: GuestType) => {
     setGuests((g) => ({
@@ -70,14 +75,16 @@ export default function BookCard({ pricePerNight, roomId }: BookCardProps) {
         )
       : 0;
 
-  // 🔥 예약 API 호출 (POST /rooms/:roomId/bookings) - fetch + token 방식
+  // ✅ 여기서는 "예약 API 호출" 대신
+  // 1) zustand에 예약 초깃값 저장
+  // 2) /booking/[roomId] 로 라우팅만 수행
   const handleBooking = async () => {
     if (!checkIn || !checkOut) {
       alert('체크인/체크아웃 날짜를 선택해주세요.');
       return;
     }
 
-    // 1) 토큰 가져오기
+    // 로그인 여부는 여기서 한 번 체크 (토큰 없으면 로그인으로 보냄)
     const token = localStorage.getItem('token');
     if (!token) {
       alert('로그인이 필요합니다.');
@@ -85,65 +92,61 @@ export default function BookCard({ pricePerNight, roomId }: BookCardProps) {
       return;
     }
 
-    const baseUrl =
-      process.env.NEXT_PUBLIC_API_URL || 'http://54.116.28.243/api';
+    // ✅ BookingPage에서 보여줄 정보(요약 카드)에 필요한 최소 데이터만 저장
+    const checkInIso = checkIn.toISOString();
+    const checkOutIso = checkOut.toISOString();
 
-    const payload = {
-      startDate: checkIn.toISOString(), // Nest DTO: IsDateString
-      endDate: checkOut.toISOString(),
+    const guestInfo = {
+      adults: guests.adults,
+      children: guests.children,
+      infants: guests.infants,
+    };
+    const draftBooking: Booking = {
+      // 이 부분 타입은 '@/types/booking' 구조에 맞춰서 저장
+      checkIn: checkInIso,
+      checkOut: checkOutIso,
+      priceDetail: {
+        nights,
+        pricePerNight,
+        total: pricePerNight * nights,
+        cleaningFee: 0, // TODO: 실제 청소비 데이터가 있다면 연동 필요
+        serviceFee: 0, // TODO: 실제 서비스 수수료 데이터가 있다면 연동 필요
+        currency: 'KRW',
+      },
+      listing: {
+        id: roomId,
+        title: '예약하려는 숙소',       // TODO: 필요하면 RoomDetail에서 제목/이미지 내려줘서 채우면 됨
+        subtitle: '',
+        imageUrl: '',
+        locationSummary: '',
+        isGuestFavorite: false,
+        rating: 5.0,
+        reviewCount: 0,
+      },
+      id: '', // 예약 생성 전이므로 임시로 빈 문자열을 할당합니다.
+      guestInfo,
+      freeCancellationUntil: '', // 예약 생성 전이므로 임시로 빈 문자열을 할당합니다.
     };
 
-    try {
-      setIsSubmitting(true);
+    // zustand에 예약 정보 저장 (타입 안 맞으면 as any로 우선 맞춰줌)
+    setBooking(draftBooking);
 
-      const res = await fetch(`${baseUrl}/rooms/${roomId}/bookings`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`, // ✅ jwt 인증
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (res.status === 401) {
-        // 토큰 만료 / 잘못된 경우
-        alert('로그인이 만료되었습니다. 다시 로그인해주세요.');
-        localStorage.removeItem('token');
-        router.push('/signin');
-        return;
-      }
-
-      if (!res.ok) {
-        console.error('예약 실패 응답:', res.status, await res.text());
-        alert('예약에 실패했습니다. 다시 시도해주세요.');
-        return;
-      }
-
-      const data = await res.json();
-      console.log('예약 성공:', data);
-      alert('예약이 완료되었습니다!');
-
-      // 나중에: 예약 상세 페이지로 이동하고 싶으면 여기서 router.push(`/booking/${data.id}`) 등으로 이동 가능
-    } catch (error) {
-      console.error('예약 요청 에러:', error);
-      alert('예약 요청 중 오류가 발생했습니다.');
-    } finally {
-      setIsSubmitting(false);
-    }
+    // ➡️ 예약 상세 페이지로 이동
+    router.push(`/booking/${roomId}`);
   };
 
   return (
-    <Card className="sticky top-24 p-6 border border-gray-300 rounded-xl shadow-xl">
+    <Card className="sticky top-24 rounded-xl border border-gray-300 p-6 shadow-xl">
       {/* 요금 */}
       <div className="flex items-baseline gap-1 ">
-        <span className="text-[22px] underline font-bold">
+        <span className="text-[22px] font-bold underline">
           ₩{pricePerNight.toLocaleString()}
         </span>
         <span className="text-gray-600">· {nights}박</span>
       </div>
 
       {/* 날짜 선택 */}
-      <div className=" border border-gray-400 rounded-lg ">
+      <div className=" rounded-lg border border-gray-400">
         <div className="grid grid-cols-2 border-b border-gray-400">
           <div className="border-r p-2 text-sm">
             <div className="text-[10px] uppercase">체크인</div>
@@ -179,17 +182,17 @@ export default function BookCard({ pricePerNight, roomId }: BookCardProps) {
         {/* 게스트 선택 */}
         <Popover open={showGuests} onOpenChange={setShowGuests}>
           <PopoverTrigger asChild>
-            <button className="w-full p-3 text-left hover:bg-gray-50 rounded-b-lg flex items-center justify-between">
+            <button className="flex w-full items-center justify-between rounded-b-lg p-3 text-left hover:bg-gray-50">
               <div>
                 <div className="text-[10px] uppercase">인원</div>
                 <div className="text-[14px]">{totalGuests}</div>
               </div>
-              <ChevronDown className="w-4 h-4" />
+              <ChevronDown className="h-4 w-4" />
             </button>
           </PopoverTrigger>
 
           <PopoverContent className="w-full p-4" align="start">
-            <div className="border border-gray-400 rounded-lg mb-4 p-4 space-y-4">
+            <div className="mb-4 space-y-4 rounded-lg border border-gray-400 p-4">
               {(['adults', 'children', 'infants'] as GuestType[]).map(
                 (type) => {
                   const label =
@@ -219,7 +222,7 @@ export default function BookCard({ pricePerNight, roomId }: BookCardProps) {
                         <Button
                           variant="outline"
                           size="sm"
-                          className="w-8 h-8 rounded-full p-0"
+                          className="h-8 w-8 rounded-full p-0"
                           onClick={() => handleDecrement(type)}
                           disabled={
                             type === 'adults'
@@ -235,7 +238,7 @@ export default function BookCard({ pricePerNight, roomId }: BookCardProps) {
                         <Button
                           variant="outline"
                           size="sm"
-                          className="w-8 h-8 rounded-full p-0"
+                          className="h-8 w-8 rounded-full p-0"
                           onClick={() => handleIncrement(type)}
                         >
                           +
@@ -250,16 +253,15 @@ export default function BookCard({ pricePerNight, roomId }: BookCardProps) {
         </Popover>
       </div>
 
-      {/* 예약 버튼 */}
+      {/* 예약 버튼 – 이제는 "예약 API"가 아니라 "booking 페이지로 이동" */}
       <button
-        className="w-full h-10 bg-linear-to-r from-pink-500 to-red-600 hover:from-pink-600 hover:to-red-600 rounded-3xl text-white"
+        className="h-10 w-full rounded-3xl bg-linear-to-r from-pink-500 to-red-600 text-white hover:from-pink-600 hover:to-red-600"
         onClick={handleBooking}
-        disabled={isSubmitting}
       >
-        {isSubmitting ? '예약 중...' : '예약하기'}
+        예약하기
       </button>
 
-      <div className="text-center text-sm text-gray-600 mb-4">
+      <div className="mb-4 text-center text-sm text-gray-600">
         예약 확정 전에는 요금이 청구되지 않습니다.
       </div>
     </Card>
