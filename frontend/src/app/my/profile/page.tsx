@@ -15,13 +15,11 @@ export default function MyProfilePage() {
   useEffect(() => {
     (async () => {
       try {
-        // 2. 로컬 스토리지에서 액세스 토큰을 가져옵니다.
         const token = localStorage.getItem('token');
         if (!token) {
           router.push('/signin');
           return;
         }
-        // console.log({ token });
 
         const res1 = await fetch(`${process.env.API_URL}/users/me`, {
           headers: {
@@ -29,11 +27,16 @@ export default function MyProfilePage() {
             Authorization: `Bearer ${token}`,
           },
         });
+
+        if (!res1.ok) {
+          throw new Error('Failed to fetch /users/me');
+        }
+
         const me = await res1.json();
         setUser(me);
         console.log({ me });
 
-        // 리뷰 서비스에서 숙소에 대한 리뷰가 아니라 사용자에 대한 리뷰를 제공받는 엔드포인트가 필요함
+        // 리뷰 API 준비되면 여기서 불러오면 됨
         // const res2 = await fetch(`${process.env.API_URL}/reviews`, {
         //   headers: {
         //     'Content-Type': 'application/json',
@@ -42,7 +45,6 @@ export default function MyProfilePage() {
         // });
         // const reviews = await res2.json();
         // setReviews(reviews);
-        // console.log({ reviews });
       } catch (error) {
         console.error('프로필 API 실패, 목업 사용:', error);
 
@@ -73,7 +75,7 @@ export default function MyProfilePage() {
 
   if (loading || !user) {
     return (
-      <main className="min-h-dvh flex flex-col bg-white">
+      <main className="flex min-h-dvh flex-col bg-white">
         <Container>
           <section className="py-10">로딩 중...</section>
         </Container>
@@ -82,26 +84,24 @@ export default function MyProfilePage() {
   }
 
   return (
-    <main className="min-h-dvh flex flex-col bg-white">
-      {/* ✅ Header / Footer 는 전역 layout 에서 렌더링되므로 여기선 안 씀 */}
+    <main className="flex min-h-dvh flex-col bg-white">
       <Container>
         <section className="flex gap-10 py-10">
-          {/* ✅ 내부 사이드바(프로필 / 이전 여행 / 인연) 제거하고,
-              상위 레이아웃에 있는 사이드바만 사용 */}
+          {/* 왼쪽 사이드바는 상위 레이아웃(my 레이아웃)에서 렌더링된다고 가정 */}
+          {/* 여기서는 오른쪽 내용만 */}
 
-          {/* 오른쪽 내용만 남기기 */}
           <section className="flex-1">
             {/* 상단 제목 */}
             <div className="flex items-center justify-between">
               <h3 className="text-3xl font-extrabold">자기소개</h3>
             </div>
 
-            {/* 프로필 카드 (아바타는 user.avatar 사용) */}
+            {/* 프로필 카드 (아바타는 고정 URL 사용) */}
             <div className="mt-6">
               <ProfileCard
                 user={user}
                 reviewsCount={reviews.length}
-                avatarUrl={user.avatar ?? null}
+                avatarUrl="https://github.com/shadcn.png"
               />
             </div>
 
