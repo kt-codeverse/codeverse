@@ -2,24 +2,48 @@
 
 import { useEffect, useState } from 'react';
 import Container from '@/components/layout/Container';
-import Header from '@/components/layout/header/Header';
 import Footer from '@/components/layout/footer/Footer';
 import WishlistCard from '@/components/wishlist/WishlistCard';
-import { http } from '@/lib/http';
 import { Wishlist } from '@/types/model';
+import { useRouter } from 'next/navigation';
 
 export default function WishlistsPage() {
   const [wishlists, setWishlists] = useState<Wishlist[]>([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     (async () => {
       try {
-        const res = await http.get<Wishlist[]>('/wishlists');
-        setWishlists(res.data);
-      } catch (error) {
-        console.error('위시리스트 불러오기 실패, 더미 데이터 사용:', error);
+        // 🔐 1. 토큰 가져오기
+        const token = localStorage.getItem('token');
+        if (!token) {
+          router.push('/signin');
+          return;
+        }
 
+        // 🌐 2. fetch로 API 호출
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/wishlists`, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        // 401(로그인 만료) → 다시 로그인
+        if (res.status === 401) {
+          router.push('/signin');
+          return;
+        }
+
+        if (!res.ok) throw new Error('Failed to fetch wishlists');
+
+        const data = await res.json();
+        setWishlists(data);
+      } catch (error) {
+        console.error('위시리스트 API 실패, 더미 데이터 사용:', error);
+
+        // 🧪 더미 데이터
         const dummy: Wishlist[] = [
           {
             id: 'recent',
@@ -48,11 +72,10 @@ export default function WishlistsPage() {
         setLoading(false);
       }
     })();
-  }, []);
+  }, [router]);
 
   return (
     <main className="min-h-dvh flex flex-col">
-      <Header />
 
       <Container>
         <section className="py-10">
