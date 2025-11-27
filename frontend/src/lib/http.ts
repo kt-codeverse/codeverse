@@ -20,7 +20,7 @@ http.interceptors.response.use(
 );
 
 export const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://54.116.28.243/api',
+  baseURL: (process.env.NEXT_PUBLIC_API_URL || 'http://54.116.28.243') + '/api',
   timeout: 10000,
 });
 
