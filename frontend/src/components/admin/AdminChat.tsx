@@ -283,7 +283,7 @@ export default function AdminChat() {
   }, [selectedSpaceId]); // selectedSpaceId 종속성 추가
 
   return (
-    <div style={{ display: 'flex', height: '100vh' }}>
+    <div style={{ display: 'flex', height: 'calc(100vh - 12rem)' }}>
       <ChatList
         onSelectSpace={setSelectedSpaceId}
         selectedSpaceId={selectedSpaceId}
