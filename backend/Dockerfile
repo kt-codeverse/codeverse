@@ -13,6 +13,11 @@ COPY prisma ./prisma
 ## generate Prisma client (ensure schema.prisma exists under prisma/)
 RUN npx prisma generate || true
 RUN npm run build
+# Compile prisma/seed.ts to a CommonJS JS file so it can be executed reliably at runtime
+# This produces prisma/seed.js next to the TS file. If tsc is not available this step is
+# allowed to fail without breaking the build (hence the || true), but for correct seeding
+# ensure devDependencies (tsc) are installed in the builder stage.
+RUN npx tsc prisma/seed.ts --module commonjs --outDir prisma || true
 
 FROM node:20-alpine AS runner
 WORKDIR /usr/src/app
