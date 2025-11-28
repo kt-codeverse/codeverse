@@ -35,8 +35,9 @@ services:
     environment:
       - NODE_ENV=production
       - API_URL=http://backend:8080/api
-      - NEXT_PUBLIC_API_URL=http://backend:8080/api
+      # 환경변수수정
       # - NEXT_PUBLIC_API_URL=/api
+      - NEXT_PUBLIC_API_URL=http://backend:8080/api
     networks:
       - codeverse_net
 
