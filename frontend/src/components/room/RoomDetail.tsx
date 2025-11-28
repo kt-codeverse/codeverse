@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import ReviewsModal from '@/components/review/ReviewsModal';
 import { Room } from '@/types/room';
 import { roomText } from '@/data/room-description';
+import RoomDetailReview from './RoomDetailReview';
 
 interface RoomDetailProps {
   room: Room;
@@ -121,6 +122,11 @@ export default function RoomDetail({ room }: RoomDetailProps) {
           {/* 숙소 편의 시설 */}
           <div className="gap-4 border-b pb-12">
             <RoomAmenity />
+          </div>
+
+          {/* 숙소 리뷰 */}
+          <div className="gap-4 border-b pb-12">
+            <RoomDetailReview listingId={roomData.id} />
           </div>
         </div>
       </div>
