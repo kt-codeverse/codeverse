@@ -65,13 +65,13 @@ export default function BookCard({
   };
 
   return (
-    <Card className="sticky top-24 rounded-xl border border-gray-300/ p-6 shadow-xl  border-red-500">
+    <Card className="sticky top-24 rounded-xl border border-gray-300/ p-6 shadow-xl ">
       {/* 요금 */}
       <div className="flex items-baseline gap-1 ">
         <span className="text-[22px] font-bold">
           ₩{pricePerNight.toLocaleString()}
         </span>
-        <span className="text-gray-600">/ 박</span>
+        <span className="text-gray-600">/ {nights}박</span>
       </div>
 
       {/* 날짜 선택 */}
@@ -158,7 +158,7 @@ export default function BookCard({
 
       {/* 예약 버튼 – 이제는 "예약 API"가 아니라 "booking 페이지로 이동" */}
       <button
-        className="mt-4 h-12 w-full rounded-lg bg-pink-500 text-lg font-bold text-white hover:bg-pink-600 disabled:cursor-not-allowed disabled:bg-gray-300"
+        className="w-full h-10 bg-linear-to-r from-pink-500 to-red-600 hover:from-pink-600 hover:to-red-600 rounded-3xl text-white"
         onClick={handleBooking}
         disabled={!startDate || !endDate || nights === 0}
       >
