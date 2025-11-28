@@ -30,7 +30,7 @@ export default function LoginPage() {
   const onSubmit = async (data: FormValues) => {
     try {
       const { email, password } = data;
-      const res = await fetch(`${process.env.API_URL}/auth/login`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
