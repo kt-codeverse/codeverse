@@ -29,23 +29,19 @@ export default function LoginPage() {
   });
 
   const onSubmit = async (data: FormValues) => {
-    //console.log('로그인 데이터 : ', data);
-
     try {
-      const register = await api.post('auth/login', {
-        email: data.email,
-        password: data.password,
+      const { email, password } = data;
+      const res = await fetch(`${process.env.API_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
       });
-      const accessToken = register.data.access_token;
-      //console.log(accessToken);
-      //localStorage.setItem('token', accessToken);
-
+      const result = await res.json();
+      const accessToken = result.access_token;
       login(accessToken);
-
       route.push('/');
     } catch (error) {
       console.log(error);
-
       alert('로그인에 실패했습니다');
     }
   };
