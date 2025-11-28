@@ -176,3 +176,11 @@
 | Event handlers    | handle                           |
 | Constants         | UPPER_SNAKE_CASE                 |
 | Utility functions | camelCase                        |
+
+## 빠른 확인: 로컬 도커 DB 접속
+
+- 로컬에서 도커 컨테이너에 있는 MySQL에 접속하려면 아래 명령을 사용하세요:
+
+```
+docker compose exec db mysql -u codeverse -psecret -D codeverse
+```

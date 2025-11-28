@@ -1,4 +1,6 @@
 import type { Room } from '@/types/room';
+
+export const dynamic = 'force-dynamic';
 import RoomCard from '@/components/room/RoomCard';
 
 async function getRooms() {

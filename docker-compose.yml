@@ -10,6 +10,11 @@ services:
       - ./backend/.env
     environment:
       - NODE_ENV=production
+    # Ensure backend waits for DB to become healthy before starting
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
     networks:
       - codeverse_net
 
@@ -29,8 +34,8 @@ services:
       - ./frontend/.env.local
     environment:
       - NODE_ENV=production
-      - API_URL=http://caddy/api
-      - NEXT_PUBLIC_API_URL=http://caddy/api
+      - API_URL=http://backend:8080/api
+      - NEXT_PUBLIC_API_URL=/api
     networks:
       - codeverse_net
 
@@ -76,12 +81,14 @@ services:
         condition: service_healthy
     env_file:
       - ./backend/.env
-    command: npx prisma migrate deploy && npx prisma db seed
+    # Use a recovery script that marks filesystem migrations as applied (if needed)
+    # then deploys migrations and runs seed. This helps recover from partial failures
+    # where tables already exist or columns differ.
+    command: sh -c "sh prisma/resolve-and-deploy.sh"
     networks:
       - codeverse_net
     profiles:
       - migrate
-
 
 networks:
   codeverse_net:
