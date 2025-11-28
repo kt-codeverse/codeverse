@@ -5,7 +5,7 @@ import RoomCard from '@/components/room/RoomCard';
 
 async function getRooms() {
   try {
-    const url = `${process.env.API_URL}/rooms`;
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/rooms`;
     // console.log({ url });
     const res = await fetch(url);
     if (!res.ok) throw new Error('Failed to fetch rooms');

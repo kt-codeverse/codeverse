@@ -21,12 +21,15 @@ export default function MyProfilePage() {
           return;
         }
 
-        const res1 = await fetch(`${process.env.API_URL}/users/me`, {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
+        const res1 = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/users/me`,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
           },
-        });
+        );
 
         if (!res1.ok) {
           throw new Error('Failed to fetch /users/me');
@@ -37,7 +40,7 @@ export default function MyProfilePage() {
         console.log({ me });
 
         // 리뷰 API 준비되면 여기서 불러오면 됨
-        // const res2 = await fetch(`${process.env.API_URL}/reviews`, {
+        // const res2 = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/reviews`, {
         //   headers: {
         //     'Content-Type': 'application/json',
         //     Authorization: `Bearer ${token}`,

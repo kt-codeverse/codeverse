@@ -27,8 +27,7 @@ export default function Page() {
   const [submitting, setSubmitting] = useState(false);
 
   // 결제 수단 상태
-  const [paymentMethod, setPaymentMethod] =
-    useState<PaymentMethod>('card');
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('card');
 
   // 카드 결제 입력값 (실제 결제는 아니고 UI용)
   const [cardNumber, setCardNumber] = useState('');
@@ -38,8 +37,7 @@ export default function Page() {
   const nights = useMemo(() => {
     if (!startDate || !endDate) return 0;
     return Math.ceil(
-      (endDate.getTime() - startDate.getTime()) /
-        (1000 * 60 * 60 * 24),
+      (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
     );
   }, [startDate, endDate]);
 
@@ -70,7 +68,7 @@ export default function Page() {
 
     try {
       setSubmitting(true);
-      const url = `${process.env.API_URL}/rooms/${params.listingId}/bookings`;
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/rooms/${params.listingId}/bookings`;
       const token = localStorage.getItem('token');
       const res = await fetch(url, {
         method: 'POST',
@@ -132,8 +130,7 @@ export default function Page() {
               <div className="flex flex-col justify-between text-sm">
                 <p className="font-medium">{MOCK_ROOM_DATA.title}</p>
                 <p className="text-gray-500">
-                  {formatDate(startDate)} ~ {formatDate(endDate)} (
-                  {nights}박)
+                  {formatDate(startDate)} ~ {formatDate(endDate)} ({nights}박)
                 </p>
                 <p className="text-gray-500">게스트 {guests}명</p>
               </div>
@@ -146,8 +143,7 @@ export default function Page() {
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span>
-                  ₩{formatCurrency(MOCK_ROOM_DATA.pricePerNight)} x{' '}
-                  {nights}박
+                  ₩{formatCurrency(MOCK_ROOM_DATA.pricePerNight)} x {nights}박
                 </span>
                 <span>₩{formatCurrency(totalPrice)}</span>
               </div>
@@ -178,9 +174,7 @@ export default function Page() {
                 <button
                   key={m.value}
                   type="button"
-                  onClick={() =>
-                    setPaymentMethod(m.value as PaymentMethod)
-                  }
+                  onClick={() => setPaymentMethod(m.value as PaymentMethod)}
                   className={`rounded-full border px-4 py-2 text-xs font-medium transition ${
                     paymentMethod === m.value
                       ? 'border-pink-500 bg-pink-500 text-white'
@@ -239,8 +233,8 @@ export default function Page() {
                   </div>
                 </div>
                 <p className="text-xs text-gray-400">
-                  실제 결제 연동은 아직 구현되지 않았으며, 입력된 정보는
-                  서버로 전송되지 않습니다.
+                  실제 결제 연동은 아직 구현되지 않았으며, 입력된 정보는 서버로
+                  전송되지 않습니다.
                 </p>
               </div>
             )}
@@ -248,14 +242,14 @@ export default function Page() {
             {/* 카카오페이 / 네이버페이 선택 시 안내문 */}
             {paymentMethod === 'kakaopay' && (
               <p className="mt-2 text-xs text-gray-500">
-                결제 단계에서 카카오페이 창이 열립니다. (실제 결제
-                연동은 추후 구현 예정입니다.)
+                결제 단계에서 카카오페이 창이 열립니다. (실제 결제 연동은 추후
+                구현 예정입니다.)
               </p>
             )}
             {paymentMethod === 'naverpay' && (
               <p className="mt-2 text-xs text-gray-500">
-                결제 단계에서 네이버페이 창이 열립니다. (실제 결제
-                연동은 추후 구현 예정입니다.)
+                결제 단계에서 네이버페이 창이 열립니다. (실제 결제 연동은 추후
+                구현 예정입니다.)
               </p>
             )}
           </div>

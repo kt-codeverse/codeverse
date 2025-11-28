@@ -32,7 +32,7 @@ export default function Page() {
    * @returns 서버로부터 받은 Photo 객체 배열
    */
   const uploadPhotos = async (formData: FormData) => {
-    const url = `${process.env.API_URL}/uploads/images`;
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/uploads/images`;
     const response = await fetch(url, { method: 'POST', body: formData });
     if (!response.ok) throw new Error('사진 업로드에 실패했습니다.');
     return response.json();

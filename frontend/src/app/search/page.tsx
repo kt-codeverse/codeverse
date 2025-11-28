@@ -5,7 +5,7 @@ import { Room } from '@/types/room';
 async function getRooms(searchParams: {
   [key: string]: string | string[] | undefined;
 }) {
-  const baseUrl = process.env.API_URL;
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
   if (!baseUrl) {
     console.error('환경 변수 API_URL이 설정되지 않았습니다.');
     return [];
