@@ -6,7 +6,6 @@ import { Mail } from 'lucide-react';
 import AuthButton from '@/components/user/AuthButton';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
-import { api } from '@/lib/http';
 import { useAuthStore } from '@/components/layout/header/useAuthStore';
 
 type FormValues = {
