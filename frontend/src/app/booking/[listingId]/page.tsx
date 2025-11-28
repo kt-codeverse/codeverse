@@ -90,7 +90,7 @@ export default function Page() {
       console.log('예약 완료:', data);
       alert('예약이 성공적으로 완료되었습니다.');
       resetNewBooking(); // 스토어 상태 초기화
-      // router.push('/my/bookings');
+      router.push('/my/profile');
     } catch (error) {
       console.error('예약 요청 중 오류:', error);
       alert('예약 중 오류가 발생했습니다. 다시 시도해주세요.');
