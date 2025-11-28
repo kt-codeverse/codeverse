@@ -2,6 +2,8 @@ FROM node:20-alpine AS builder
 ARG NEXT_PUBLIC_FIREBASE_API_KEY
 ARG NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
 ARG NEXT_PUBLIC_FIREBASE_PROJECT_ID
+ARG NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_KAKAO_MAP_KEY
 # Use `/app` to match existing build context and previous images
 WORKDIR /app
 
@@ -12,6 +14,8 @@ RUN npm ci --silent --include=dev
 
 # Copy source and build
 COPY . .
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_KAKAO_MAP_KEY=$NEXT_PUBLIC_KAKAO_MAP_KEY
 RUN npm run build
 
 FROM node:20-alpine AS runner

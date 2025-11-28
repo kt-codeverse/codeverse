@@ -1,8 +1,9 @@
 import RoomDetail from '@/components/room/RoomDetail';
+import { getBaseUrl } from '@/lib/getBaseUrl';
 
 async function getRoomDetail(id: string) {
   try {
-    const url = `${process.env.NEXT_PUBLIC_API_URL}/rooms/${id}`;
+    const url = `${getBaseUrl()}/rooms/${id}`;
     const res = await fetch(url);
     if (!res.ok) throw new Error('Failed to fetch room detail');
     return res.json();

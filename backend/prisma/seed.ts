@@ -792,7 +792,7 @@ async function main() {
   console.log(`시드 스크립트 시작...`);
 
   // 1. 데이터베이스 초기화
-  await clearDatabase();
+  // await clearDatabase();
 
   // 2. 사용자 생성
   const createdUsers = await seedUsers();

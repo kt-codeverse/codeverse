@@ -1,11 +1,12 @@
 import type { Room } from '@/types/room';
+import { getBaseUrl } from '@/lib/getBaseUrl';
 
 export const dynamic = 'force-dynamic';
 import RoomCard from '@/components/room/RoomCard';
 
 async function getRooms() {
   try {
-    const url = `${process.env.NEXT_PUBLIC_API_URL}/rooms`;
+    const url = `${getBaseUrl()}/rooms`;
     // console.log({ url });
     const res = await fetch(url);
     if (!res.ok) throw new Error('Failed to fetch rooms');

@@ -23,13 +23,13 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
+        NEXT_PUBLIC_API_URL: /api
+        NEXT_PUBLIC_KAKAO_MAP_KEY: ${NEXT_PUBLIC_KAKAO_MAP_KEY}
         NEXT_PUBLIC_FIREBASE_API_KEY: "AIzaSyAWrqovr6OACI9XMH8oP8jkV_Vj-9_PHbA"
         NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: "codeverse-b710e.firebaseapp.com"
         NEXT_PUBLIC_FIREBASE_PROJECT_ID: "codeverse-b710e"
 
     container_name: codeverse_frontend
-    ports:
-      - "3000:3000"
     env_file:
       - ./frontend/.env.local
     environment:

@@ -1,13 +1,14 @@
 import Filter from '@/components/search/Filter';
 import RoomCard from '@/components/room/RoomCard';
 import { Room } from '@/types/room';
+import { getBaseUrl } from '@/lib/getBaseUrl';
 
 async function getRooms(searchParams: {
   [key: string]: string | string[] | undefined;
 }) {
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+  const baseUrl = getBaseUrl();
   if (!baseUrl) {
-    console.error('환경 변수 API_URL이 설정되지 않았습니다.');
+    console.error('Failed to get base API URL.');
     return [];
   }
 
