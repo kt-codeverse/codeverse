@@ -26,14 +26,16 @@ import {
   LucideWashingMachine,
   Shirt,
   Blinds,
+  SoapDispenserDroplet,
+  Bubbles,
 } from 'lucide-react';
 
 export default function RoomAmenity() {
   const amenities = [
     { label: '헤어드라이어', icon: Fan },
-    { label: '샴푸', icon: Bath },
-    { label: '컨디셔너', icon: Bath },
-    { label: '바디워시', icon: Bath },
+    { label: '샴푸', icon: SoapDispenserDroplet },
+    { label: '컨디셔너', icon: SoapDispenserDroplet },
+    { label: '바디워시', icon: Bubbles },
     { label: '온수', icon: Bath },
     { label: '세탁기', icon: WashingMachine },
     { label: '건조기', icon: LucideWashingMachine },

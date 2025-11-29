@@ -1,11 +1,14 @@
 'use client';
-import { Star } from 'lucide-react';
+import { LucideIcon, Star } from 'lucide-react';
 import RoomDescription from './RoomDescription';
 import Image from 'next/image';
 
 interface RoomInfoProps {
   description: string;
-  amenities: string[];
+  amenities: {
+    label: string;
+    icon: LucideIcon;
+  }[];
   maxGuests: number;
   city: string;
   privacyType: string;
@@ -60,12 +63,13 @@ export default function RoomInfo({
       {/* 편의시설 */}
       <div className="py-6 border-b">
         <div className="grid grid-cols-2 gap-4">
-          {amenities.map((a, idx) => (
+          {amenities.map((item, idx) => (
             <div
               key={idx}
               className="flex items-center gap-3 text-sm text-gray-600"
             >
-              {a}
+              <item.icon size={20} />
+              <span>{item.label}</span>
             </div>
           ))}
         </div>
