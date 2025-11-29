@@ -1,10 +1,16 @@
-# 기능 시연 영상
+# 코드벌스
 
-https://drive.google.com/file/d/1Oi_Zl2SKq6MtqJW_Xo4AfSwaxVPsj0dW/view?usp=drive_link
+## 프로젝트 노션 페이지
 
-# UI/UX 및 반응형 시연 영상
+프로젝트 관련 전체 문서는 [코드벌스 노션 페이지](https://vivid-thyme-ac6.notion.site/1-29b9e3e335cc801d872dff9be4127134?source=copy_link)에서 확인 가능합니다.
 
-https://drive.google.com/file/d/1hulv2SiyJmPqHohY1GOigqowSo3ODas5/view?usp=drive_link
+## 기능 시연 영상
+
+[기능 시연 영상 보기](https://drive.google.com/file/d/1Oi_Zl2SKq6MtqJW_Xo4AfSwaxVPsj0dW/view?usp=drive_link)
+
+## UI/UX 및 반응형 시연 영상
+
+[UI/UX 및 반응형 시연 영상 보기](https://drive.google.com/file/d/1hulv2SiyJmPqHohY1GOigqowSo3ODas5/view?usp=drive_link)
 
 <br>
 <br>
