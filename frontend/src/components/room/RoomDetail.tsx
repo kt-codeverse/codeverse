@@ -15,6 +15,14 @@ import ReviewsModal from '@/components/review/ReviewsModal';
 import { Room } from '@/types/room';
 import { roomText } from '@/data/room-description';
 import RoomDetailReview from './RoomDetailReview';
+import {
+  AirVent,
+  BaggageClaim,
+  ChefHat,
+  CircleParking,
+  KeyRound,
+  WashingMachine,
+} from 'lucide-react';
 
 interface RoomDetailProps {
   room: Room;
@@ -29,11 +37,12 @@ export default function RoomDetail({ room }: RoomDetailProps) {
   };
 
   const amenities = [
-    '셀프체크인',
-    '여행 가방 보관 가능',
-    '무료 주차 공간',
-    '세탁기 및 건조기',
-    '에어컨',
+    { label: '셀프체크인', icon: KeyRound },
+    { label: '여행 가방 보관 가능', icon: BaggageClaim },
+    { label: '무료 주차 공간', icon: CircleParking },
+    { label: '세탁기 및 건조기', icon: WashingMachine },
+    { label: '에어컨', icon: AirVent },
+    { label: '주방', icon: ChefHat },
   ];
 
   const roomDescriptionText = roomText; // 숙소 추가 설명 데이터
